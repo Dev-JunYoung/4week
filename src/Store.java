@@ -1,6 +1,7 @@
 import org.w3c.dom.ls.LSOutput;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Store { //buy() 장비각각 3종류식 총9개, 포션종류2가지,
                      //sell() 아이템구분없이
@@ -13,13 +14,82 @@ public class Store { //buy() 장비각각 3종류식 총9개, 포션종류2가�
   soad soad=new soad("초보자의 검",100,1,10);
   Armor armor=new Armor("초보자의 갑옷",100,1,10);
   Shoes shoes=new Shoes("초보자의 신발",100,1,10);
-  soad soad2=new soad("숙련자의검",500,2,20);
+  soad soad2=new soad("숙련자의 검",500,2,20);
   Armor armor2=new Armor("숙련자의 갑옷",500,2,20);
   Shoes shoes2=new Shoes("숙련자의 신발",500,2,20);
   soad soad3=new soad("마스터의 검",1000,3,50);
   Armor armor3=new Armor("마스터의 갑옷",1000,3,50);
   Shoes shoes3=new Shoes("마스터의 신발",1000,3,50);
   ArrayList StoreList=new ArrayList();
+  Scanner sc=new Scanner(System.in);
+  int 뎁스1num;
+  int 뎁스2num;
+
+  void store(Inventory invertory,Store store,User user){
+    while (true){
+      System.out.println("----------------------------------------------------------------------------------------------------------------------");
+      System.out.println("1.구매하기  ㅣ  2.판매하기  ㅣ  3.돌아가기  ㅣ  ");
+      System.out.println("----------------------------------------------------------------------------------------------------------------------");
+      뎁스1num=sc.nextInt();
+      switch (뎁스1num){
+        case 1:  //구매
+          while(true){
+            store.storeView(); //뷰보여줌
+            System.out.println(invertory.inventoryList);
+            System.out.println("----------------------------------------------------------------------------------------------------------------------");
+            System.out.println("구매하실 번호를 눌러주세요.    ㅣ   돌아가기:0");
+            System.out.println("----------------------------------------------------------------------------------------------------------------------");
+            System.out.println("보유금화:  "+invertory.getCash());
+            뎁스2num= sc.nextInt();
+            switch (뎁스2num){
+              case 0:
+                break;
+              case 1:store.buyHpPotion(invertory);
+                break;
+              case 2:store.buyMpPotion(invertory);
+                break;
+              case 3:store.buyHpPotion2(invertory);
+                break;
+              case 4:store.buyMpPotion2(invertory);
+                break;
+              case 5:store.buyHpPotion3(invertory);
+                break;
+              case 6:store.buyMpPotion3(invertory);
+                break;
+              case 7:store.buySoad(invertory);
+                break;
+              case 8:store.buyArmor(invertory);
+                break;
+              case 9:store.buyShoes(invertory);
+                break;
+              case 10:store.buySoad2(invertory);
+                break;
+              case 11:store.buyArmor2(invertory);
+                break;
+              case 12:store.buyShoes2(invertory);
+                break;
+              case 13:store.buySoad3(invertory);
+                break;
+              case 14:store.buyArmor3(invertory);
+                break;
+              case 15:store.buyShoes3(invertory);
+                break;
+            }
+            sc.nextLine();
+            if(뎁스2num==0){
+              break;
+            }
+          }
+          break;
+        case 2: //판매
+          invertory.sell(invertory,user);
+          break;
+        case 3: //돌아가기
+          break;
+      }
+      break;
+    }
+  }
   void storeInit(){
     StoreList.add("         이름       가격       회복량");
     StoreList.add("1. "+hpPotion.getName()+" :     "+ hpPotion.price+"       "+hpPotion.recoveryAmount);
@@ -49,7 +119,10 @@ public class Store { //buy() 장비각각 3종류식 총9개, 포션종류2가�
     }
     System.out.println("---------------------------------------------------------------------");
   }
+  ArrayList sellList=new ArrayList();
+  void setSellList(){
 
+  }
   void buy(){
 
   }

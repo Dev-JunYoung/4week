@@ -48,6 +48,62 @@ public class User extends unit {
         this.setAvoid(((int) (Math.random() * 20 + 10)));
         return user;
     }
+    //유저 상태 메서드 (main.2)
+    void userStatus(User user,Inventory inventory,Skills skills){
+        int 뎁스1num;
+        int 뎁스2num;
+        while(true){
+            user.userStatList(user);
+            System.out.println("----------------------------------------------------------------------------------------------------------------------");
+            System.out.println("1.능력치 올리기 ㅣ   2.스킬   ㅣ   3.착용장비확인     ㅣ   4.돌아가기"    );
+            System.out.println("----------------------------------------------------------------------------------------------------------------------");
+            뎁스1num= sc.nextInt();
+            switch (뎁스1num){           //     1.wearingEquipments
+                //              2.userSkills
+                //              3.inventory
+                case 1: //능력치올리기완성
+                    if(user.statPoint>0){
+                        user.userStatUp(user);
+                        break;
+                    }else{
+                        System.out.println("스탯포인트가 부족합니다");
+                        sc.nextLine();
+                    }
+                    break;
+                case 2: //스킬 skillView()호출 -1. 스킬리스트
+                    //                     2.  스킬 올리기 (스탯없으면 X)
+                    while(true){
+                        skills.skillView(skills);
+                        System.out.println("----------------------------------------------------------------------------------------------------------------------");
+                        System.out.println("1.스킬 올리기 ㅣ   2.돌아가기   ㅣ ");
+                        System.out.println("----------------------------------------------------------------------------------------------------------------------");
+                        뎁스2num= sc.nextInt();
+                        if(뎁스2num==1){
+                            if(skills.getSkillPoint()>0){
+                                skills.skillsUp(skills);
+                            }else{
+                                System.out.println("스킬포인트가 부족합니다.(enter)");
+                                sc.nextLine();
+                                break;
+                            }
+                        }else if(뎁스2num==2){
+                            break;
+                        }
+                        break;
+                    }break;
+                case 3:
+                    //착용장비확인 장비메서드호출
+                    inventory.wearing(user,inventory);
+                    sc.nextLine();
+                    break;
+                case 4: 뎁스1num=4; //돌아가기
+            }
+            if(뎁스1num==4){ //돌아가기
+                break;
+            }
+
+        }
+    }
     // 유저 스탯 리스트
     User userStatList(User user) {
         System.out.println();
@@ -74,7 +130,6 @@ public class User extends unit {
     //장비착용시 능력치 업그레이드
 
     // 유저 레벨업시 스탯 UP 메서드
-    // 레벨업 하면 기본적으로 능력치가 1증가, hp,ml도 증가
     User userLavelUp(User user) {
         setLevel(getLevel()+1);
         statPoint = statPoint + 6;
@@ -89,7 +144,7 @@ public class User extends unit {
         //레벨없할때 +3
         return user;
     }
-
+    // 레벨업 하면 기본적으로 능력치가 1증가, hp,ml도 증가
     User userStatUp(User user) {
         int num;
         System.out.println("----------------------------------------------------------------------------------------------------------------------");
@@ -145,8 +200,6 @@ public class User extends unit {
         setStatPoint(getStatPoint() - 1);
     }//스탯업 메서드끝
 
-    //wearing Equipments
-
 
     //user 생성자, 객세생성될때 무조건있어야 하는값들
     public User(String name) {
@@ -191,11 +244,14 @@ public class User extends unit {
     public void setExperience(int experience) {
         if (experience > 100) {
             experience = 0;
-
-
         }
         super.setExperience(experience);
     }
+    //deal 메서드를 만들어야겠음
+    //deal의 개념  몬스터체력=몬스터체력-(내공격력-몬스터방어력) 이거임
+    // 근데 (내공격력-몬스터방어력)  이게 음수가 되면안됌
+    //스킬딜이랑은 따로 분리
+
     User setExperience(int experience, User user,Skills skills) {
         if (experience >= 100) {
             experience = 0;
@@ -280,6 +336,10 @@ public class User extends unit {
         return super.getDefense();
     }
 
+    @Override
+    public void setDefense(int defense) {
+        super.setDefense(defense);
+    }
 
     @Override
     public int getRealHp() {
@@ -288,14 +348,12 @@ public class User extends unit {
 
     @Override
     public void setRealHp(int realHp) { //real hp 셋팅중 1000 /1000 헌재체력이 넘으면 안됌()
-
-       // if (realHp <= getRealHp()) {
-       //     super.setRealHp(super.getHp());
-      // }else{
-            super.setRealHp(realHp);
-       // }
+        super.setRealHp(realHp);
     }
-
+    //오버라이딩을 사용해서 현재 hp가 총 hp를 넘어가는것을 막아볼까..
+    public void setRealHp(int realHp,User user) { //real hp 셋팅중 1000 /1000 헌재체력이 넘으면 안됌()
+        super.setRealHp(realHp);
+    }
 
     @Override
     public int getRealMp() {

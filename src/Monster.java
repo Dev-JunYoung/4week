@@ -44,6 +44,10 @@ public class Monster extends unit {
         setMonEX(monEX);
     }
 
+    void mosterAttack(){
+
+    }
+
     public String getDropItem() {
         return dropItem;
     }

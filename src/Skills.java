@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Skills {
-
     public Skills(){
     }
     //객체생성될때 스킬포인트3갖고 생성
@@ -24,9 +23,7 @@ public class Skills {
     int forest=0;  //3
     int hpSkill=0;
     int armorSkill=0;
-    
     int damage;
-
 
     User user;
 Scanner sc=new Scanner(System.in);
@@ -68,16 +65,13 @@ Scanner sc=new Scanner(System.in);
         }
             return skills;
     }
-
-    //skillUp메서드 해당스킬스탯+1, 보유스킬스탯-1
+    //skillUp메서드 해당스킬스탯+1, 보유스킬포인트 스탯-1
     //-------------------------------------------------
     void fireUp(Skills skills){
-        System.out.println("파이어");
         setFire(getFire()+1);
         setSkillPoint(getSkillPoint()-1);
     }
     void waterUp(Skills skills){
-        System.out.println("물");
         setWater(getWater()+1);
         setSkillPoint(getSkillPoint()-1);
     }
@@ -86,7 +80,7 @@ Scanner sc=new Scanner(System.in);
         setSkillPoint(getSkillPoint()-1);
     }
     void hpSkillUp(Skills skills){
-        setHpSkill(getHpSkill()+20);
+        setHpSkill(getHpSkill()+1);
         setSkillPoint(getSkillPoint()-1);
     }
     void armorSkill(Skills skills){
@@ -95,15 +89,22 @@ Scanner sc=new Scanner(System.in);
     }
     //스킬포인트-------------------------------------------------
 
-
-
     //스킬메서드
     void ArmorUp(User user,Skills skills){
         user.setDefense(user.getDefense()+skills.getArmorSkill()*3);
+        user.setRealMp(user.getRealMp()-5);
+        System.out.println("방어력증가!");
     }
     void hpRecovery(User user,Skills skills){
         user.setRealHp(user.getHp()+skills.getHpSkill()*10);
+        user.setRealMp(user.getRealMp()-5);
+        System.out.println();
+        System.out.println(user.realMp);
+        System.out.println("체력회복!");
     }
+    //공격스킬 메서드 상성에따라 딜값 달라짐 마나사용
+
+
     public int getWater() {
         return water;
     }
@@ -133,9 +134,6 @@ Scanner sc=new Scanner(System.in);
     }
 
     public void setHpSkill(int hpSkill) {
-        if(user.realHp>user.getHp()){
-            user.realHp=user.getHp();
-        }
         this.hpSkill = hpSkill;
     }
 
@@ -155,12 +153,5 @@ Scanner sc=new Scanner(System.in);
         this.damage = damage;
     }
 
-   /* public Com getCom() {
-        return com;
-    }
-
-    public void setCom(Com com) {
-        this.com = com;
-    }*/
 }
 //속성에따라 데미지 다름
