@@ -54,7 +54,7 @@ public class project {
                     break;
                 case 2: //userStatus 능력치,스킬스탯확인, 증가, 착용장비확인
                     user.userStatus(user,invertory,skills);
-                  /*  while(true){
+                 //ee /*  while(true){
                         user.userStatList(user);
                         System.out.println("----------------------------------------------------------------------------------------------------------------------");
                         System.out.println("1.능력치 올리기 ㅣ   2.스킬   ㅣ   3.착용장비확인     ㅣ   4.돌아가기"    );
