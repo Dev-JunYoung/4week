@@ -34,7 +34,6 @@ public class User extends unit {
     }
 
     Scanner sc = new Scanner(System.in);
-
     //게임시작 유저 초기화값
     User userInitSet(User user) {
         super.setLevel(1);
@@ -47,6 +46,21 @@ public class User extends unit {
         super.setDefense(((int) (Math.random() * 20 + 10)));
         this.setAvoid(((int) (Math.random() * 20 + 10)));
         return user;
+    }
+    void startUser(User user){
+        System.out.println("---------------------------------------------------------------------");
+        while(true){
+            System.out.println("능력치가 랜덤으로 부여됩니다. ");
+            user.userStatList(user);
+            System.out.println("1.완료     2.능력치 재분배");
+            if(sc.nextInt()==1){
+                break;
+            }
+            user=user.userInitSet(user);
+        }
+        //능력치 while끝
+        System.out.println(user.getName()+"님의 캐릭터가 능력치가 설정되었습니다.");
+
     }
     //유저 상태 메서드 (main.2)
     void userStatus(User user,Inventory inventory,Skills skills){
