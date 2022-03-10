@@ -96,11 +96,15 @@ Scanner sc=new Scanner(System.in);
         System.out.println("방어력증가!");
     }
     void hpRecovery(User user,Skills skills){
-        user.setRealHp(user.getHp()+skills.getHpSkill()*10);
-        user.setRealMp(user.getRealMp()-5);
-        System.out.println();
-        System.out.println(user.realMp);
-        System.out.println("체력회복!");
+
+        if(skills.getHpSkill()==0){
+            System.out.println("스킬포인트가 0 입니다. 사용할 수 없습니다");
+        }else {
+            user.setRealHp(user.getRealHp()+skills.getHpSkill()*200);
+            user.setRealMp(user.getRealMp()-5);
+            System.out.println("체력회복!");
+        }
+
     }
     //공격스킬 메서드 상성에따라 딜값 달라짐 마나사용
 

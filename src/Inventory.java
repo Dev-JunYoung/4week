@@ -31,7 +31,7 @@ public class Inventory {
             }
             System.out.println("보유금화   :   " + getCash());
             System.out.println("---------------------------------------------------------------------");
-            System.out.println("  입력하시오     (나가기:0)");
+            System.out.println("문자열로 입력하시오.  장비는 장착, 포션은 사용     (나가기:0)");
             이름 = sc.nextLine();
             if (이름.equals("hpPotion50")) {
                 setHpPotion(user, store, inventory);
@@ -62,11 +62,36 @@ public class Inventory {
                 setArmor3(user, store, inventory);
             }
 
-              else if (이름.equals("초보자의 신발")) {
+            else if (이름.equals("초보자의 신발")) {
                 setShoes(user, store, inventory);
+            }
+            else if (이름.equals("숙련자의 신발")) {
+                setShoes2(user, store, inventory);
+            }
+            else if (이름.equals("마스터의 신발")) {
+                setShoes3(user, store, inventory);
             } else {
                 System.out.println("입력하신 아이템은 없습니다.");
             }
+    }
+    //목록초기화 (치트키 유무)
+    void inventoryInit(User user,Inventory inventory){
+       if( user.getName().equals("cheat")){
+           inventory.setCash(100000);
+           inventory.inventoryList.add("파이리의 꼬리");
+           inventory.inventoryList.add("꼬북이의 등딱지");
+           inventory.inventoryList.add("이상해씨의 씨앗");
+           inventory.inventoryList.add("리자드의 꼬리");
+           inventory.inventoryList.add("어니부기의 등딱지");
+           inventory.inventoryList.add("이상해풀의 풀입");
+           inventory.inventoryList.add("리자몽의 꼬리");
+           inventory.inventoryList.add("거북왕의 등딱지");
+           inventory.inventoryList.add("이상해꽃의 꽃");
+           inventory.inventoryList.add("뮤츠의 유골");
+
+       }else {
+           inventory.setCash(1000);
+       }
     }
     //착용장비
     void wearing(User user,Inventory inventory){
@@ -81,18 +106,6 @@ public class Inventory {
         if(num==1){
 
         }
-       /* if{ //해체메서드
-            takeOffSoad(user,store,inventory);
-
-        }else if(num==2){
-            takeOffArmor(user,store,inventory);
-
-        }else if(num==3){
-            takeOffShoes(user,store,inventory);
-
-        }else{
-
-        }*/
     }
     //검장착 ------------------------------------------------------------------------------------------
     void setSoad(User user,Store store,Inventory inventory){
@@ -338,9 +351,7 @@ public class Inventory {
 // 물약 먹음 --------------------------------------------------------------------------------------
     void setHpPotion(User user,Store store,Inventory inventory){ //물약먹음
     //총 hp < 현재hp +포션량
-      /*  if(user.getHp()<user.realHp+store.hpPotion.getRecoveryAmount()){
-            user.setRealHp(user.getHp());
-        }*/
+
     //if문추가 - 총hp>포션먹은hp == 총hp
     if(user.realHp+store.hpPotion.getRecoveryAmount()>user.getHp()){
         user.realHp=user.getHp();
@@ -493,6 +504,54 @@ public class Inventory {
             setCash(getCash()+1000);
             System.out.println("판매완료.  ");
             System.out.println("보유금화   :   " + getCash());
+        }else if (이름.equals("리자몽의 꼬리")) {
+            inventoryList.remove("리자몽의 꼬리");
+            setCash(getCash()+500);
+            System.out.println("판매완료.  ");
+            System.out.println("보유금화   :   " + getCash());
+        }
+        else if (이름.equals("거북왕의 등딱지")) {
+            inventoryList.remove("거북왕의 등딱지");
+            setCash(getCash()+500);
+            System.out.println("판매완료.  ");
+            System.out.println("보유금화   :   " + getCash());
+        }else if (이름.equals("이상해꽃의 꽃")) {
+            inventoryList.remove("이상해꽃의 꽃");
+            setCash(getCash()+500);
+            System.out.println("판매완료.  ");
+            System.out.println("보유금화   :   " + getCash());
+        }else if (이름.equals("이상해풀의 풀입")) {
+            inventoryList.remove("이상해풀의 풀입");
+            setCash(getCash()+300);
+            System.out.println("판매완료.  ");
+            System.out.println("보유금화   :   " + getCash());
+        }else if (이름.equals("어니부기의 등딱지")) {
+            inventoryList.remove("어니부기의 등딱지");
+            setCash(getCash()+300);
+            System.out.println("판매완료.  ");
+            System.out.println("보유금화   :   " + getCash());
+        }else if (이름.equals("리자드의 꼬리")) {
+            inventoryList.remove("리자드의 꼬리");
+            setCash(getCash()+300);
+            System.out.println("판매완료.  ");
+            System.out.println("보유금화   :   " + getCash());
+        }else if (이름.equals("이상해씨의 씨앗")) {
+            inventoryList.remove("이상해씨의 씨앗");
+            setCash(getCash()+100);
+            System.out.println("판매완료.  ");
+            System.out.println("보유금화   :   " + getCash());
+        }else if (이름.equals("꼬북이의 등딱지")) {
+            inventoryList.remove("꼬북이의 등딱지");
+            setCash(getCash()+100);
+            System.out.println("판매완료.  ");
+            System.out.println("보유금화   :   " + getCash());
+        }else if (이름.equals("파이리의 꼬리")) {
+            inventoryList.remove("파이리의 꼬리");
+            setCash(getCash()+100);
+            System.out.println("판매완료.  ");
+            System.out.println("보유금화   :   " + getCash());
+        }else {
+            System.out.println("정확하게 입력하지 않았거나, 소지하고 있지않습니다.");
         }
     }
 }

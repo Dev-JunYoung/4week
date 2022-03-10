@@ -29,6 +29,8 @@ String 이름;
         if(이름.equals("초보자의 검")){
             if(inventory.getCash()>=300&&inventory.inventoryList.contains("초보자의 검")&&inventory.inventoryList.contains("파이리의 꼬리")){
                                     upgradeSoad(inventory,store);
+            }else {
+                System.out.println("재료가 부족합니다");
             }
         }
         else if(이름.equals("초보자의 갑옷")){
@@ -36,6 +38,8 @@ String 이름;
                         inventory.inventoryList.contains("초보자의 갑옷")&&
                         inventory.inventoryList.contains("꼬북이의 등딱지")){
                     upgradeArmor(inventory,store);
+                }else {
+                    System.out.println("재료가 부족합니다");
                 }
         }
         else if(이름.equals("초보자의 신발")){
@@ -43,6 +47,8 @@ String 이름;
                         inventory.inventoryList.contains("초보자의 신발")&&
                         inventory.inventoryList.contains("이상해씨의 씨앗")){
                     upgradeShoes(inventory,store);
+                }else {
+                    System.out.println("재료가 부족합니다");
                 }
         }
         else if(이름.equals("숙련자의 검")){
@@ -50,6 +56,8 @@ String 이름;
                     inventory.inventoryList.contains("숙련자의 검")&&
                     inventory.inventoryList.contains("리자드의 꼬리")){
                 upgradeShoes(inventory,store);
+            }else {
+                System.out.println("재료가 부족합니다");
             }
         }
         else if(이름.equals("숙련자의 갑옷")){
@@ -57,6 +65,8 @@ String 이름;
                     inventory.inventoryList.contains("숙련자의 갑옷")&&
                     inventory.inventoryList.contains("어니부기의 등딱지")){
                 upgradeShoes(inventory,store);
+            }else {
+                System.out.println("재료가 부족합니다");
             }
         }
         else if(이름.equals("숙련자의 신발")){
@@ -64,6 +74,8 @@ String 이름;
                     inventory.inventoryList.contains("숙련자의 신발")&&
                     inventory.inventoryList.contains("이상해풀의 풀입")){
                 upgradeShoes(inventory,store);
+            }else {
+                System.out.println("재료가 부족합니다");
             }
         }
         else {

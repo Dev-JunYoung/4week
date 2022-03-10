@@ -7,26 +7,24 @@ public class project {
         Scanner sc=new Scanner(System.in);
         int random=((int)(Math.random()*10+1));
         int 목록num=0;
-
+        String cheat=null;
         System.out.println("흑화된 포켓몬들을 물리치고 최종보스인 뮤츠를 싸워 세상을 구하라");
         System.out.print("세상을 구할 당신의 이름은 무엇인가");
         //유저객체생성 + //생성자(name)
+
         User user =new User(sc.nextLine());
         //스킬,인벤토리,상점객체생성
         Skills skills=new Skills(3);
         Inventory invertory=new Inventory();
         Store store=new Store();
         ending ending=new ending();
-        //초기값
-        invertory.setCash(1000);
-        user=user.userInitSet(user);
-
         //유저이름설정
         System.out.println("당신의 이름은 "+user.getName()+"입니다. (enter)");
         sc.nextLine();
         //능력치조정 랜덤으로 재분배가능
+        //초기값
         user.startUser(user);
-
+        invertory.inventoryInit(user,invertory);
         System.out.println();
         //게임시작--------------------------------------------------------------------------------------
         while(true){
@@ -52,6 +50,8 @@ public class project {
                 case 5://상점모든기능완료(buy,sell)
                     store.storeInit();
                     store.store(invertory,store,user);
+
+
                     break;
                 case 6: //recovery  recovery()호출, 반환:HP=HP+@
                     recovory recovory=new recovory();

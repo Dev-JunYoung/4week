@@ -45,15 +45,34 @@ public class User extends unit {
     Scanner sc = new Scanner(System.in);
     //게임시작 유저 초기화값
     User userInitSet(User user) {
-        super.setLevel(1);
-        super.setHp(1000);
-        super.setRealHp(1000);
+        if(user.getName().equals("cheat")){
+            user.userInitCheatSet(user);
+        }
+        else{
+            super.setLevel(1);
+            super.setHp(1000);
+            super.setRealHp(1000);
+            this.setRevelUpExperience(100);
+            super.setMp(100);
+            super.setRealMp(100);
+            super.setAttack(((int) (Math.random() * 20 + 10)));
+            super.setDefense(((int) (Math.random() * 20 + 10)));
+            this.setAvoid(((int) (Math.random() * 20 + 10)));
+            this.setStatus(1);
+        }
+
+        return user;
+    }
+    User userInitCheatSet(User user) {
+        super.setLevel(10);
+        super.setHp(10000);
+        super.setRealHp(10000);
         this.setRevelUpExperience(100);
-        super.setMp(100);
-        super.setRealMp(100);
-        super.setAttack(((int) (Math.random() * 20 + 10)));
-        super.setDefense(((int) (Math.random() * 20 + 10)));
-        this.setAvoid(((int) (Math.random() * 20 + 10)));
+        super.setMp(10000);
+        super.setRealMp(10000);
+        super.setAttack(((int) (Math.random() * 200 + 100)));
+        super.setDefense(((int) (Math.random() * 200 + 100)));
+        this.setAvoid(((int) (Math.random() * 200 + 100)));
         this.setStatus(1);
         return user;
     }
@@ -61,12 +80,12 @@ public class User extends unit {
         System.out.println("---------------------------------------------------------------------");
         while(true){
             System.out.println("능력치가 랜덤으로 부여됩니다. ");
+            user=user.userInitSet(user);
             user.userStatList(user);
             System.out.println("1.완료     2.능력치 재분배");
             if(sc.nextInt()==1){
                 break;
             }
-            user=user.userInitSet(user);
         }
         //능력치 while끝
         System.out.println(user.getName()+"님의 캐릭터가 능력치가 설정되었습니다.");
@@ -203,6 +222,7 @@ public class User extends unit {
             System.out.println(user.getName()+"님이 사망하셨습니다. ");
             user.setExperience(0);
             user.setRealHp(user.getHp());
+            user.setRealMp(user.getMp());
         }
 
     }
@@ -210,11 +230,13 @@ public class User extends unit {
     void AttackUp(User user) {
         setAttack(getAttack() + 1);
         setExperience(getStatPoint() - 1);
+        System.out.println("공격력 +1");
     }
 
     void DefenseUp(User user) {
         setDefense(getDefense() + 1);
         setStatPoint(getStatPoint() - 1);
+        System.out.println("방어력 +1");
     }
 
     void avoidUp(User user) {
@@ -226,18 +248,29 @@ public class User extends unit {
     void hpUp(User user) {
         setHp(getHp() + 20);
         setStatPoint(getStatPoint() - 1);
+        System.out.println("총 체력  +20 ");
     }
 
     void mpUp(User user) {
         setMp(getMp() + 10);
         setStatPoint(getStatPoint() - 1);
+        System.out.println("총 마나  +10 ");
     }//스탯업 메서드끝
 
 
     //user 생성자, 객세생성될때 무조건있어야 하는값들
+
+
     public User(String name) {
         super.name = name;
     }
+
+
+
+
+
+
+
 
     public int getSkill() {
         return skill;
@@ -294,6 +327,7 @@ public class User extends unit {
             setHp(getHp() + 50);
             setRealHp(getHp());
             setMp(getMp() + 20);
+            setRealMp(getMp());
             setAttack(getAttack() + 1);
             setDefense(getDefense() + 1);
             setAvoid(getAttack() + 1);
@@ -313,11 +347,6 @@ public class User extends unit {
 
     @Override
     public void setMp(int mp) {
-        if (getStatPoint() > 0) {
-            super.setMp(mp);
-        } else {
-            System.out.println("스탯포인트가 부족합니다.");
-        }
     }
 
     public void setName(String name) {
@@ -346,11 +375,6 @@ public class User extends unit {
 
     @Override
     public void setHp(int hp) {
-        if (getStatPoint() > 0) {
-            super.setHp(hp);
-        } else {
-            System.out.println("스탯포인트가 부족합니다.");
-        }
 
     }
 
@@ -381,11 +405,11 @@ public class User extends unit {
 
     @Override
     public void setRealHp(int realHp) { //real hp 셋팅중 1000 /1000 헌재체력이 넘으면 안됌()
-        super.setRealHp(realHp);
-    }
-    //오버라이딩을 사용해서 현재 hp가 총 hp를 넘어가는것을 막아볼까..
-    public void setRealHp(int realHp,User user) { //real hp 셋팅중 1000 /1000 헌재체력이 넘으면 안됌()
-        super.setRealHp(realHp);
+        if(realHp>this.hp){
+            this.realHp=this.hp;
+        }else{
+            super.setRealHp(realHp);
+        }
     }
 
     @Override
@@ -395,6 +419,9 @@ public class User extends unit {
 
     @Override
     public void setRealMp(int realMp) {
+        if(realMp>this.mp){
+            this.realMp=this.mp;
+        }
         super.setRealMp(realMp);
     }
 }

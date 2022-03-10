@@ -102,10 +102,7 @@ public class hunter {
                     뮤츠속성별공격력변화(user,뮤츠);
                     break;
                 case 5:
-                    if(user.getRealHp()+50>user.getHp()){ //총체력보다 많으면
-                        user.setRealHp(user.getRealHp()); //총체력으로 셋팅
-                    }
-                    user.setRealHp(user.getRealHp()+50);
+                    skills.hpRecovery(user, skills);
                     break;
                 case 6:
                     skills.ArmorUp(user,skills);
@@ -116,6 +113,7 @@ public class hunter {
             }//내공격끝
 
             if(뮤츠.getRealHp()<=0){
+
                 System.out.println("뮤츠를 처치했습니다.");
                 user.setExperience(user.getExperience()+뮤츠.getMonEX(),user,skills);
                 inventory.inventoryList.add(뮤츠.dropItem);
@@ -169,6 +167,7 @@ public class hunter {
                 return user;
             }
             System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
+            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
             System.out.println("----------------------------------------------------------------------------------------------------------");
             System.out.println("뮤츠의 현재HP  / 총HP  : " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
             System.out.println("뮤츠의 현재 속성은 "+속성+" 입니다");
@@ -256,7 +255,7 @@ public class hunter {
                         1,
                         70,
                         "리자몽의 꼬리",
-                        100,
+                        500,
                         50
                 );
                 Battle리자몽(user, skills, inventory, store,리자몽);
@@ -273,7 +272,7 @@ public class hunter {
                     2,
                     70,
                     "거북왕의 등딱지",
-                    100,
+                    500,
                     50
             );
                 Battle거북왕(user, skills, inventory, store,거북왕);
@@ -290,7 +289,7 @@ public class hunter {
                     3,
                     70,
                     "이상해꽃의 꽃",
-                    100,
+                    500,
                     50
             );
                 Battle이상해꽃(user, skills, inventory, store,이상해꽃);
@@ -327,10 +326,7 @@ public class hunter {
                     user.setRealMp(user.getRealMp()-3);
                     break;
                 case 5:
-                    if(user.getRealHp()+50>user.getHp()){ //총체력보다 많으면
-                        user.setRealHp(user.getRealHp()); //총체력으로 셋팅
-                    }
-                    user.setRealHp(user.getRealHp()+50);
+                    skills.hpRecovery(user, skills);
                     break;
                 case 6:
                     skills.ArmorUp(user,skills);
@@ -369,6 +365,7 @@ public class hunter {
                 return user;
             }
             System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
+            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
             System.out.println("----------------------------------------------------------------------------------------------------------");
             System.out.println("이상해꽃의 현재HP  / 총HP  : " + 이상해꽃.getRealHp() + " / " + 이상해꽃.getHp());
         }
@@ -403,10 +400,7 @@ public class hunter {
                     user.setRealMp(user.getRealMp()-3);
                     break;
                 case 5:
-                    if(user.getRealHp()+50>user.getHp()){ //총체력보다 많으면
-                        user.setRealHp(user.getRealHp()); //총체력으로 셋팅
-                    }
-                    user.setRealHp(user.getRealHp()+50);
+                    skills.hpRecovery(user, skills);
                     break;
                 case 6:
                     skills.ArmorUp(user,skills);
@@ -445,6 +439,7 @@ public class hunter {
                 return user;
             }
             System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
+            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
             System.out.println("----------------------------------------------------------------------------------------------------------");
             System.out.println("거북왕의 현재HP  / 총HP  : " + 거북왕.getRealHp() + " / " + 거북왕.getHp());
         }
@@ -479,10 +474,7 @@ public class hunter {
                     user.setRealMp(user.getRealMp()-3);
                     break;
                 case 5:
-                    if(user.getRealHp()+50>user.getHp()){ //총체력보다 많으면
-                        user.setRealHp(user.getRealHp()); //총체력으로 셋팅
-                    }
-                        user.setRealHp(user.getRealHp()+50);
+                    skills.hpRecovery(user, skills);
                     break;
                 case 6:
                     skills.ArmorUp(user,skills);
@@ -521,6 +513,7 @@ public class hunter {
                 return user;
             }
             System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
+            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
             System.out.println("----------------------------------------------------------------------------------------------------------");
             System.out.println("리자몽의 현재HP  / 총HP  : " + 리자몽.getRealHp() + " / " + 리자몽.getHp());
         }
@@ -543,7 +536,7 @@ public class hunter {
                         1,
                         70,
                         "리자드의 꼬리",
-                        70,
+                        200,
                         30
                 );
                 Battle리자드(user, skills, inventory,store,리자드);
@@ -561,7 +554,7 @@ public class hunter {
                         2,
                         70,
                         "어니부기의 등딱지",
-                        70,
+                        200,
                         30
                 );
                 Battle어니부기(user, skills, inventory, store,어니부기);
@@ -579,7 +572,7 @@ public class hunter {
                         2,
                         70,
                         "이상해풀의 풀입",
-                        70,
+                        200,
                         30
                 );
                 Battle이상해풀(user, skills, inventory, store,이상해풀);
@@ -617,10 +610,7 @@ public class hunter {
                     user.setRealMp(user.getRealMp()-3);
                     break;
                 case 5:
-                    if(user.getRealHp()+50>user.getHp()){ //총체력보다 많으면
-                        user.setRealHp(user.getRealHp()); //총체력으로 셋팅
-                    }
-                    user.setRealHp(user.getRealHp()+50);
+                    skills.hpRecovery(user, skills);
                     break;
                 case 6:
                     skills.ArmorUp(user,skills);
@@ -660,6 +650,7 @@ public class hunter {
                 return user;
             }
             System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
+            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
             System.out.println("----------------------------------------------------------------------------------------------------------");
             System.out.println("이상해풀의 현재HP  / 총HP  : " + 이상해풀.getRealHp() + " / " + 이상해풀.getHp());
         }
@@ -694,10 +685,7 @@ public class hunter {
                     user.setRealMp(user.getRealMp()-3);
                     break;
                 case 5:
-                    if(user.getRealHp()+50>user.getHp()){ //총체력보다 많으면
-                        user.setRealHp(user.getRealHp()); //총체력으로 셋팅
-                    }
-                    user.setRealHp(user.getRealHp()+50);
+                    skills.hpRecovery(user, skills);
                     break;
                 case 6:
                     skills.ArmorUp(user,skills);
@@ -737,6 +725,7 @@ public class hunter {
                 return user;
             }
             System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
+            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
             System.out.println("----------------------------------------------------------------------------------------------------------");
             System.out.println("리자드의 현재HP  / 총HP  : " + 리자드.getRealHp() + " / " + 리자드.getHp());
         }
@@ -771,10 +760,7 @@ public class hunter {
                     user.setRealMp(user.getRealMp()-3);
                     break;
                 case 5:
-                    if(user.getRealHp()+50>user.getHp()){ //총체력보다 많으면
-                        user.setRealHp(user.getRealHp()); //총체력으로 셋팅
-                    }
-                    user.setRealHp(user.getRealHp()+50);
+                    skills.hpRecovery(user, skills);
                     break;
                 case 6:
                     skills.ArmorUp(user,skills);
@@ -814,6 +800,7 @@ public class hunter {
                 return user;
             }
             System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
+            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
             System.out.println("----------------------------------------------------------------------------------------------------------");
             System.out.println("어니부기의 현재HP  / 총HP  : " + 어니부기.getRealHp() + " / " + 어니부기.getHp());
         }
@@ -836,7 +823,7 @@ public class hunter {
                     1,
                     30,
                     "파이리의 꼬리",
-                    30,
+                    100,
                     20
             );
          Battle파이리(user,skills,inventory,store,파이리);
@@ -853,7 +840,7 @@ public class hunter {
                 1,
                 30,
                 "꼬북이의 등딱지",
-                30,
+                100,
                 20
         );
          Battle꼬북이(user,skills,inventory,store,꼬북이);
@@ -870,7 +857,7 @@ public class hunter {
                 3,
                 30,
                 "이상해씨의 씨앗",
-                30,
+                100,
                 20
         );
             Battle이상해씨(user,skills,inventory,store,이상해씨);
@@ -907,10 +894,7 @@ public class hunter {
                     user.setRealMp(user.getRealMp()-3);
                     break;
                 case 5:
-                    if(user.getRealHp()+50>user.getHp()){ //총체력보다 많으면
-                        user.setRealHp(user.getRealHp()); //총체력으로 셋팅
-                    }
-                    user.setRealHp(user.getRealHp()+50);
+                    skills.hpRecovery(user, skills);
                     break;
                 case 6:
                     skills.ArmorUp(user,skills);
@@ -948,6 +932,7 @@ public class hunter {
                 return user;
             }
             System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
+            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
             System.out.println("----------------------------------------------------------------------------------------------------------");
             System.out.println("파이리의 현재HP  / 총HP  : " + 파이리.getRealHp() + " / " + 파이리.getHp());
         }
@@ -982,10 +967,7 @@ public class hunter {
                         user.setRealMp(user.getRealMp()-3);
                         break;
                     case 5:
-                        if(user.getRealHp()+50>user.getHp()){ //총체력보다 많으면
-                            user.setRealHp(user.getRealHp()); //총체력으로 셋팅
-                        }
-                        user.setRealHp(user.getRealHp()+50);
+                        skills.hpRecovery(user, skills);
                         break;
                     case 6:
                         skills.ArmorUp(user,skills);
@@ -995,7 +977,7 @@ public class hunter {
                         return user;
                 }//내공격끝
                 if(꼬북이.getRealHp()<=0){
-                    System.out.println("파이리을 처치했습니다.");
+                    System.out.println("꼬북이를 처치했습니다.");
                     user.setExperience(user.getExperience()+꼬북이.getMonEX(),user,skills);
                     inventory.inventoryList.add(꼬북이.dropItem);
                     inventory.setCash(inventory.getCash()+100);
@@ -1024,6 +1006,7 @@ public class hunter {
                 }
 
                 System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
+                System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
                 System.out.println("----------------------------------------------------------------------------------------------------------");
                 System.out.println("꼬북이의 현재HP  / 총HP  : " + 꼬북이.getRealHp() + " / " + 꼬북이.getHp());
             }
@@ -1058,10 +1041,7 @@ public class hunter {
                         user.setRealMp(user.getRealMp()-3);
                         break;
                     case 5:
-                        if(user.getRealHp()+50>user.getHp()){ //총체력보다 많으면
-                            user.setRealHp(user.getRealHp()); //총체력으로 셋팅
-                        }
-                        user.setRealHp(user.getRealHp()+50);
+                        skills.hpRecovery(user, skills);
                         break;
                     case 6:
                         skills.ArmorUp(user,skills);
@@ -1100,6 +1080,7 @@ public class hunter {
                     return user;
                 }
                 System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
+                System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
                 System.out.println("----------------------------------------------------------------------------------------------------------");
                 System.out.println("이상해씨의 현재HP  / 총HP  : " + 이상해씨.getRealHp() + " / " + 이상해씨.getHp());
             }
@@ -1196,7 +1177,8 @@ boolean game=true;
                     return user;
                 }
             System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
-                System.out.println("----------------------------------------------------------------------------------------------------------");
+            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+            System.out.println("----------------------------------------------------------------------------------------------------------");
             System.out.println("파이리의 현재HP  / 총HP  : " + 파이리.getRealHp() + " / " + 파이리.getHp());
         }
         return user;
