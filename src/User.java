@@ -14,6 +14,15 @@ public class User extends unit {
     int skill = 0;
     int avoid;
     int statPoint = 0;
+    int status=1;
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     public int getRevelUpExperience() {
         return revelUpExperience;
@@ -45,6 +54,7 @@ public class User extends unit {
         super.setAttack(((int) (Math.random() * 20 + 10)));
         super.setDefense(((int) (Math.random() * 20 + 10)));
         this.setAvoid(((int) (Math.random() * 20 + 10)));
+        this.setStatus(1);
         return user;
     }
     void startUser(User user){
@@ -187,6 +197,15 @@ public class User extends unit {
         return user;
     }
 
+    //유저 킬 메서드
+    void userDie(User user){
+        if(user.getRealHp()<0){
+            System.out.println(user.getName()+"님이 사망하셨습니다. ");
+            user.setExperience(0);
+            user.setRealHp(user.getHp());
+        }
+
+    }
     // 스텟업메서드 해당스탯+1 보유스탯-1
     void AttackUp(User user) {
         setAttack(getAttack() + 1);

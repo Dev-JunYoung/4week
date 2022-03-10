@@ -10,6 +10,7 @@ public class boss extends Monster{
     }
     //필살기(몬스터클래스 메서드 오버라이딩)
     void mosterAttack(boss boss) {
+        System.out.println(boss.getName()+"필살기!!");
         super.mosterAttack();
     }
 
