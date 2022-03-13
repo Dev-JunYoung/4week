@@ -10,7 +10,7 @@ public class hunter {
     int stage;
     int num;
     int random;
-
+    int skillDamage;
     void 사냥터입구(User user,Skills skills,Inventory inventory,Store store){
         int num;
         System.out.println("----------------------------------------------------------------------------------------------------------------------");
@@ -30,17 +30,11 @@ public class hunter {
             case 4: //보스
                 보스사냥터(user, skills, inventory,store);
                 break;
-              /*  if(user.getLevel()>=10){
-
-                }*/
-
             case 5:
                 break;
-
-
         }
     }
-//--------------------------------------------------------------------------------------------------------------    
+//--------------------------------------------------------------------------------------------------------------
     //보스 추가메서드 필살기
     User 보스사냥터(User user, Skills skills, Inventory inventory, Store store){
         //보스는 매 턴마다 속성이 달라짐,
@@ -52,27 +46,26 @@ public class hunter {
                 200,
                 200,
                 200,
-                200,
-                200,
+                150,
+                100,
                 0,
                 200,
                 "뮤츠의 유골",
-                100,
+                2000,
                 100
         ) ;
         Battle뮤츠(user,skills,inventory,store,뮤츠);
         return user;
     }
     //--------------------------------------------------------------------------------------------------------------
-
     User Battle뮤츠(User user, Skills skills, Inventory inventory, Store store,boss 뮤츠){
         뮤츠.property=((int)(Math.random()*3+1));
-        String 속성;
+        String 속성 = null;
         if(뮤츠.property==1){
-            속성="'물' 속성";
-        }else if(뮤츠.property==2){
             속성="'불' 속성";
-        }else {
+        }else if(뮤츠.property==2){
+            속성="'물' 속성";
+        }else if(뮤츠.property==3){
             속성="'풀' 속성";
         }
         System.out.println("----------------------------------------------------------------------------------------------------------");
@@ -89,17 +82,104 @@ public class hunter {
             num=sc.nextInt();
             switch (num){
                 case 1: //일반공격
-                    뮤츠.setRealHp(뮤츠.getRealHp()-30);
+                    if(뮤츠.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-user.getPower()));
+                    }  else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
-                case 2: //내가 불공격 - 뮤츠속성확인(3가지) - 딜이 다르게들어감
-                    뮤츠속성별공격력변화(user,뮤츠);
-
+                case 2: //내가 불공격
+                        switch (뮤츠.property){
+                            case 1:   //case 1 불뮤츠
+                                skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
+                                if(뮤츠.getDefense()<skillDamage){
+                                    뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                    System.out.println(user.getName()+"님이 공격했습니다.");
+                                }else {
+                                    System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                                }
+                                break;
+                            case 2:    //case 2 물뮤츠
+                                skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*2/3;
+                                if(뮤츠.getDefense()<skillDamage){
+                                    뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                    System.out.println(user.getName()+"님이 공격했습니다.");
+                                }else {
+                                    System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                                }
+                                break;
+                            case 3:  //case 3 풀뮤츠
+                                skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*3/2;
+                                if(뮤츠.getDefense()<skillDamage){
+                                    뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                    System.out.println(user.getName()+"님이 공격했습니다.");
+                                }else {
+                                    System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                                }
+                                break;
+                        }
                     break;
                 case 3: //내가 물공격
-                    뮤츠속성별공격력변화(user,뮤츠);
+                    switch (뮤츠.property){
+                        case 1:   //case 1 불뮤츠
+                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*3/2;
+                            if(뮤츠.getDefense()<skillDamage){
+                                뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                System.out.println(user.getName()+"님이 공격했습니다.");
+                            }else {
+                                System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                            }
+                            break;
+                        case 2:    //case 2 물뮤츠
+                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10));
+                            if(뮤츠.getDefense()<skillDamage){
+                                뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                System.out.println(user.getName()+"님이 공격했습니다.");
+                            }else {
+                                System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                            }
+                            break;
+                        case 3:  //case 3 풀뮤츠
+                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*2/3;
+                            if(뮤츠.getDefense()<skillDamage){
+                                뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                System.out.println(user.getName()+"님이 공격했습니다.");
+                            }else {
+                                System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                            }
+                            break;
+                    }
                     break;
-                case 4:
-                    뮤츠속성별공격력변화(user,뮤츠);
+                case 4: //user 풀
+                    switch (뮤츠.property){
+                        case 1:   //case 1 불뮤츠
+                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*2/3;
+                            if(뮤츠.getDefense()<skillDamage){
+                                뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                System.out.println(user.getName()+"님이 공격했습니다.");
+                            }else {
+                                System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                            }
+                            break;
+                        case 2:    //case 2 물뮤츠
+                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*3/2;
+                            if(뮤츠.getDefense()<skillDamage){
+                                뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                System.out.println(user.getName()+"님이 공격했습니다.");
+                            }else {
+                                System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                            }
+                            break;
+                        case 3:  //case 3 풀뮤츠
+                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10));
+                            if(뮤츠.getDefense()<skillDamage){
+                                뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                System.out.println(user.getName()+"님이 공격했습니다.");
+                            }else {
+                                System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                            }
+                            break;
+                    }
                     break;
                 case 5:
                     skills.hpRecovery(user, skills);
@@ -131,7 +211,12 @@ public class hunter {
                     System.out.println("드레인펀치!!");
                     System.out.println("----------------------------------------------------------------------------------------------------------");
                     user.setRealHp(user.getRealHp()-100);
-
+                    if(user.getDefense()-뮤츠.getAttack()<0){ //양수가 되면 안됌
+                        user.setRealHp(user.getRealHp()+(user.getDefense()-뮤츠.getAttack()));
+                        System.out.println("칼등치기!!");
+                    }else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
                 case 2: //스킬
                     System.out.println("----------------------------------------------------------------------------------------------------------");
@@ -311,19 +396,38 @@ public class hunter {
             num=sc.nextInt();
             switch (num){
                 case 1: //일반공격
-                    이상해꽃.setRealHp(이상해꽃.getRealHp()-30);
+                    if(이상해꽃.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        이상해꽃.setRealHp(이상해꽃.getRealHp()+(이상해꽃.getDefense()-user.getPower()));
+                    }  else {
+                    System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                }
                     break;
                 case 2:
-                    이상해꽃.setRealHp(이상해꽃.getRealHp()-60);
-                    user.setRealMp(user.getRealMp()-3);
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*3/2;
+                    if(이상해꽃.getDefense()<skillDamage){
+                        이상해꽃.setRealHp(이상해꽃.getRealHp()+(이상해꽃.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
                 case 3:
-                    이상해꽃.setRealHp(이상해꽃.getRealHp()-15);
-                    user.setRealMp(user.getRealMp()-3);
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*2/3;
+                    if(이상해꽃.getDefense()<skillDamage){
+                        이상해꽃.setRealHp(이상해꽃.getRealHp()+(이상해꽃.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
                 case 4:
-                    이상해꽃.setRealHp(이상해꽃.getRealHp()-30);
-                    user.setRealMp(user.getRealMp()-3);
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10));
+                    if(이상해꽃.getDefense()<skillDamage){
+                        이상해꽃.setRealHp(이상해꽃.getRealHp()+(이상해꽃.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
                 case 5:
                     skills.hpRecovery(user, skills);
@@ -350,12 +454,21 @@ public class hunter {
             random=((int)(Math.random()*2+1));
             switch (random){
                 case 1: // 평타
-                    System.out.println("칼등치기!!");
-                    user.setRealHp(user.getRealHp()-100);
+
+                    if(user.getDefense()-이상해꽃.getAttack()<0){ //양수가 되면 안됌
+                    user.setRealHp(user.getRealHp()+(user.getDefense()-이상해꽃.getAttack()));
+                        System.out.println("칼등치기!!"); }else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
                 case 2: //스킬
-                    System.out.println("솔라빔!!");
-                    user.setRealHp(user.getRealHp()-200);
+
+                    if(이상해꽃.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        이상해꽃.setRealHp(이상해꽃.getRealHp()+(이상해꽃.getDefense()-user.getPower()));
+                        System.out.println("솔라빔!!");
+                    } else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
             }
             stage=stage+1;
@@ -385,19 +498,38 @@ public class hunter {
             num=sc.nextInt();
             switch (num){
                 case 1: //일반공격
-                    거북왕.setRealHp(거북왕.getRealHp()-30);
+                    if(거북왕.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        거북왕.setRealHp(거북왕.getRealHp()+(거북왕.getDefense()-user.getPower()));
+                    } else {
+                    System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                }
                     break;
                 case 2:
-                    거북왕.setRealHp(거북왕.getRealHp()-15);
-                    user.setRealMp(user.getRealMp()-3);
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*2/3;
+                    if(거북왕.getDefense()<skillDamage){
+                        거북왕.setRealHp(거북왕.getRealHp()+(거북왕.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
-                case 3:
-                    거북왕.setRealHp(거북왕.getRealHp()-30);
-                    user.setRealMp(user.getRealMp()-3);
+                case 3: //물공격
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10));
+                    if(거북왕.getDefense()<skillDamage){
+                        거북왕.setRealHp(거북왕.getRealHp()+(거북왕.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
-                case 4:
-                    거북왕.setRealHp(거북왕.getRealHp()-60);
-                    user.setRealMp(user.getRealMp()-3);
+                case 4: //풀공격
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*3/2;
+                    if(거북왕.getDefense()<skillDamage){
+                        거북왕.setRealHp(거북왕.getRealHp()+(거북왕.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
                 case 5:
                     skills.hpRecovery(user, skills);
@@ -424,12 +556,20 @@ public class hunter {
             random=((int)(Math.random()*2+1));
             switch (random){
                 case 1: // 평타
-                    System.out.println("거북왕펀치!!");
-                    user.setRealHp(user.getRealHp()-100);
+
+                    if(user.getDefense()-거북왕.getAttack()<0){ //양수가 되면 안됌
+                        user.setRealHp(user.getRealHp()+(user.getDefense()-거북왕.getAttack()));
+                        System.out.println("거북왕펀치!!");
+                    }
                     break;
                 case 2: //스킬
-                    System.out.println("하이드로빔!!");
-                    user.setRealHp(user.getRealHp()-200);
+
+                    if(거북왕.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        거북왕.setRealHp(거북왕.getRealHp()+(거북왕.getDefense()-user.getPower()));
+                        System.out.println("하이드로빔!!");
+                    } else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
             }
             stage=stage+1;
@@ -459,19 +599,38 @@ public class hunter {
             num=sc.nextInt();
             switch (num){
                 case 1: //일반공격
-                    리자몽.setRealHp(리자몽.getRealHp()-30);
+                    if(리자몽.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        리자몽.setRealHp(리자몽.getRealHp()+(리자몽.getDefense()-user.getPower()));
+                    } else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
                 case 2:
-                    리자몽.setRealHp(리자몽.getRealHp()-30);
-                    user.setRealMp(user.getRealMp()-3);
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
+                    if(리자몽.getDefense()<skillDamage){
+                        리자몽.setRealHp(리자몽.getRealHp()+(리자몽.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
-                case 3:
-                    리자몽.setRealHp(리자몽.getRealHp()-60);
-                    user.setRealMp(user.getRealMp()-3);
+                case 3: //물공격
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*3/2;
+                    if(리자몽.getDefense()<skillDamage){
+                        리자몽.setRealHp(리자몽.getRealHp()+(리자몽.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
-                case 4:
-                    리자몽.setRealHp(리자몽.getRealHp()-15);
-                    user.setRealMp(user.getRealMp()-3);
+                case 4: //풀공격
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*2/3;
+                    if(리자몽.getDefense()<skillDamage){
+                        리자몽.setRealHp(리자몽.getRealHp()+(리자몽.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
                 case 5:
                     skills.hpRecovery(user, skills);
@@ -498,12 +657,21 @@ public class hunter {
             random=((int)(Math.random()*2+1));
             switch (random){
                 case 1: // 평타
-                    System.out.println("마구 할퀴기!!");
-                    user.setRealHp(user.getRealHp()-100);
+
+                    if(user.getDefense()-리자몽.getAttack()<0){ //양수가 되면 안됌
+                        user.setRealHp(user.getRealHp()+(user.getDefense()-리자몽.getAttack()));
+                        System.out.println("마구 할퀴기!!");
+                    }
                     break;
                 case 2: //스킬
-                    System.out.println("회오리 불꽃!!");
-                    user.setRealHp(user.getRealHp()-200);
+
+                    if(user.getDefense()-리자몽.getAttack()*4/3<0){ //양수가 되면 안됌
+                        user.setRealHp(user.getRealHp()+(user.getDefense()-리자몽.getAttack()));
+                        System.out.println("회오리 불꽃!!");
+
+                    }else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
             }
             stage=stage+1;
@@ -569,7 +737,7 @@ public class hunter {
                         70,
                         70,
                         70,
-                        2,
+                        3,
                         70,
                         "이상해풀의 풀입",
                         200,
@@ -578,7 +746,7 @@ public class hunter {
                 Battle이상해풀(user, skills, inventory, store,이상해풀);
                 break;
         }
-        
+
         return user;
     } //switch
     User Battle이상해풀(User user,Skills skills,Inventory inventory,Store store,Monster 이상해풀){
@@ -595,19 +763,38 @@ public class hunter {
             num=sc.nextInt();
             switch (num){
                 case 1: //일반공격
-                    이상해풀.setRealHp(이상해풀.getRealHp()-30);
+                    if(이상해풀.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        이상해풀.setRealHp(이상해풀.getRealHp()+(이상해풀.getDefense()-user.getPower()));
+                    } else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
                 case 2:
-                    이상해풀.setRealHp(이상해풀.getRealHp()-60);
-                    user.setRealMp(user.getRealMp()-3);
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*3/2;
+                    if(이상해풀.getDefense()<skillDamage){
+                        이상해풀.setRealHp(이상해풀.getRealHp()+(이상해풀.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
                 case 3:
-                    이상해풀.setRealHp(이상해풀.getRealHp()-15);
-                    user.setRealMp(user.getRealMp()-3);
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*2/3;
+                    if(이상해풀.getDefense()<skillDamage){
+                        이상해풀.setRealHp(이상해풀.getRealHp()+(이상해풀.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
                 case 4:
-                    이상해풀.setRealHp(이상해풀.getRealHp()-30);
-                    user.setRealMp(user.getRealMp()-3);
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10));
+                    if(이상해풀.getDefense()<skillDamage){
+                        이상해풀.setRealHp(이상해풀.getRealHp()+(이상해풀.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
                 case 5:
                     skills.hpRecovery(user, skills);
@@ -635,12 +822,19 @@ public class hunter {
             random=((int)(Math.random()*2+1));
             switch (random){
                 case 1: // 평타
-                    System.out.println("땅울리기!!");
-                    user.setRealHp(user.getRealHp()-70);
+                    if(user.getDefense()-이상해풀.getAttack()<0){ //양수가 되면 안됌
+                        user.setRealHp(user.getRealHp()+(user.getDefense()-이상해풀.getAttack()));
+                        System.out.println("땅울리기!!");
+                    }
                     break;
                 case 2: //스킬
-                    System.out.println("풀입날리기!!");
-                    user.setRealHp(user.getRealHp()-150);
+                    if(user.getDefense()-이상해풀.getAttack()*4/3<0){ //양수가 되면 안됌
+                        user.setRealHp(user.getRealHp()+(user.getDefense()-이상해풀.getAttack()));
+                       System.out.println("풀입날리기!!");
+
+                    }else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
             }
             stage=stage+1;
@@ -670,20 +864,41 @@ public class hunter {
             num=sc.nextInt();
             switch (num){
                 case 1: //일반공격
-                    리자드.setRealHp(리자드.getRealHp()-30);
+                    if(리자드.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        리자드.setRealHp(리자드.getRealHp()+(리자드.getDefense()-user.getPower()));
+                    } else {
+                    System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                }
                     break;
                 case 2:
-                    리자드.setRealHp(리자드.getRealHp()-30);
-                    user.setRealMp(user.getRealMp()-3);
+                    ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
+                    if(리자드.getDefense()<skillDamage){
+                        리자드.setRealHp(리자드.getRealHp()+(리자드.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
-                case 3:
-                    리자드.setRealHp(리자드.getRealHp()-60);
-                    user.setRealMp(user.getRealMp()-3);
+                case 3: //물공격
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*3/2;
+                    if(리자드.getDefense()<skillDamage){
+                        리자드.setRealHp(리자드.getRealHp()+(리자드.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
-                case 4:
-                    리자드.setRealHp(리자드.getRealHp()-15);
-                    user.setRealMp(user.getRealMp()-3);
+                case 4: //풀공격
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*2/3;
+                    if(리자드.getDefense()<skillDamage){
+                        리자드.setRealHp(리자드.getRealHp()+(리자드.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
+
                 case 5:
                     skills.hpRecovery(user, skills);
                     break;
@@ -710,12 +925,18 @@ public class hunter {
             random=((int)(Math.random()*2+1));
             switch (random){
                 case 1: // 평타
-                    System.out.println("손톱할퀴기!!");
-                    user.setRealHp(user.getRealHp()-70);
+                    if(user.getDefense()-리자드.getAttack()<0){ //양수가 되면 안됌
+                    user.setRealHp(user.getRealHp()+(user.getDefense()-리자드.getAttack()));
+                        System.out.println("손톱할퀴기!!"); }
                     break;
                 case 2: //스킬
-                    System.out.println("불꽃세례!!");
-                    user.setRealHp(user.getRealHp()-150);
+
+                    if(user.getDefense()-리자드.getAttack()*4/3<0){ //양수가 되면 안됌
+                        user.setRealHp(user.getRealHp()+(user.getDefense()-리자드.getAttack()));
+                        System.out.println("불꽃세례!!");
+                    }else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
             }
             stage=stage+1;
@@ -745,20 +966,41 @@ public class hunter {
             num=sc.nextInt();
             switch (num){
                 case 1: //일반공격
-                    어니부기.setRealHp(어니부기.getRealHp()-30);
+                    if(어니부기.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        어니부기.setRealHp(어니부기.getRealHp()+(어니부기.getDefense()-user.getPower()));
+                    } else {
+                    System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                }
                     break;
+                ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
                 case 2:
-                    어니부기.setRealHp(어니부기.getRealHp()-15);
-                    user.setRealMp(user.getRealMp()-3);
+                skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*2/3;
+                if(어니부기.getDefense()<skillDamage){
+                    어니부기.setRealHp(어니부기.getRealHp()+(어니부기.getDefense()-skillDamage));
+                    System.out.println(user.getName()+"님이 공격했습니다.");
+                }else {
+                    System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                }
+                break;
+                case 3: //물공격
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10));
+                    if(어니부기.getDefense()<skillDamage){
+                        어니부기.setRealHp(어니부기.getRealHp()+(어니부기.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
-                case 3:
-                    어니부기.setRealHp(어니부기.getRealHp()-30);
-                    user.setRealMp(user.getRealMp()-3);
+                case 4: //풀공격
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*3/2;
+                    if(어니부기.getDefense()<skillDamage){
+                        어니부기.setRealHp(어니부기.getRealHp()+(어니부기.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
-                case 4:
-                    어니부기.setRealHp(어니부기.getRealHp()-60);
-                    user.setRealMp(user.getRealMp()-3);
-                    break;
+
                 case 5:
                     skills.hpRecovery(user, skills);
                     break;
@@ -785,12 +1027,18 @@ public class hunter {
             random=((int)(Math.random()*2+1));
             switch (random){
                 case 1: // 평타
-                    System.out.println("등딱지 박치기!!");
-                    user.setRealHp(user.getRealHp()-70);
+                    if(user.getDefense()-어니부기.getAttack()<0){ //양수가 되면 안됌
+                    user.setRealHp(user.getRealHp()+(user.getDefense()-어니부기.getAttack()));
+                        System.out.println("등딱지 박치기!!"); }
                     break;
                 case 2: //스킬
-                    System.out.println("물대포!!");
-                    user.setRealHp(user.getRealHp()-150);
+
+                    if(user.getDefense()-어니부기.getAttack()*4/3<0){ //양수가 되면 안됌
+                        user.setRealHp(user.getRealHp()+(user.getDefense()-어니부기.getAttack()));
+                        System.out.println("물대포!!");
+                    }else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
             }
             stage=stage+1;
@@ -837,7 +1085,7 @@ public class hunter {
                 30,
                 30,
                 30,
-                1,
+                2,
                 30,
                 "꼬북이의 등딱지",
                 100,
@@ -879,29 +1127,50 @@ public class hunter {
             num=sc.nextInt();
             switch (num){
                 case 1: //일반공격
-                    파이리.setRealHp(파이리.getRealHp()-10);
+                    if(파이리.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        파이리.setRealHp(파이리.getRealHp()+(파이리.getDefense()-user.getPower()));
+                    }
+                    else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
+                        break;
+                case 2://불공격
+                    ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
+                    if(파이리.getDefense()<skillDamage){
+                        파이리.setRealHp(파이리.getRealHp()+(파이리.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
-                case 2:
-                    파이리.setRealHp(파이리.getRealHp()-10);
-                    user.setRealMp(user.getRealMp()-3);
+                case 3: //물공격
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*3/2;
+                    if(파이리.getDefense()<skillDamage){
+                        파이리.setRealHp(파이리.getRealHp()+(파이리.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
-                case 3:
-                    파이리.setRealHp(파이리.getRealHp()-20);
-                    user.setRealMp(user.getRealMp()-3);
+                case 4: //풀공격
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*2/3;
+                    if(파이리.getDefense()<skillDamage){
+                        파이리.setRealHp(파이리.getRealHp()+(파이리.getDefense()-skillDamage));
+                        System.out.println(user.getName()+"님이 공격했습니다.");
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
-                case 4:
-                    파이리.setRealHp(파이리.getRealHp()-5);
-                    user.setRealMp(user.getRealMp()-3);
-                    break;
-                case 5:
-                    skills.hpRecovery(user, skills);
-                    break;
-                case 6:
-                    skills.ArmorUp(user,skills);
-                    break;
-                case 7:
-                    game=false;
-                    return user;
+                    case 5:
+                        skills.hpRecovery(user, skills);
+                        break;
+                    case 6:
+                        skills.ArmorUp(user,skills);
+                        break;
+                    case 7:
+                        game=false;
+                        return user;
             }//내공격끝
             if(파이리.getRealHp()<=0){
                 System.out.println("파이리을 처치했습니다.");
@@ -918,11 +1187,18 @@ public class hunter {
             switch (random){
                 case 1: // 평타
                     System.out.println("파이리 펀치!!");
-                    user.setRealHp(user.getRealHp()-50);
+                    if(user.getDefense()-파이리.getAttack()<0){ //양수가 되면 안됌
+                        user.setRealHp(user.getRealHp()+(user.getDefense()-파이리.getAttack()));
+                    }
                     break;
                 case 2: //스킬
-                    System.out.println("불꽃발사!!");
-                    user.setRealHp(user.getRealHp()-100);
+
+                    if(user.getDefense()-파이리.getAttack()*4/3<0){ //양수가 되면 안됌
+                        user.setRealHp(user.getRealHp()+(user.getDefense()-파이리.getAttack()));
+                        System.out.println("불꽃발사!!");
+                    }else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                     break;
             }
             stage=stage+1;
@@ -952,19 +1228,39 @@ public class hunter {
                 num=sc.nextInt();
                 switch (num){
                     case 1: //일반공격
-                        꼬북이.setRealHp(꼬북이.getRealHp()-10);
+                        if(꼬북이.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                            꼬북이.setRealHp(꼬북이.getRealHp()+(꼬북이.getDefense()-user.getPower()));
+                        } else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                         break;
-                    case 2:
-                        꼬북이.setRealHp(꼬북이.getRealHp()-5);
-                        user.setRealMp(user.getRealMp()-3);
+                    case 2://불공격
+                        ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
+                        skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*2/3;
+                        if(꼬북이.getDefense()<skillDamage){
+                            꼬북이.setRealHp(꼬북이.getRealHp()+(꼬북이.getDefense()-skillDamage));
+                            System.out.println(user.getName()+"님이 공격했습니다.");
+                        }else {
+                            System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                        }
                         break;
-                    case 3:
-                        꼬북이.setRealHp(꼬북이.getRealHp()-10);
-                        user.setRealMp(user.getRealMp()-3);
+                    case 3: //물공격
+                        skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10));
+                        if(꼬북이.getDefense()<skillDamage){
+                            꼬북이.setRealHp(꼬북이.getRealHp()+(꼬북이.getDefense()-skillDamage));
+                            System.out.println(user.getName()+"님이 공격했습니다.");
+                        }else {
+                            System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                        }
                         break;
-                    case 4:
-                        꼬북이.setRealHp(꼬북이.getRealHp()-20);
-                        user.setRealMp(user.getRealMp()-3);
+                    case 4: //풀공격
+                        skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*3/2;
+                        if(꼬북이.getDefense()<skillDamage){
+                            꼬북이.setRealHp(꼬북이.getRealHp()+(꼬북이.getDefense()-skillDamage));
+                            System.out.println(user.getName()+"님이 공격했습니다.");
+                        }else {
+                            System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                        }
                         break;
                     case 5:
                         skills.hpRecovery(user, skills);
@@ -991,11 +1287,18 @@ public class hunter {
                 switch (random){
                     case 1: // 평타
                         System.out.println("몸통박치기!!");
-                        user.setRealHp(user.getRealHp()-50);
+                        if(user.getDefense()-꼬북이.getAttack()<0){ //양수가 되면 안됌
+                            user.setRealHp(user.getRealHp()+(user.getDefense()-꼬북이.getAttack()));
+                        }
                         break;
                     case 2: //스킬
-                        System.out.println("물뿌리기!!");
-                        user.setRealHp(user.getRealHp()-100);
+
+                        if(user.getDefense()-꼬북이.getAttack()*4/3<0){ //양수가 되면 안됌
+                            user.setRealHp(user.getRealHp()+(user.getDefense()-꼬북이.getAttack()));
+                            System.out.println("물뿌리기!!");
+                        }else {
+                            System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                        }
                         break;
                 }
                 stage=stage+1;
@@ -1026,19 +1329,40 @@ public class hunter {
                 num=sc.nextInt();
                 switch (num){
                     case 1: //일반공격
-                        이상해씨.setRealHp(이상해씨.getRealHp()-10);
+
+                        if(이상해씨.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                            이상해씨.setRealHp(이상해씨.getRealHp()+(이상해씨.getDefense()-user.getPower()));
+                        } else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
                         break;
-                    case 2:
-                        이상해씨.setRealHp(이상해씨.getRealHp()-20);
-                        user.setRealMp(user.getRealMp()-3);
+                    case 2://불>풀
+                        ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
+                         skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*3/2;
+                        if(이상해씨.getDefense()<skillDamage){
+                            이상해씨.setRealHp(이상해씨.getRealHp()+(이상해씨.getDefense()-skillDamage));
+                            System.out.println(user.getName()+"님이 공격했습니다.");
+                        }else {
+                            System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                        }
                         break;
                     case 3:
-                        이상해씨.setRealHp(이상해씨.getRealHp()-5);
-                        user.setRealMp(user.getRealMp()-3);
+                        skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*2/3;
+                        if(이상해씨.getDefense()<skillDamage){
+                            이상해씨.setRealHp(이상해씨.getRealHp()+(이상해씨.getDefense()-skillDamage));
+                            System.out.println(user.getName()+"님이 공격했습니다.");
+                        }else {
+                            System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                        }
                         break;
                     case 4:
-                        이상해씨.setRealHp(이상해씨.getRealHp()-10);
-                        user.setRealMp(user.getRealMp()-3);
+                        skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10));
+                        if(이상해씨.getDefense()<skillDamage){
+                            이상해씨.setRealHp(이상해씨.getRealHp()+(이상해씨.getDefense()-skillDamage));
+                            System.out.println(user.getName()+"님이 공격했습니다.");
+                        }else {
+                            System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                        }
                         break;
                     case 5:
                         skills.hpRecovery(user, skills);
@@ -1065,12 +1389,24 @@ public class hunter {
                 random=((int)(Math.random()*2+1));
                 switch (random){
                     case 1: // 평타
+
+                    if(user.getDefense()-이상해씨.getAttack()<0){ //양수가 되면 안됌
+                        user.setRealHp(user.getRealHp()+(user.getDefense()-이상해씨.getAttack()));
                         System.out.println("몸통박치기!!");
-                        user.setRealHp(user.getRealHp()-50);
-                        break;
+                    }else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
+
+                    break;
                     case 2: //스킬
-                        System.out.println("물뿌리기!!");
-                        user.setRealHp(user.getRealHp()-100);
+
+                        if(user.getDefense()-이상해씨.getAttack()*4/3<0){ //양수가 되면 안됌
+                            user.setRealHp(user.getRealHp()+(user.getDefense()-이상해씨.getAttack()));
+                            System.out.println("씨폭탄!!");
+
+                        }else {
+                            System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                        }
                         break;
                 }
                 stage=stage+1;
@@ -1090,117 +1426,5 @@ public class hunter {
 
 boolean game=true;
 
-    User Battle(User user,Skills skills,Inventory inventory,Store store){
-        Monster 파이리=new Monster(
-                "파이리",
-                1,
-                10,
-                10,
-                10,
-                10,
-                10,
-                10,
-                1,
-                10,
-                "파이리의 꼬리",
-                10,
-                10);
-            System.out.println("----------------------------------------------------------------------------------------------------------");
-            System.out.println(파이리.getName()+"와 전투를 합니다");
-            System.out.println("현재HP  / 총HP  : " + 파이리.getRealHp() + " / " + 파이리.getHp());
-            System.out.println(" 공격력         : " + 파이리.getAttack());
-            System.out.println(" 방어력         : " + 파이리.getDefense());
-        System.out.println("----------------------------------------------------------------------------------------------------------");
-            while (game) {
-            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.도망가기    ㅣ");
-            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            num=sc.nextInt();
-            switch (num){
-                case 1:
-                    System.out.println(user.getName()+"님의 일반공격!");
-
-                    파이리.setRealHp(파이리.getRealHp()+파이리.getDefense()-user.getAttack());
-                    break;
-                case 2:
-                    System.out.println(user.getName()+"님의 화염발사!!");
-                    파이리.setRealHp(파이리.getRealHp()-(파이리.getDefense()-user.getAttack()*skills.getFire()));
-                    break;
-                case 3:
-                    System.out.println(user.getName()+"님의 물대포!!");
-                    파이리.setRealHp(파이리.getRealHp()-(파이리.getDefense()-user.getAttack())*skills.getWater()*2);
-                    break;
-                case 4:
-                    System.out.println(user.getName()+"님의 나뭇잎날리기!!");
-                    파이리.setRealHp(파이리.getRealHp()-(파이리.getDefense()-user.getAttack())* skills.getForest()*1/2);
-                    break;
-                case 5:
-                    System.out.println(user.getName()+"님의 체력회복");
-                    skills.hpRecovery(user,skills);
-                    break;
-                case 6:
-                    int temp;
-                    temp=user.getDefense();
-                    System.out.println(temp);
-                    System.out.println(user.getDefense());
-                    System.out.println(user.getName()+"님의 방어력증가");
-                    skills.ArmorUp(user,skills);
-                    break;
-                case 7:
-                    game=false;
-                    return user;
-             }
-            if(파이리.getRealHp()<=0){
-                System.out.println("파이리를 처치했습니다.");
-                user.setExperience(user.getExperience()+파이리.getMonEX(),user,skills);
-                inventory.inventoryList.add(파이리.dropItem);
-                inventory.setCash(inventory.getCash()+100);
-                System.out.println("보상아이템 :  "+파이리.dropItem+" ㅣ 금화:  "+파이리.getDropCash()+"  ㅣ  경험치 : "+파이리.getMonEX());
-                game=false;
-                break;
-            }
-            random=((int)(Math.random()*2+1));
-            switch (1){
-                case 1:
-                    user.setRealHp(user.getRealHp()-(user.getDefense()-파이리.getAttack()));
-                    System.out.println("파이리의 몸통 박치기!!");
-                    break;
-                case 2:
-                    user.setRealHp(user.getRealHp()-(user.getDefense()-파이리.getAttack())*2);
-                    System.out.println("파이리의 불꽃세례!!");
-                    break;
-            }
-            stage=stage+1;
-            System.out.println("진행횟수  :  "+stage);
-                if(user.getRealHp()<0){
-                    user.userDie(user);
-                    return user;
-                }
-            System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
-            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
-            System.out.println("----------------------------------------------------------------------------------------------------------");
-            System.out.println("파이리의 현재HP  / 총HP  : " + 파이리.getRealHp() + " / " + 파이리.getHp());
-        }
-        return user;
-    } //파이리
-    // 데미지 계산이 ,,,,(고려해야할것들 속성,몹방어력,공격력,체력 등 .. 상수로계산)
-    int setUserDamage(User user,Monster monster){
-        //유저의 방어력이 몹의 공격력보다 크면 데미지0
-        int damage = user.getDefense() - monster.getAttack();
-        if(damage>0){
-            damage=0;
-        }
-        return damage;
-    }
-    int setMosterDamage(User user,Monster monster){
-        //유저의 방어력이 몹의 공격력보다 크면 데미지0
-        int damage = monster.getDefense() - user.getAttack();
-        System.out.println(damage+"damage");
-        if(damage>0){
-            damage=0;
-        }
-
-        return damage;
-    }
 }
 

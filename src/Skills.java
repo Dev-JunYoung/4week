@@ -23,9 +23,13 @@ public class Skills {
     int forest=0;  //3
     int hpSkill=0;
     int armorSkill=0;
-    int damage;
-
+    int skillPower;
+boolean loop=true;
     User user;
+
+
+
+
 Scanner sc=new Scanner(System.in);
     ///skillView
     public static Skills skillView(Skills skills){
@@ -36,6 +40,8 @@ Scanner sc=new Scanner(System.in);
         view.add("체력회복           :  "+skills.getHpSkill());
         view.add("방어력증가         :   "+skills.getArmorSkill());
         view.add("보유스킬포인드      :   "+skills.getSkillPoint());
+        System.out.println(skills.skillPower);
+
         System.out.println("User Skills");
         System.out.println("---------------------------------------------------------------------");
         for(int i=0;i< view.size();i++) {
@@ -48,21 +54,27 @@ Scanner sc=new Scanner(System.in);
     Skills skillsUp(Skills skills){
         int num;
         System.out.println("----------------------------------------------------------------------------------------------------------------------");
-        System.out.println("1. 화염발사  ㅣ   2.물대포  ㅣ    3.나뭇잎날리기  ㅣ  4.체력회복  ㅣ   5.방어력증가  ");
+        System.out.println("1. 화염발사  ㅣ   2.물대포  ㅣ    3.나뭇잎날리기  ㅣ  4.체력회복  ㅣ   5.방어력증가  ㅣ  6.돌아가기");
         System.out.println("----------------------------------------------------------------------------------------------------------------------");
         num= sc.nextInt();
-        switch (num){
-            case 1: fireUp(skills);
-                break;
-            case 2: waterUp(skills);
-                break;
-            case 3: forestUp(skills);
-                break;
-            case 4: hpSkillUp(skills);
-                break;
-            case 5: armorSkill(skills);
-                break;
+        if(skillPoint>=0){
+            switch (num){
+                case 1: fireUp(skills);
+                    break;
+                case 2: waterUp(skills);
+                    break;
+                case 3: forestUp(skills);
+                    break;
+                case 4: hpSkillUp(skills);
+                    break;
+                case 5: armorSkill(skills);
+                    break;
+                case 6:num=6;
+                    break;
+            }
+
         }
+
             return skills;
     }
     //skillUp메서드 해당스킬스탯+1, 보유스킬포인트 스탯-1
@@ -100,7 +112,7 @@ Scanner sc=new Scanner(System.in);
         if(skills.getHpSkill()==0){
             System.out.println("스킬포인트가 0 입니다. 사용할 수 없습니다");
         }else {
-            user.setRealHp(user.getRealHp()+skills.getHpSkill()*200);
+            user.setRealHp(user.getRealHp()+skills.getHpSkill()*50);
             user.setRealMp(user.getRealMp()-5);
             System.out.println("체력회복!");
         }
@@ -149,13 +161,12 @@ Scanner sc=new Scanner(System.in);
         this.armorSkill = armorSkill;
     }
 
-    public int getDamage() {
-        return damage;
+    public int getSkillPower() {
+        return skillPower;
     }
 
-    public void setDamage(int damage) {
-        this.damage = damage;
+    public void setSkillPower(int skillPower) {
+        this.skillPower = skillPower;
     }
-
 }
 //속성에따라 데미지 다름

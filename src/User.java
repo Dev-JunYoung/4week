@@ -2,19 +2,27 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class User extends unit {
-    /*   String name; 상속
-      int level;
-      int hp;
-      int Attack;
-      int Defense;
-      int avoid;
-      int Experience;
-      */
-    int revelUpExperience = 100;
-    int skill = 0;
-    int avoid;
-    int statPoint = 0;
-    int status=1;
+
+    private int revelUpExperience = 100;
+    private int skill = 0;
+    private int avoid;
+    private int statPoint = 0;
+    private int status=1;
+    private int Power=0;
+
+    public int getPower() {
+        Power=this.getAttack()+this.getAvoid();
+        return Power;
+    }
+
+    public void setPower(int power) {
+        Power = power;
+        Power=super.getAttack()+this.getAvoid();
+    }
+    public void setPower(User user) {
+        Power = user.getAttack()+user.getAvoid();
+
+    }
 
     public int getStatus() {
         return status;
@@ -29,6 +37,7 @@ public class User extends unit {
     }
 
     public void setRevelUpExperience(int revelUpExperience) {
+
         this.revelUpExperience = revelUpExperience;
     }
 
@@ -59,8 +68,8 @@ public class User extends unit {
             super.setDefense(((int) (Math.random() * 20 + 10)));
             this.setAvoid(((int) (Math.random() * 20 + 10)));
             this.setStatus(1);
+            this.setPower(user);
         }
-
         return user;
     }
     User userInitCheatSet(User user) {
@@ -74,6 +83,7 @@ public class User extends unit {
         super.setDefense(((int) (Math.random() * 200 + 100)));
         this.setAvoid(((int) (Math.random() * 200 + 100)));
         this.setStatus(1);
+        this.setPower(user);
         return user;
     }
     void startUser(User user){
@@ -100,6 +110,7 @@ public class User extends unit {
             System.out.println("----------------------------------------------------------------------------------------------------------------------");
             System.out.println("1.능력치 올리기 ㅣ   2.스킬   ㅣ   3.착용장비확인     ㅣ   4.돌아가기"    );
             System.out.println("----------------------------------------------------------------------------------------------------------------------");
+
             뎁스1num= sc.nextInt();
             switch (뎁스1num){           //     1.wearingEquipments
                 //              2.userSkills
@@ -161,6 +172,7 @@ public class User extends unit {
         member.add("명중률     : " + user.getAvoid());
         member.add("경험치     : " + user.getExperience() + " / " + user.getRevelUpExperience());
         member.add("스탯포인트  : " + user.getStatPoint());
+        member.add("현재 공격력 : "+user.getPower());
         //member.add("스킬포인트  : "+skill.
         System.out.println("User Status");
         System.out.println("---------------------------------------------------------------------");
@@ -184,7 +196,7 @@ public class User extends unit {
         System.out.println(user.getName() + "님의 레벨이 " + getLevel() + "이 되었습니다.");
         //스킬포인트 추가해야됌
         user.setExperience(0); //레벨업--> 경험치 초기화
-        //레벨없할때 +3
+
         return user;
     }
     // 레벨업 하면 기본적으로 능력치가 1증가, hp,ml도 증가
@@ -224,12 +236,12 @@ public class User extends unit {
             user.setRealHp(user.getHp());
             user.setRealMp(user.getMp());
         }
-
     }
     // 스텟업메서드 해당스탯+1 보유스탯-1
     void AttackUp(User user) {
         setAttack(getAttack() + 1);
-        setExperience(getStatPoint() - 1);
+        setStatPoint(getStatPoint() - 1);
+
         System.out.println("공격력 +1");
     }
 
@@ -240,7 +252,7 @@ public class User extends unit {
     }
 
     void avoidUp(User user) {
-        setAvoid(getAttack() + 1);
+        setAvoid(getAvoid() + 1);
         setStatPoint(getStatPoint() - 1);
         System.out.println("민첩성 +1");
     }
@@ -259,18 +271,9 @@ public class User extends unit {
 
 
     //user 생성자, 객세생성될때 무조건있어야 하는값들
-
-
     public User(String name) {
         super.name = name;
     }
-
-
-
-
-
-
-
 
     public int getSkill() {
         return skill;
@@ -317,13 +320,16 @@ public class User extends unit {
     //deal의 개념  몬스터체력=몬스터체력-(내공격력-몬스터방어력) 이거임
     // 근데 (내공격력-몬스터방어력)  이게 음수가 되면안됌
     //스킬딜이랑은 따로 분리
-
+    //레벨업 메서드 레벨업하게되면 유저와 스킬에 있는 값을 모두 변경해줘야되서 파라미터로 받음)
     User setExperience(int experience, User user,Skills skills) {
         if (experience >= 100) {
             experience = 0;
             setLevel(getLevel()+1);
             statPoint = statPoint + 6;
-            skills.setSkillPoint(getStatPoint()+3);
+
+            skills.setSkillPoint(getStatPoint()+2);
+
+
             setHp(getHp() + 50);
             setRealHp(getHp());
             setMp(getMp() + 20);

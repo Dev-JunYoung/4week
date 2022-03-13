@@ -99,17 +99,17 @@ public class Store { //buy() 장비각각 3종류식 총9개, 포션종류2가�
     StoreList.add("5. "+hpPotion3.getName()+" :    "+ hpPotion3.price+"      "+hpPotion3.recoveryAmount);
     StoreList.add("6. "+hpPotion3.getName()+" :    "+ mpPotion3.price+"     "+hpPotion3.recoveryAmount);
     StoreList.add("-------------------------------------------------------------------------------------------------");
-    StoreList.add("7. "+soad.getName()+" :"+soad.getPrice()+"ㅣ   공격력증가 :  "+soad.getAttackPower());
-    StoreList.add("8. "+armor.getName()+" :"+armor.getPrice()+"ㅣ   방어력증가  "+armor.getArmorPower());
-    StoreList.add("9. "+shoes.getName()+" :"+shoes.getPrice()+"ㅣ   명중률증가:  "+shoes.getAvoidUp());
+    StoreList.add("7. "+soad.getName()+" :"+soad.getPrice()+"     ㅣ   공격력증가 :  "+soad.getAttackPower());
+    StoreList.add("8. "+armor.getName()+" :"+armor.getPrice()+"   ㅣ   방어력증가 :  "+armor.getArmorPower());
+    StoreList.add("9. "+shoes.getName()+" :"+shoes.getPrice()+"   ㅣ   명중률증가 :  "+shoes.getAvoidUp());
     StoreList.add("-------------------------------------------------------------------------------------------------");
-    StoreList.add("10. "+soad2.getName()+" :"+soad2.getPrice()+"ㅣ   공격력증가 :  "+soad2.getAttackPower());
-    StoreList.add("11. "+armor2.getName()+" :"+armor2.getPrice()+"ㅣ   방어력증가  "+armor2.getArmorPower());
-    StoreList.add("12. "+shoes2.getName()+" :"+shoes2.getPrice()+"ㅣ   명중률증가:  "+shoes2.getAvoidUp());
+    StoreList.add("10. "+soad2.getName()+" :"+soad2.getPrice()+"  ㅣ   공격력증가 :  "+soad2.getAttackPower());
+    StoreList.add("11. "+armor2.getName()+" :"+armor2.getPrice()+"ㅣ   방어력증가 : "+armor2.getArmorPower());
+    StoreList.add("12. "+shoes2.getName()+" :"+shoes2.getPrice()+"ㅣ   명중률증가 : "+shoes2.getAvoidUp());
     StoreList.add("-------------------------------------------------------------------------------------------------");
-    StoreList.add("13. "+soad3.getName()+" :"+soad3.getPrice()+"ㅣ   공격력증가 :  "+soad3.getAttackPower());
-    StoreList.add("14. "+armor3.getName()+" :"+armor3.getPrice()+"ㅣ   명중률증가:  "+armor3.getArmorPower());
-    StoreList.add("15. "+shoes3.getName()+" :"+shoes3.getPrice()+"ㅣ   방어력증가  "+shoes3.getAvoidUp());
+    StoreList.add("13. "+soad3.getName()+" :"+soad3.getPrice()+"  ㅣ   공격력증가 :  "+soad3.getAttackPower());
+    StoreList.add("14. "+armor3.getName()+" :"+armor3.getPrice()+"ㅣ   방어력증가 :  "+armor3.getArmorPower());
+    StoreList.add("15. "+shoes3.getName()+" :"+shoes3.getPrice()+"ㅣ   명중률증가 :  "+shoes3.getAvoidUp());
   }
   void storeView(){
 

@@ -13,17 +13,7 @@ Scanner sc=new Scanner(System.in);
 int num=0;
 
     User recovory(User user,Inventory inventory){
-       /* long time = System.currentTimeMillis();
-        SimpleDateFormat simpl =
-                new SimpleDateFormat("ss");
-        String s = simpl.format(time);
-        System.out.println(s);
 
-        while(true){
-            while (s.equals(10)){
-                user.setRealHp(user.getRealHp()+50);
-            }
-        }*/
         System.out.println("----------------------------------------------------------------------------------------------------------------------");
         System.out.println("1.회복하기(금화100사용)  ㅣ  2.돌아가기   ㅣ  ");
         System.out.println("----------------------------------------------------------------------------------------------------------------------");

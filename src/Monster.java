@@ -1,21 +1,12 @@
 public class Monster extends unit {
-    /*protected String name; //사용자,com이름
-    protected int level; //레벨 max10
-    protected int hp; //
-    protected int realHp; //
-    protected int mp; //
-    protected int realMp; //
-    protected int Attack;
-    protected int Defense;
-    int Experience=0;
-    int revelUpExperience=100;*/
-    //속성이다름 
+
     int property;
     //스킬이다름
     int skillAttack;
     String dropItem;
     int dropCash;
     int monEX;
+
     public Monster(String name,
                    int ravel,
                    int hp,
@@ -43,6 +34,9 @@ public class Monster extends unit {
         setDropCash(dropCash);
         setMonEX(monEX);
     }
+
+
+
 
     void mosterAttack(){
 

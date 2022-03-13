@@ -23,7 +23,7 @@ public class Inventory {
     //착용장비배열
    String[] wearing=new String[3];
     //인벤토리목록
-    void inventoryView(User user,Store store,Inventory inventory){
+    void inventoryView(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment){
 
             System.out.println("---------------------------------------------------------------------");
             for (int i = 0; i < inventoryList.size(); i++) {
@@ -46,31 +46,64 @@ public class Inventory {
             }else if (이름.equals("mpPotion200")) {
                 setMpPotion200(user, store, inventory);
             }
-            else if (이름.equals("마스터의 검")) {
-                setSoad3(user, store, inventory);
-            }
-            else if (이름.equals("숙련자의 검")) {
-                setSoad2(user, store, inventory);
-            }
+            //setPotion  끝
             else if (이름.equals("초보자의 검")) {
-                setSoad(user, store, inventory);
-            } else if (이름.equals("초보자의 갑옷")) {
-                setArmor(user, store, inventory);
+                setSoad(user, store, inventory,upgradeEquipment);
+
+            }   else if (이름.equals("숙련자의 검")) {
+                setSoad2(user, store, inventory,upgradeEquipment);
+            }
+            else if (이름.equals("마스터의 검")) {
+                setSoad3(user, store, inventory,upgradeEquipment);
+            }
+           else if (이름.equals("초보자의 갑옷")) {
+                setArmor(user, store, inventory,upgradeEquipment);
             } else if (이름.equals("숙련자의 갑옷")) {
-                setArmor2(user, store, inventory);
+                setArmor2(user, store, inventory,upgradeEquipment);
             } else if (이름.equals("마스터의 갑옷")) {
-                setArmor3(user, store, inventory);
+                setArmor3(user, store, inventory,upgradeEquipment);
             }
 
             else if (이름.equals("초보자의 신발")) {
-                setShoes(user, store, inventory);
+                setShoes(user, store, inventory,upgradeEquipment);
             }
             else if (이름.equals("숙련자의 신발")) {
-                setShoes2(user, store, inventory);
+                setShoes2(user, store, inventory,upgradeEquipment);
             }
             else if (이름.equals("마스터의 신발")) {
-                setShoes3(user, store, inventory);
-            } else {
+                setShoes3(user, store, inventory,upgradeEquipment);
+            }
+//강화---------------------------------------------------------------------------
+            else if (이름.equals("초보자의 검(강화)")) {
+                setUpgradeSoad(user, store, inventory,upgradeEquipment);
+
+            }   else if (이름.equals("숙련자의 검(강화)")) {
+                setUpgradeSoad2(user, store, inventory,upgradeEquipment);
+            }
+            else if (이름.equals("마스터의 검(강화)")) {
+                setUpgradeSoad3(user, store, inventory,upgradeEquipment);
+                //-------------------------------------------------------------------
+            }else if (이름.equals("초보자의 갑옷(강화)")) {
+                setUpgradeArmor(user, store, inventory,upgradeEquipment);
+
+            }   else if (이름.equals("숙련자의 갑옷(강화)")) {
+                setUpgradeArmor2(user, store, inventory,upgradeEquipment);
+            }
+            else if (이름.equals("마스터의 갑옷(강화)")) {
+                setUpgradeArmor3(user, store, inventory,upgradeEquipment);
+            }//----------------------------------------------------------------------------
+            else if (이름.equals("초보자의 신발(강화)")) {
+                setUpgradeShoes(user, store, inventory,upgradeEquipment);
+
+            }   else if (이름.equals("숙련자의 신발(강화)")) {
+                setUpgradeShoes2(user, store, inventory,upgradeEquipment);
+            }
+            else if (이름.equals("마스터의 신발(강화)")) {
+                setUpgradeShoes3(user, store, inventory,upgradeEquipment);
+            }
+
+//----------------------------------------------------------------------------------------------------------
+            else {
                 System.out.println("입력하신 아이템은 없습니다.");
             }
     }
@@ -107,11 +140,12 @@ public class Inventory {
 
         }
     }
-    //검장착 ------------------------------------------------------------------------------------------
-    void setSoad(User user,Store store,Inventory inventory){
+    //검장착 업그레이드장비까지끝------------------------------------------------------------------------------------------
+    void setSoad(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment){
         if (wearing[0] == null) {  //비어있으면 바로 장착
             System.out.println("검 장착!");
             user.setAttack(user.getAttack() + store.soad.getAttackPower());
+            inventoryList.remove("초보자의 검");
             wearing[0] = "초보자의 검";
         } else if (wearing[0].equals("초보자의 검")) { //있으면 삭제하고장착 1
             inventoryList.remove("초보자의 검"); //장착할거니까 리스트에서는 지워야됌
@@ -132,10 +166,35 @@ public class Inventory {
             user.setAttack(user.getAttack() + store.soad.getAttackPower());
             wearing[0] = "초보자의 검";
             inventoryList.add("마스터의 검");
+
+            //초보자의 검 착용하는데 (강화가 있는경우 3가지)
+        }else if (wearing[0].equals("초보자의 검(강화)")) { //있으면 삭제하고장착 1
+            inventoryList.remove("초보자의 검"); //장착할거니까 리스트에서는 지워야됌
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + store.soad.getAttackPower());
+            wearing[0] = "초보자의 검";
+            inventoryList.add("초보자의 검(강화)"); //착용하고있었던거는 추가
+            //-------완료  이게 로직에 맞는거임
+        } else if (wearing[0].equals("숙련자의 검(강화)")) { //있으면 삭제하고장착 2
+            inventoryList.remove("초보자의 검");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + store.soad.getAttackPower());
+            wearing[0] = "초보자의 검";
+            inventoryList.add("숙련자의 검(강화)");
+        } else if (wearing[0].equals("마스터의 검(강화)")) { //있으면 삭제하고장착 3
+            inventoryList.remove("초보자의 검");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + store.soad.getAttackPower());
+            wearing[0] = "초보자의 검";
+            inventoryList.add("마스터의 검(강화)");
         }
+
+
+
     }
-    void setSoad2(User user,Store store,Inventory inventory) {
+    void setSoad2(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment) {
         if (wearing[0] == null) {  //비어있으면 바로 장착
+            inventoryList.remove("초보자의 검");
             System.out.println("검 장착!");
             user.setAttack(user.getAttack() + store.soad2.getAttackPower());
             wearing[0] = "숙련자의 검";
@@ -158,14 +217,37 @@ public class Inventory {
             user.setAttack(user.getAttack() + store.soad2.getAttackPower());
             wearing[0] = "숙련자의 검";
             inventoryList.add("마스터의 검");
+            //--------------------------------------------------------------------------------
+
+        }else if (wearing[0].equals("초보자의 검(강화)")) { //있으면 삭제하고장착 1
+            inventoryList.remove("숙련자의 검"); //장착할거니까 리스트에서는 지워야됌
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + store.soad2.getAttackPower());
+            wearing[0] = "숙련자의 검";
+            inventoryList.add("초보자의 검(강화)"); //착용하고있었던거는 추가
+            //-------완료  이게 로직에 맞는거임
+        } else if (wearing[0].equals("숙련자의 검(강화)")) { //있으면 삭제하고장착 2
+            inventoryList.remove("숙련자의 검");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + store.soad2.getAttackPower());
+            wearing[0] = "숙련자의 검";
+            inventoryList.add("숙련자의 검(강화)");
+        } else if (wearing[0].equals("마스터의 검(강화)")) { //있으면 삭제하고장착 3
+            inventoryList.remove("마스터의 검");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + store.soad2.getAttackPower());
+            wearing[0] = "숙련자의 검";
+            inventoryList.add("마스터의 검(강화)");
         }
     }
-    void setSoad3(User user,Store store,Inventory inventory) {
+    void setSoad3(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment) {
         if (wearing[0] == null) {  //비어있으면 바로 장착
             System.out.println("검 장착!");
+            inventoryList.remove("마스터의 검");
             user.setAttack(user.getAttack() + store.soad3.getAttackPower());
             wearing[0] = "마스터의 검";
-        } else if (wearing[0].equals("초보자의 검")) { //있으면 삭제하고장착 1
+        }
+        else if (wearing[0].equals("초보자의 검")) { //있으면 삭제하고장착 1
             inventoryList.remove("마스터의 검"); //장착할거니까 리스트에서는 지워야됌
             System.out.println("검 장착!");
             user.setAttack(user.getAttack() + store.soad3.getAttackPower());
@@ -184,25 +266,66 @@ public class Inventory {
             user.setAttack(user.getAttack() + store.soad3.getAttackPower());
             wearing[0] = "마스터의 검";
             inventoryList.add("마스터의 검");
+        }else if (wearing[0].equals("초보자의 검(강화)")) { //있으면 삭제하고장착 1
+            inventoryList.remove("마스터의 검"); //장착할거니까 리스트에서는 지워야됌
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + store.soad3.getAttackPower());
+            wearing[0] = "마스터의 검"; //wearing 배열에 추가
+            inventoryList.add("초보자의 검(강화)"); //착용하고있었던거는 추가
+            //-------완료  이게 로직에 맞는거임
+        } else if (wearing[0].equals("숙련자의 검(강화)")) { //있으면 삭제하고장착 2
+            inventoryList.remove("마스터의 검");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + store.soad3.getAttackPower());
+            wearing[0] = "마스터의 검";
+            inventoryList.add("숙련자의 검(강화)");
+        } else if (wearing[0].equals("마스터의 검(강화)")) { //있으면 삭제하고장착 3
+            inventoryList.remove("마스터의 검");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + store.soad3.getAttackPower());
+            wearing[0] = "마스터의 검";
+            inventoryList.add("마스터의 검(강화)");
+        }
+        //---------------------------------------------------------------------------------
+        else if (wearing[0].equals("초보자의 검(강화)")) { //있으면 삭제하고장착 1
+            inventoryList.remove("마스터의 검"); //장착할거니까 리스트에서는 지워야됌
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + store.soad3.getAttackPower());
+            wearing[0] = "마스터의 검"; //wearing 배열에 추가
+            inventoryList.add("초보자의 검(강화)"); //착용하고있었던거는 추가
+            //-------완료  이게 로직에 맞는거임
+        } else if (wearing[0].equals("숙련자의 검(강화)")) { //있으면 삭제하고장착 2
+            inventoryList.remove("마스터의 검");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + store.soad3.getAttackPower());
+            wearing[0] = "마스터의 검";
+            inventoryList.add("숙련자의 검(강화)");
+        } else if (wearing[0].equals("마스터의 검(강화)")) { //있으면 삭제하고장착 3
+            inventoryList.remove("마스터의 검");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + store.soad3.getAttackPower());
+            wearing[0] = "마스터의 검";
+            inventoryList.add("마스터의 검(강화)");
         }
     }
-    //갑옷장착--------------------------------------------------------------------------------------------
-    void setArmor(User user,Store store,Inventory inventory){
+
+    //--------------------------------------------------------------------------------------------
+    //갑옷장착 업그레이드장비까지끝----------------------------------------------------------------------------------------------------
+    void setArmor(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment){
         if(wearing[1]==null){
-            System.out.println("갑옷 장착!");
             wearing[1]="초보자의 갑옷";
             inventoryList.remove("초보자의 갑옷");
             user.setDefense(user.getDefense()+store.armor.getArmorPower());
             System.out.println("갑옷 장착!");
         }else if(wearing[1].equals("초보자의 갑옷")){
             inventoryList.add("초보자의 갑옷");
-            user.setAttack(user.getAttack() + store.armor.getArmorPower());
+            user.setDefense(user.getDefense()+store.armor.getArmorPower());
             inventoryList.remove("초보자의 갑옷");
             wearing[1] = "초보자의 갑옷";
             System.out.println("갑옷 장착!");
         }else if(wearing[1].equals("숙련자의 갑옷")){
             inventoryList.add("숙련자의 갑옷");
-            user.setAttack(user.getAttack() + store.armor.getArmorPower());
+            user.setDefense(user.getDefense()+store.armor.getArmorPower());
             inventoryList.remove("초보자의 갑옷");
             wearing[1] = "초보자의 갑옷";
             System.out.println("갑옷 장착!");
@@ -212,9 +335,29 @@ public class Inventory {
             inventoryList.remove("초보자의 갑옷");
             wearing[1] = "초보자의 갑옷";
             System.out.println("갑옷 장착!");
+
+        }//----------------------------------------------------------------------
+        else if(wearing[1].equals("초보자의 갑옷(강화)")){
+            inventoryList.add("초보자의 갑옷(강화)");
+            user.setDefense(user.getDefense()+store.armor.getArmorPower());
+            inventoryList.remove("초보자의 갑옷");
+            wearing[1] = "초보자의 갑옷";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("숙련자의 갑옷(강화)")){
+            inventoryList.add("숙련자의 갑옷(강화)");
+            user.setDefense(user.getDefense()+store.armor.getArmorPower());
+            inventoryList.remove("초보자의 갑옷");
+            wearing[1] = "초보자의 갑옷";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("마스터의 갑옷(강화)")){
+            inventoryList.add("마스터의 갑옷(강화)");
+            user.setDefense(user.getDefense()+store.armor.getArmorPower());
+            inventoryList.remove("초보자의 갑옷");
+            wearing[1] = "초보자의 갑옷";
+            System.out.println("갑옷 장착!");
         }
     }
-    void setArmor2(User user,Store store,Inventory inventory){
+    void setArmor2(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment){
         if(wearing[1]==null){
             wearing[1]="숙련자의 갑옷";
             inventoryList.remove("숙련자의 갑옷");
@@ -222,79 +365,139 @@ public class Inventory {
             System.out.println("갑옷 장착!");
         }else if(wearing[1].equals("초보자의 갑옷")){
             inventoryList.add("초보자의 갑옷");
-            user.setAttack(user.getAttack() + store.armor2.getArmorPower());
+            user.setDefense(user.getDefense()+store.armor2.getArmorPower());
             inventoryList.remove("숙련자의 갑옷");
             wearing[1]="숙련자의 갑옷";
             System.out.println("갑옷 장착!");
         }else if(wearing[1].equals("숙련자의 갑옷")){
             inventoryList.add("숙련자의 갑옷");
-            user.setAttack(user.getAttack() + store.armor2.getArmorPower());
+            user.setDefense(user.getDefense()+store.armor2.getArmorPower());
             inventoryList.remove("숙련자의 갑옷");
             wearing[1]="숙련자의 갑옷";
             System.out.println("갑옷 장착!");
         }else if(wearing[1].equals("마스터의 갑옷")){
             inventoryList.add("마스터의 갑옷");
-            user.setAttack(user.getAttack() + store.armor2.getArmorPower());
+            user.setDefense(user.getDefense()+store.armor2.getArmorPower());
+            inventoryList.remove("숙련자의 갑옷");
+            wearing[1]="숙련자의 갑옷";
+            System.out.println("갑옷 장착!");
+        }//---------------------------------------------------------------------------------------
+        else if(wearing[1].equals("초보자의 갑옷(강화)")){
+            inventoryList.add("초보자의 갑옷(강화)");
+            user.setDefense(user.getDefense()+store.armor2.getArmorPower());
+            inventoryList.remove("숙련자의 갑옷");
+            wearing[1]="숙련자의 갑옷";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("숙련자의 갑옷(강화)")){
+            inventoryList.add("숙련자의 갑옷(강화)");
+            user.setDefense(user.getDefense()+store.armor2.getArmorPower());
+            inventoryList.remove("숙련자의 갑옷");
+            wearing[1]="숙련자의 갑옷";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("마스터의 갑옷(강화)")){
+            inventoryList.add("마스터의 갑옷(강화)");
+            user.setDefense(user.getDefense()+store.armor2.getArmorPower());
             inventoryList.remove("숙련자의 갑옷");
             wearing[1]="숙련자의 갑옷";
             System.out.println("갑옷 장착!");
         }
     }
-    void setArmor3(User user,Store store,Inventory inventory){
+    void setArmor3(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment){
         if(wearing[1]==null){
-            System.out.println("갑옷 장착!");
+
             wearing[1]="마스터의 갑옷";
             inventoryList.remove("마스터의 갑옷");
             user.setDefense(user.getDefense()+store.armor3.getArmorPower());
             System.out.println("갑옷 장착!");
         }else if(wearing[1].equals("초보자의 갑옷")){
             inventoryList.add("초보자의 갑옷");
-            user.setAttack(user.getAttack() + store.armor3.getArmorPower());
+            user.setDefense(user.getAttack() + store.armor3.getArmorPower());
             inventoryList.remove("마스터의 갑옷");
             wearing[1]="마스터의 갑옷";
             System.out.println("갑옷 장착!");
         }else if(wearing[1].equals("숙련자의 갑옷")){
             inventoryList.add("숙련자의 갑옷");
-            user.setAttack(user.getAttack() + store.armor3.getArmorPower());
+            user.setDefense(user.getAttack() + store.armor3.getArmorPower());
             inventoryList.remove("마스터의 갑옷");
             wearing[1]="마스터의 갑옷";
             System.out.println("갑옷 장착!");
         }else if(wearing[1].equals("마스터의 갑옷")){
             inventoryList.add("마스터의 갑옷");
-            user.setAttack(user.getAttack() + store.armor3.getArmorPower());
+            user.setDefense(user.getAttack() + store.armor3.getArmorPower());
+            inventoryList.remove("마스터의 갑옷");
+            wearing[1]="마스터의 갑옷";
+            System.out.println("갑옷 장착!");
+        }
+        else if(wearing[1].equals("초보자의 갑옷(강화)")){
+            inventoryList.add("초보자의 갑옷(강화)");
+            user.setDefense(user.getAttack() + store.armor3.getArmorPower());
+            inventoryList.remove("마스터의 갑옷");
+            wearing[1]="마스터의 갑옷";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("숙련자의 갑옷(강화)")){
+            inventoryList.add("숙련자의 갑옷(강화)");
+            user.setDefense(user.getAttack() + store.armor3.getArmorPower());
+            inventoryList.remove("마스터의 갑옷(강화)");
+            wearing[1]="마스터의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("마스터의 갑옷(강화)")){
+            inventoryList.add("마스터의 갑옷(강화)");
+            user.setDefense(user.getAttack() + store.armor3.getArmorPower());
             inventoryList.remove("마스터의 갑옷");
             wearing[1]="마스터의 갑옷";
             System.out.println("갑옷 장착!");
         }
     }
+
     //신발장착-------------------------------------------------------------------------------------------------
-    void setShoes(User user,Store store,Inventory inventory){
+    void setShoes(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment){
         if(wearing[2]==null){
             wearing[2]="초보자의 신발";
             inventoryList.remove("초보자의 신발");
-            user.setDefense(user.getDefense()+store.shoes2.getAvoidUp());
+            user.setAvoid(user.getAvoid()+store.shoes.getAvoidUp());
             System.out.println("신발 장착!");
         }else if(wearing[2].equals("초보자의 신발")){
             inventoryList.add("초보자의 신발");
-            user.setAttack(user.getAttack() + store.shoes2.getAvoidUp());
+            user.setAvoid(user.getAvoid() + store.shoes.getAvoidUp());
             inventoryList.remove("초보자의 신발");
             wearing[2]="초보자의 신발";
             System.out.println("신발 장착!");
         }else if(wearing[2].equals("숙련자의 신발")){
             inventoryList.add("숙련자의 신발");
-            user.setAttack(user.getAttack() + store.shoes2.getAvoidUp());
+            user.setAvoid(user.getAvoid() + store.shoes.getAvoidUp());
             inventoryList.remove("초보자의 신발");
             wearing[2]="초보자의 신발";
             System.out.println("신발 장착!");
         }else if(wearing[2].equals("마스터의 신발")){
             inventoryList.add("마스터의 신발");
-            user.setAttack(user.getAttack() + store.shoes2.getAvoidUp());
+            user.setAvoid(user.getAvoid() + store.shoes.getAvoidUp());
             inventoryList.remove("초보자의 신발");
             wearing[2]="초보자의 신발";
             System.out.println("신발 장착!");
         }
+        else if(wearing[2].equals("초보자의 신발(강화)")){
+            inventoryList.add("초보자의 신발(강화)");
+            user.setAvoid(user.getAvoid() + store.shoes.getAvoidUp());
+            inventoryList.remove("초보자의 신발");
+            wearing[2]="초보자의 신발";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("숙련자의 신발(강화)")){
+            inventoryList.add("숙련자의 신발(강화)");
+            user.setAvoid(user.getAvoid() + store.shoes.getAvoidUp());
+            inventoryList.remove("초보자의 신발");
+            wearing[2]="초보자의 신발";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("마스터의 신발(강화)")){
+            inventoryList.add("마스터의 신발(강화)");
+            user.setAvoid(user.getAvoid() + store.shoes.getAvoidUp());
+            inventoryList.remove("초보자의 신발");
+            wearing[2]="초보자의 신발";
+            System.out.println("신발 장착!");
+        }
+        //--------------------------------------------------------------------------------------
+
     }
-    void setShoes2(User user,Store store,Inventory inventory){
+    void setShoes2(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment){
         if(wearing[2]==null){
             wearing[2]="숙련자의 신발";
             inventoryList.remove("숙련자의 신발");
@@ -318,9 +521,28 @@ public class Inventory {
             inventoryList.remove("숙련자의 신발");
             wearing[2]="숙련자의 신발";
             System.out.println("신발 장착!");
+        }//----------------------------------------------------
+        else if(wearing[2].equals("초보자의 신발(강화)")){
+            inventoryList.add("초보자의 신발(강화)");
+            user.setAttack(user.getAttack() + store.shoes2.getAvoidUp());
+            inventoryList.remove("숙련자의 신발");
+            wearing[2]="숙련자의 신발";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("숙련자의 신발(강화)")){
+            inventoryList.add("숙련자의 신발(강화)");
+            user.setAttack(user.getAttack() + store.shoes2.getAvoidUp());
+            inventoryList.remove("숙련자의 신발");
+            wearing[2]="숙련자의 신발";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("마스터의 신발(강화)")){
+            inventoryList.add("마스터의 신발(강화)");
+            user.setAttack(user.getAttack() + store.shoes2.getAvoidUp());
+            inventoryList.remove("숙련자의 신발");
+            wearing[2]="숙련자의 신발";
+            System.out.println("신발 장착!");
         }
     }
-    void setShoes3(User user,Store store,Inventory inventory){
+    void setShoes3(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment){
         if(wearing[2]==null){
             wearing[2]="마스터의 신발";
             inventoryList.remove("마스터의 신발");
@@ -344,9 +566,456 @@ public class Inventory {
             inventoryList.remove("마스터의 신발");
             wearing[2]="마스터의 신발";
             System.out.println("신발 장착!");
+        }//-------------------------------------------------------------------------
+        else if(wearing[2].equals("초보자의 신발(강화)")){
+            inventoryList.add("초보자의 신발");
+            user.setAttack(user.getAttack() + store.shoes3.getAvoidUp());
+            inventoryList.remove("마스터의 신발(강화)");
+            wearing[2]="마스터의 신발";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("숙련자의 신발(강화)")){
+            inventoryList.add("숙련자의 신발");
+            user.setAttack(user.getAttack() + store.shoes3.getAvoidUp());
+            inventoryList.remove("마스터의 신발(강화)");
+            wearing[2]="마스터의 신발";
+            System.out.println("마스터의 신발!");
+        }else if(wearing[2].equals("마스터의 신발(강화)")){
+            inventoryList.add("마스터의 신발(강화)");
+            user.setAttack(user.getAttack() + store.shoes3.getAvoidUp());
+            inventoryList.remove("마스터의 신발");
+            wearing[2]="마스터의 신발";
+            System.out.println("신발 장착!");
         }
     }
     //--------------------------------------------------------------------------------------------
+    
+    //업그레이드 검장착----------------------------------------------------------------------------------------------------
+    void setUpgradeSoad(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment){
+        if (wearing[0] == null) {  //비어있으면 바로 장착
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() +upgradeEquipment.upgradeSoad.getAttackPower());
+            wearing[0] = "초보자의 검(강화)";
+            inventoryList.remove("초보자의 검(강화)");
+        } else if (wearing[0].equals("초보자의 검")) { //있으면 삭제하고장착 2
+            inventoryList.remove("초보자의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad.getAttackPower());
+            wearing[0] = "초보자의 검(강화)";
+            inventoryList.add("초보자의 검");
+        } else if (wearing[0].equals("숙련자의 검")) { //있으면 삭제하고장착 2
+            inventoryList.remove("초보자의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad.getAttackPower());
+            wearing[0] = "초보자의 검(강화)";
+            inventoryList.add("숙련자의 검");
+        }else if (wearing[0].equals("마스터의 검")) { //있으면 삭제하고장착 2
+            inventoryList.remove("초보자의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad.getAttackPower());
+            wearing[0] = "초보자의 검(강화)";
+            inventoryList.add("마스터의 검");
+        }//---------------------------------------------------------------------------------
+        else if (wearing[0].equals("초보자의 검(강화)")) { //있으면 삭제하고장착 2
+            inventoryList.remove("초보자의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad.getAttackPower());
+            wearing[0] = "초보자의 검(강화)";
+            inventoryList.add("초보자의 검(강화)");
+        } else if (wearing[0].equals("숙련자의 검(강화)")) { //있으면 삭제하고장착 2
+            inventoryList.remove("초보자의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad.getAttackPower());
+            wearing[0] = "초보자의 검(강화)";
+            inventoryList.add("숙련자의 검(강화)");
+        }else if (wearing[0].equals("마스터의 검(강화)")) { //있으면 삭제하고장착 2
+            inventoryList.remove("초보자의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad.getAttackPower());
+            wearing[0] = "초보자의 검(강화)";
+            inventoryList.add("마스터의 검(강화)");
+        }
+
+        //---------------------------------------------------------------------------------------------------------
+    }
+    void setUpgradeSoad2(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment) {
+        if (wearing[0] == null) {  //비어있으면 바로 장착
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() +upgradeEquipment.upgradeSoad2.getAttackPower());
+            wearing[0] = "숙련자의 검(강화)";
+        } else if (wearing[0].equals("초보자의 검")) { //있으면 삭제하고장착 2
+            inventoryList.remove("숙련자의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad2.getAttackPower());
+            wearing[0] = "숙련자의 검(강화)";
+            inventoryList.add("초보자의 검");
+        } else if (wearing[0].equals("숙련자의 검")) { //있으면 삭제하고장착 2
+            inventoryList.remove("숙련자의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad2.getAttackPower());
+            wearing[0] = "숙련자의 검(강화)";
+            inventoryList.add("숙련자의 검");
+        }else if (wearing[0].equals("마스터의 검")) { //있으면 삭제하고장착 2
+            inventoryList.remove("숙련자의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad2.getAttackPower());
+            wearing[0] = "숙련자의 검(강화)";
+            inventoryList.add("마스터의 검");
+        }//---------------------------------------------------------------------------------
+        else if (wearing[0].equals("초보자의 검(강화)")) { //있으면 삭제하고장착 2
+            inventoryList.remove("숙련자의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad2.getAttackPower());
+            wearing[0] = "숙련자의 검(강화)";
+            inventoryList.add("초보자의 검(강화)");
+        } else if (wearing[0].equals("숙련자의 검(강화)")) { //있으면 삭제하고장착 2
+            inventoryList.remove("숙련자의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad2.getAttackPower());
+            wearing[0] = "숙련자의 검(강화)";
+            inventoryList.add("숙련자의 검(강화)");
+        }else if (wearing[0].equals("마스터의 검(강화)")) { //있으면 삭제하고장착 2
+            inventoryList.remove("숙련자의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad2.getAttackPower());
+            wearing[0] = "숙련자의 검(강화)";
+            inventoryList.add("마스터의 검(강화)");
+        }
+    }
+    void setUpgradeSoad3(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment) {
+        if (wearing[0] == null) {  //비어있으면 바로 장착
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad3.getAttackPower());
+            wearing[0] = "마스터의 검(강화)";
+        } else if (wearing[0].equals("초보자의 검")) { //있으면 삭제하고장착 1
+            inventoryList.remove("마스터의 검(강화)"); //장착할거니까 리스트에서는 지워야됌
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad3.getAttackPower());
+            wearing[0] = "마스터의 검(강화)"; //wearing 배열에 추가
+            inventoryList.add("초보자의 검"); //착용하고있었던거는 추가
+            //-------완료  이게 로직에 맞는거임
+        } else if (wearing[0].equals("숙련자의 검")) { //있으면 삭제하고장착 2
+            inventoryList.remove("마스터의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad3.getAttackPower());
+            wearing[0] = "마스터의 검(강화)";
+            inventoryList.add("숙련자의 검");
+        } else if (wearing[0].equals("마스터의 검")) { //있으면 삭제하고장착 3
+            inventoryList.remove("마스터의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad3.getAttackPower());
+            wearing[0] = "마스터의 검(강화)";
+            inventoryList.add("마스터의 검");
+        }
+        //--------------------------------------------------------------------------------------------------------
+        else if (wearing[0].equals("초보자의 검(강화)")) { //있으면 삭제하고장착 1
+            inventoryList.remove("마스터의 검(강화)"); //장착할거니까 리스트에서는 지워야됌
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad3.getAttackPower());
+            wearing[0] = "마스터의 검(강화)"; //wearing 배열에 추가
+            inventoryList.add("초보자의 검(강화)"); //착용하고있었던거는 추가
+            //-------완료  이게 로직에 맞는거임
+        } else if (wearing[0].equals("숙련자의 검(강화)")) { //있으면 삭제하고장착 2
+            inventoryList.remove("마스터의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad3.getAttackPower());
+            wearing[0] = "마스터의 검(강화)";
+            inventoryList.add("숙련자의 검(강화)");
+        } else if (wearing[0].equals("마스터의 검(강화)")) { //있으면 삭제하고장착 3
+            inventoryList.remove("마스터의 검(강화)");
+            System.out.println("검 장착!");
+            user.setAttack(user.getAttack() + upgradeEquipment.upgradeSoad3.getAttackPower());
+            wearing[0] = "마스터의 검(강화)";
+            inventoryList.add("마스터의 검(강화)");
+        }
+    }
+    //업그레이드 갑옷장착----------------------------------------------------------------------------------------------------\
+    void setUpgradeArmor(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment){
+        if(wearing[1]==null){
+            wearing[1]="초보자의 갑옷(강화)";
+            inventoryList.remove("초보자의 갑옷(강화)");
+            user.setDefense(user.getDefense()+upgradeEquipment.UpgradeArmor.getArmorPower());
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("초보자의 갑옷")){
+            inventoryList.add("초보자의 갑옷");
+            user.setDefense(user.getDefense()+upgradeEquipment.UpgradeArmor.getArmorPower());
+            inventoryList.remove("초보자의 갑옷(강화)");
+            wearing[1] = "초보자의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("숙련자의 갑옷")){
+            inventoryList.add("숙련자의 갑옷");
+            user.setDefense(user.getDefense()+upgradeEquipment.UpgradeArmor.getArmorPower());
+            inventoryList.remove("초보자의 갑옷(강화)");
+            wearing[1] = "초보자의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("마스터의 갑옷")){
+            inventoryList.add("마스터의 갑옷");
+            user.setDefense(user.getDefense()+upgradeEquipment.UpgradeArmor.getArmorPower());
+            inventoryList.remove("초보자의 갑옷(강화)");
+            wearing[1] = "초보자의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+
+        }//----------------------------------------------------------------------
+        else if(wearing[1].equals("초보자의 갑옷(강화)")){
+            inventoryList.add("초보자의 갑옷(강화)");
+            user.setDefense(user.getDefense()+upgradeEquipment.UpgradeArmor.getArmorPower());
+            inventoryList.remove("초보자의 갑옷(강화)");
+            wearing[1] = "초보자의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("숙련자의 갑옷(강화)")){
+            inventoryList.add("숙련자의 갑옷(강화)");
+            user.setDefense(user.getDefense()+upgradeEquipment.UpgradeArmor.getArmorPower());
+            inventoryList.remove("초보자의 갑옷(강화)");
+            wearing[1] = "초보자의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("마스터의 갑옷(강화)")){
+            inventoryList.add("마스터의 갑옷(강화)");
+            user.setDefense(user.getDefense()+upgradeEquipment.UpgradeArmor.getArmorPower());
+            inventoryList.remove("초보자의 갑옷(강화)");
+            wearing[1] = "초보자의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+
+        }
+    }
+    void setUpgradeArmor2(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment){
+        if(wearing[1]==null){
+            System.out.println("갑옷 장착!");
+            wearing[1]="숙련자의 갑옷(강화)";
+            inventoryList.remove("숙련자의 갑옷(강화)");
+            user.setDefense(user.getDefense()+upgradeEquipment.upgradeArmor2.getArmorPower());
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("초보자의 갑옷")){
+            inventoryList.add("초보자의 갑옷");
+            user.setDefense(user.getDefense()+upgradeEquipment.upgradeArmor2.getArmorPower());
+            inventoryList.remove("숙련자의 갑옷(강화)");
+            wearing[1] = "숙련자의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("숙련자의 갑옷")){
+            inventoryList.add("숙련자의 갑옷");
+            user.setDefense(user.getDefense()+upgradeEquipment.upgradeArmor2.getArmorPower());
+            inventoryList.remove("숙련자의 갑옷(강화)");
+            wearing[1] = "숙련자의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("마스터의 갑옷")){
+            inventoryList.add("마스터의 갑옷");
+            user.setDefense(user.getDefense()+upgradeEquipment.upgradeArmor2.getArmorPower());
+            inventoryList.remove("숙련자의 갑옷(강화)");
+            wearing[1] = "숙련자의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+
+        }//----------------------------------------------------------------------
+        else if(wearing[1].equals("초보자의 갑옷(강화)")){
+            inventoryList.add("초보자의 갑옷(강화)");
+            user.setDefense(user.getDefense()+upgradeEquipment.upgradeArmor2.getArmorPower());
+            inventoryList.remove("숙련자의 갑옷(강화)");
+            wearing[1] = "숙련자의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("숙련자의 갑옷(강화)")){
+            inventoryList.add("숙련자의 갑옷(강화)");
+            user.setDefense(user.getDefense()+upgradeEquipment.upgradeArmor2.getArmorPower());
+            inventoryList.remove("숙련자의 갑옷(강화)");
+            wearing[1] = "숙련자의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("마스터의 갑옷(강화)")){
+            inventoryList.add("마스터의 갑옷(강화)");
+            user.setDefense(user.getDefense()+upgradeEquipment.upgradeArmor2.getArmorPower());
+            inventoryList.remove("숙련자의 갑옷(강화)");
+            wearing[1] = "숙련자의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+
+        }
+    }
+    void setUpgradeArmor3(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment){
+        if(wearing[1]==null){
+            System.out.println("갑옷 장착!");
+            wearing[1]="마스터의 갑옷(강화)";
+            inventoryList.remove("마스터의 갑옷(강화)");
+            user.setDefense(user.getDefense()+upgradeEquipment.upgradeArmor3.getArmorPower());
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("초보자의 갑옷")){
+            inventoryList.add("초보자의 갑옷");
+            user.setDefense(user.getDefense()+upgradeEquipment.upgradeArmor3.getArmorPower());
+            inventoryList.remove("마스터의 갑옷(강화)");
+            wearing[1] = "마스터의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("숙련자의 갑옷")){
+            inventoryList.add("숙련자의 갑옷");
+            user.setDefense(user.getDefense()+upgradeEquipment.upgradeArmor3.getArmorPower());
+            inventoryList.remove("마스터의 갑옷(강화)");
+            wearing[1] = "마스터의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("마스터의 갑옷")){
+            inventoryList.add("마스터의 갑옷");
+            user.setDefense(user.getDefense()+upgradeEquipment.upgradeArmor3.getArmorPower());
+            inventoryList.remove("마스터의 갑옷(강화)");
+            wearing[1] = "마스터의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+
+        }//----------------------------------------------------------------------
+        else if(wearing[1].equals("초보자의 갑옷(강화)")){
+            inventoryList.add("초보자의 갑옷(강화)");
+            user.setDefense(user.getDefense()+upgradeEquipment.upgradeArmor3.getArmorPower());
+            inventoryList.remove("마스터의 갑옷(강화)");
+            wearing[1] = "마스터의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("숙련자의 갑옷(강화)")){
+            inventoryList.add("숙련자의 갑옷(강화)");
+            user.setDefense(user.getDefense()+upgradeEquipment.upgradeArmor3.getArmorPower());
+            inventoryList.remove("마스터의 갑옷(강화)");
+            wearing[1] = "마스터의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+        }else if(wearing[1].equals("마스터의 갑옷(강화)")){
+            inventoryList.add("마스터의 갑옷(강화)");
+            user.setDefense(user.getDefense()+upgradeEquipment.upgradeArmor3.getArmorPower());
+            inventoryList.remove("마스터의 갑옷(강화)");
+            wearing[1] = "마스터의 갑옷(강화)";
+            System.out.println("갑옷 장착!");
+
+        }
+    }
+    //업그레이드 신발장착----------------------------------------------------------------------------------------------------
+    void setUpgradeShoes(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment){
+        if(wearing[2]==null){
+            wearing[2]="초보자의 신발(강화)";
+            inventoryList.remove("초보자의 신발(강화)");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.UpgradeShoes.getAvoidUp());
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("초보자의 신발")){
+            inventoryList.add("초보자의 신발");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.UpgradeShoes.getAvoidUp());
+            inventoryList.remove("초보자의 신발(강화)");
+            wearing[2]="초보자의 신발(강화)";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("숙련자의 신발")){
+            inventoryList.add("숙련자의 신발");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.UpgradeShoes.getAvoidUp());
+            inventoryList.remove("초보자의 신발(강화)");
+            wearing[2]="초보자의 신발(강화)";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("마스터의 신발")){
+            inventoryList.add("마스터의 신발");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.UpgradeShoes.getAvoidUp());
+            inventoryList.remove("초보자의 신발(강화)");
+            wearing[2]="초보자의 신발(강화)";
+            System.out.println("신발 장착!");
+        }
+        else if(wearing[2].equals("초보자의 신발(강화)")){
+            inventoryList.add("초보자의 신발(강화)");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.UpgradeShoes.getAvoidUp());
+            inventoryList.remove("초보자의 신발(강화)");
+            wearing[2]="초보자의 신발(강화)";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("숙련자의 신발(강화)")){
+            inventoryList.add("숙련자의 신발(강화)");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.UpgradeShoes.getAvoidUp());
+            inventoryList.remove("초보자의 신발(강화)");
+            wearing[2]="초보자의 신발(강화)";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("마스터의 신발(강화)")){
+            inventoryList.add("마스터의 신발(강화)");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.UpgradeShoes.getAvoidUp());
+            inventoryList.remove("초보자의 신발(강화)");
+            wearing[2]="초보자의 신발(강화)";
+            System.out.println("신발 장착!");
+        }
+        //--------------------------------------------------------------------------------------
+
+    }
+    void setUpgradeShoes2(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment){
+        if(wearing[2]==null){
+            wearing[2]="숙련자의 신발(강화)";
+            inventoryList.remove("숙련자의 신발(강화)");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.upgradeShoes2.getAvoidUp());
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("초보자의 신발")){
+            inventoryList.add("초보자의 신발");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.upgradeShoes2.getAvoidUp());
+            inventoryList.remove("숙련자의 신발(강화)");
+            wearing[2]="숙련자의 신발(강화)";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("숙련자의 신발")){
+            inventoryList.add("숙련자의 신발");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.upgradeShoes2.getAvoidUp());
+            inventoryList.remove("숙련자의 신발(강화)");
+            wearing[2]="숙련자의 신발(강화)";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("마스터의 신발")){
+            inventoryList.add("마스터의 신발");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.upgradeShoes2.getAvoidUp());
+            inventoryList.remove("숙련자의 신발(강화)");
+            wearing[2]="숙련자의 신발(강화)";
+            System.out.println("신발 장착!");
+        }
+        else if(wearing[2].equals("초보자의 신발(강화)")){
+            inventoryList.add("초보자의 신발(강화)");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.upgradeShoes2.getAvoidUp());
+            inventoryList.remove("숙련자의 신발(강화)");
+            wearing[2]="숙련자의 신발(강화)";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("숙련자의 신발(강화)")){
+            inventoryList.add("숙련자의 신발(강화)");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.upgradeShoes2.getAvoidUp());
+            inventoryList.remove("숙련자의 신발(강화)");
+            wearing[2]="숙련자의 신발(강화)";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("마스터의 신발(강화)")){
+            inventoryList.add("마스터의 신발(강화)");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.upgradeShoes2.getAvoidUp());
+            inventoryList.remove("숙련자의 신발(강화)");
+            wearing[2]="숙련자의 신발(강화)";
+            System.out.println("신발 장착!");
+        }
+        //--------------------------------------------------------------------------------------
+
+    }
+    void setUpgradeShoes3(User user,Store store,Inventory inventory,upgradeEquipment upgradeEquipment){
+        if(wearing[2]==null){
+            wearing[2]="마스터의 신발(강화)";
+            inventoryList.remove("마스터의 신발(강화)");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.upgradeShoes3.getAvoidUp());
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("초보자의 신발")){
+            inventoryList.add("초보자의 신발");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.upgradeShoes3.getAvoidUp());
+            inventoryList.remove("마스터의 신발(강화)");
+            wearing[2]="마스터의 신발(강화)";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("숙련자의 신발")){
+            inventoryList.add("숙련자의 신발");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.upgradeShoes3.getAvoidUp());
+            inventoryList.remove("마스터의 신발(강화)");
+            wearing[2]="마스터의 신발(강화)";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("마스터의 신발")){
+            inventoryList.add("마스터의 신발");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.upgradeShoes3.getAvoidUp());
+            inventoryList.remove("마스터의 신발(강화)");
+            wearing[2]="마스터의 신발(강화)";
+            System.out.println("신발 장착!");
+        }
+        else if(wearing[2].equals("초보자의 신발(강화)")){
+            inventoryList.add("초보자의 신발(강화)");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.upgradeShoes3.getAvoidUp());
+            inventoryList.remove("마스터의 신발(강화)");
+            wearing[2]="마스터의 신발(강화)";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("숙련자의 신발(강화)")){
+            inventoryList.add("숙련자의 신발(강화)");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.upgradeShoes3.getAvoidUp());
+            inventoryList.remove("마스터의 신발(강화)");
+            wearing[2]="마스터의 신발(강화)";
+            System.out.println("신발 장착!");
+        }else if(wearing[2].equals("마스터의 신발(강화)")){
+            inventoryList.add("마스터의 신발(강화)");
+            user.setAvoid(user.getAvoid() +upgradeEquipment.upgradeShoes3.getAvoidUp());
+            inventoryList.remove("마스터의 신발(강화)");
+            wearing[2]="마스터의 신발(강화)";
+            System.out.println("신발 장착!");
+        }
+        //--------------------------------------------------------------------------------------
+
+    }
+
+
 
 // 물약 먹음 --------------------------------------------------------------------------------------
     void setHpPotion(User user,Store store,Inventory inventory){ //물약먹음
@@ -555,3 +1224,12 @@ public class Inventory {
         }
     }
 }
+
+
+/*else if(wearing[0].equals(upgradeEquipment.upgradeSoad.getName())){
+            inventory.inventoryList.remove(store.soad.getName());
+            System.out.println("검 장착");
+            user.setAttack(user.getAttack()+ upgradeEquipment.upgradeSoad.getAttackPower());
+            wearing[0]=upgradeEquipment.upgradeSoad.getName();
+            inventoryList.add(equals(upgradeEquipment.upgradeSoad.getName()));
+        }*/

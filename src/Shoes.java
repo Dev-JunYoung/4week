@@ -1,6 +1,6 @@
 public class Shoes extends Equipments{
     int avoidUp;
-
+    
     public Shoes(String name,int price,int upgrade,int avoidUp) {
         setName(name);
         setPrice(price);
