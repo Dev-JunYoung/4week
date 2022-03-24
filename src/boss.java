@@ -1,7 +1,149 @@
-public class boss extends Monster{
 
-    public boss(String name, int ravel, int hp, int realHp, int mp, int realMp, int Attack, int Defense, int property, int skillAttack, String dropItem, int dropCash, int monEX) {
-        super(name, ravel, hp, realHp, mp, realMp, Attack, Defense, property, skillAttack, dropItem, dropCash, monEX);
+public class boss extends Monster implements Runnable{
+
+hunter hunter;
+User user;
+
+    public boss(String name,
+                int ravel,
+                int hp,
+                int realHp,
+                int mp,
+                int realMp,
+                int Attack,
+                int Defense,
+                int property,
+                int skillAttack,
+                String dropItem,
+                int dropCash,
+                int monEX,
+                int monNum,
+                User user) {
+        super(name, ravel, hp, realHp, mp, realMp, Attack, Defense, property, skillAttack, dropItem, dropCash, monEX, monNum, user);
+        setName(name);
+        setLevel(level);
+        setHp(hp);
+        setRealHp(realHp);
+        setMp(mp);
+        setRealMp(realMp);
+        setAttack(Attack);
+        setDefense(Defense);
+        setProperty(property);
+        setSkillAttack(skillAttack);
+        setDropItem(dropItem);
+        setDropCash(dropCash);
+        setMonEX(monEX);
+        setMonNum(monNum);
+        this.user=user;
+
+    }
+
+   /* {
+        super(
+                name,
+                ravel,
+                hp,
+                realHp,
+                mp,
+                realMp,
+                Attack,
+                Defense,
+                property,
+                skillAttack,
+                dropItem,
+                dropCash,
+                monEX,
+                monNum,
+                this.user=user);
+    }*/
+String propertyView(){
+    String 속성 = null;
+    if(this.getProperty()==1){
+        속성=ConsoleColors.FONT_RED+" 불"+ConsoleColors.RESET;
+    }else if(this.getProperty()==2){
+        속성=ConsoleColors.FONT_BLUE+"물"+ConsoleColors.RESET;
+    }else {
+        속성=ConsoleColors.FONT_GREEN+"풀"+ConsoleColors.RESET;
+    }
+    return 속성;
+}
+    @Override
+    public void run() {
+        try {
+            System.out.println("");
+            System.out.println("-----------------------------------------------------------------------------------------------------------------------------");
+
+            if (user.getRealHp() < 0 || this.getRealHp() < 0) {
+                flag = false;
+            }
+                while(flag){
+                    setProperty((int) (Math.random() * 3 + 1));
+                    System.out.println("-----------------------------------------------------------------------------------------------------------------------------");
+                    System.out.println("뮤츠의 속성이 변화했습니다 ");
+                    System.out.print("뮤츠속성 : "); System.out.println(this.propertyView()+ "  ");
+                    System.out.println("-----------------------------------------------------------------------------------------------------------------------------");
+                    for (int i = 0; i < 5; i++) { //3회 공격시 속성 변경
+                    Thread.sleep(3000);
+                    int random=((int)(Math.random()*2+1)); //평타공격,일반공격
+                    switch (random){
+                        case 1: //평타
+                            System.out.println(ConsoleColors.FONT_RED+"                                        드레인펀치!!"+ConsoleColors.RESET);
+                            if(user.getDefense()-this.getAttack()<0){ //양수가 되면 안됌
+                                System.out.println(this.user.getName()+"님의  현재HP  / 총HP  : " + this.user.getRealHp() + " / " + this.user.getHp());
+                                user.setRealHp(user.getRealHp()+(user.getDefense()-this.getAttack()));
+                                System.out.println(ConsoleColors.FONT_RED+user.getName()+"님의 데미지 : "+(user.getDefense()-this.getAttack())+ConsoleColors.RESET);
+                                System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
+                            }
+                            break;
+                        case 2: //스킬 -> 속성별 스킬
+                            switch (this.getProperty()){
+                                case 1: //불sout
+                                    System.out.println(ConsoleColors.FONT_RED+"                                                    회오리 불꽃!!"+ConsoleColors.RESET);
+                                    break;
+                                case 2: //물
+                                    System.out.println(ConsoleColors.FONT_RED+"                                                    하이드로빔!!"+ConsoleColors.RESET);
+                                    break;
+                                case 3: //풀
+                                    System.out.println(ConsoleColors.FONT_RED+"                                                    솔라빔!!"+ConsoleColors.RESET);
+                                    break;
+                            }
+                            if(user.getDefense()-this.getAttack()*5/3<0){ //양수가 되면 안됌
+                                System.out.println("");
+                                System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
+                                user.setRealHp(user.getRealHp()+(user.getDefense()-this.getAttack())*5/3);
+                                System.out.println(ConsoleColors.FONT_RED+user.getName()+"님의 데미지 : "+(user.getDefense()-this.getAttack())*5/3+ConsoleColors.RESET);
+                                System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
+                            }else {
+                                System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
+                            }
+                            break;
+                    } //switch
+                if(user.getRealHp()<=0){
+                    Thread.interrupted(); //false 로 초기화
+                    flag=false;
+                    System.out.println(ConsoleColors.FONT_RED+"사망하셨습니다.   ( 아무숫자를 누르세요  )"+ConsoleColors.RESET);
+                    return;
+                } //if
+                i++; // 뮤츠의 공격3회 끝나면 속성변경
+                System.out.println("-----------------------------------------------------------------------------------------------------------------------------");
+                System.out.println("");
+                } //while
+            } } //for //try
+        catch (Exception e){
+        }
+        
+        
+
+    }
+
+    @Override
+    public int getMonNum() {
+        return super.getMonNum();
+    }
+
+    @Override
+    public void setMonNum(int monNum) {
+        super.setMonNum(monNum);
     }
 
     @Override
@@ -10,7 +152,6 @@ public class boss extends Monster{
     }
     //필살기(몬스터클래스 메서드 오버라이딩)
     void mosterAttack(boss boss) {
-        System.out.println(boss.getName()+"필살기!!");
         super.mosterAttack();
     }
 
@@ -156,7 +297,18 @@ public class boss extends Monster{
 
     @Override
     public int getProperty() {
-        return super.getProperty();
+/*
+        if(getProperty()==1){
+            super.setProperty(1);
+        }else if(getProperty()==2){
+            super.setProperty(2);
+        }else if(getProperty()==3){
+            super.setProperty(3);
+        }*/
+        return
+            super.getProperty();
+
+
     }
 
     @Override
@@ -164,3 +316,4 @@ public class boss extends Monster{
         super.setProperty(property);
     }
 }
+

@@ -26,10 +26,6 @@ public class Skills {
     int skillPower;
 boolean loop=true;
     User user;
-
-
-
-
 Scanner sc=new Scanner(System.in);
     ///skillView
     public static Skills skillView(Skills skills){
@@ -40,8 +36,7 @@ Scanner sc=new Scanner(System.in);
         view.add("체력회복           :  "+skills.getHpSkill());
         view.add("방어력증가         :   "+skills.getArmorSkill());
         view.add("보유스킬포인드      :   "+skills.getSkillPoint());
-        System.out.println(skills.skillPower);
-
+        System.out.println("---------------------------------------------------------------------");
         System.out.println("User Skills");
         System.out.println("---------------------------------------------------------------------");
         for(int i=0;i< view.size();i++) {
@@ -56,7 +51,7 @@ Scanner sc=new Scanner(System.in);
         System.out.println("----------------------------------------------------------------------------------------------------------------------");
         System.out.println("1. 화염발사  ㅣ   2.물대포  ㅣ    3.나뭇잎날리기  ㅣ  4.체력회복  ㅣ   5.방어력증가  ㅣ  6.돌아가기");
         System.out.println("----------------------------------------------------------------------------------------------------------------------");
-        num= sc.nextInt();
+        num=project.예외();
         if(skillPoint>=0){
             switch (num){
                 case 1: fireUp(skills);
@@ -102,24 +97,28 @@ Scanner sc=new Scanner(System.in);
     //스킬포인트-------------------------------------------------
 
     //스킬메서드
-    void ArmorUp(User user,Skills skills){
+    int ArmorUp(User user,Skills skills){
+
         user.setDefense(user.getDefense()+skills.getArmorSkill()*3);
         user.setRealMp(user.getRealMp()-5);
-        System.out.println("방어력증가!");
+        return skills.getArmorSkill();
+    }
+    int ArmorRe(User user,Skills skills){
+
+        return skills.getArmorSkill();
     }
     void hpRecovery(User user,Skills skills){
 
         if(skills.getHpSkill()==0){
             System.out.println("스킬포인트가 0 입니다. 사용할 수 없습니다");
         }else {
-            user.setRealHp(user.getRealHp()+skills.getHpSkill()*50);
+            user.setRealHp(user.getRealHp()+skills.getHpSkill()*20);
             user.setRealMp(user.getRealMp()-5);
-            System.out.println("체력회복!");
+
         }
 
     }
     //공격스킬 메서드 상성에따라 딜값 달라짐 마나사용
-
 
     public int getWater() {
         return water;

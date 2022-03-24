@@ -24,10 +24,9 @@ public class unit {
     }
 */  //몬스터,유저는 공격, 스킬을 사용 할수있다.
     void Attack(){
-        System.out.println("공격");
     }
     void Skill(){
-        System.out.println("스킬사용");
+
     }
 
     public int getRealHp() {

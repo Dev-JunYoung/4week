@@ -19,4 +19,11 @@ public class Item {
     public void setName(String name) {
         this.name = name;
     }
+
+    public void 상호작용(User user, Inventory inventory, Store store){
+    }
+    public void sell(Inventory inventory){
+    }
+
+
 }

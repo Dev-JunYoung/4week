@@ -1,15 +1,17 @@
-public class Action { //전투 시 딜값계산하는 클래스
-    //일반공격력메서드 /
-    // *User : super.Attack / this.Avoid
-    //moster : realHp, Defense //일반공격은 상성이 없음.*/
+import java.awt.*;
 
-    void monsterHit(hunter hunter,Skills skills,User user){
-        int skillDamage = user.getPower()
-                + (user.getPower() * skills.fire)
-                / 10 * skills.fire;
-    }
-
-    void monsterProperty(){
-
+public class Action implements Runnable{ //유저 공격 쿨타임
+    @Override
+    public void run() {
+        System.out.println("공격!!");
+        try {
+            for(int i=3;i>0;i--){
+                System.out.println("공격제한 : "+i);
+                Thread.sleep(500);
+            }
+            return;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

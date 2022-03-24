@@ -2,55 +2,50 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class User extends unit {
-
     private int revelUpExperience = 100;
     private int skill = 0;
     private int avoid;
     private int statPoint = 0;
     private int status=1;
     private int Power=0;
-
+    private int 유저모드=0;
+    public int get유저모드() {
+        return 유저모드;
+    }
+    public void set유저모드(int 유저모드) {
+        this.유저모드 = 유저모드;
+    }
     public int getPower() {
         Power=this.getAttack()+this.getAvoid();
         return Power;
     }
-
     public void setPower(int power) {
         Power = power;
         Power=super.getAttack()+this.getAvoid();
     }
     public void setPower(User user) {
         Power = user.getAttack()+user.getAvoid();
-
     }
-
     public int getStatus() {
         return status;
     }
-
     public void setStatus(int status) {
         this.status = status;
     }
-
     public int getRevelUpExperience() {
         return revelUpExperience;
     }
-
     public void setRevelUpExperience(int revelUpExperience) {
-
         this.revelUpExperience = revelUpExperience;
     }
-
     @Override
     void Attack() {
         super.Attack();
     }
-
     @Override
     void Skill() {
         super.Skill();
     }
-
     Scanner sc = new Scanner(System.in);
     //게임시작 유저 초기화값
     User userInitSet(User user) {
@@ -60,7 +55,7 @@ public class User extends unit {
         else{
             super.setLevel(1);
             super.setHp(1000);
-            super.setRealHp(1000);
+            super.setRealHp(50);
             this.setRevelUpExperience(100);
             super.setMp(100);
             super.setRealMp(100);
@@ -75,43 +70,42 @@ public class User extends unit {
     User userInitCheatSet(User user) {
         super.setLevel(10);
         super.setHp(10000);
-        super.setRealHp(10000);
+        super.setRealHp(1000);
         this.setRevelUpExperience(100);
         super.setMp(10000);
         super.setRealMp(10000);
         super.setAttack(((int) (Math.random() * 200 + 100)));
-        super.setDefense(((int) (Math.random() * 200 + 100)));
+        super.setDefense(0);//((int) (Math.random() * 200 + 100))
         this.setAvoid(((int) (Math.random() * 200 + 100)));
         this.setStatus(1);
         this.setPower(user);
         return user;
     }
-    void startUser(User user){
+    void startUser(User user,Inventory inventory){
         System.out.println("---------------------------------------------------------------------");
         while(true){
             System.out.println("능력치가 랜덤으로 부여됩니다. ");
             user=user.userInitSet(user);
-            user.userStatList(user);
+            user.userStatList(user,inventory);
             System.out.println("1.완료     2.능력치 재분배");
-            if(sc.nextInt()==1){
+            if(sc.nextInt()== 1){
                 break;
             }
         }
         //능력치 while끝
         System.out.println(user.getName()+"님의 캐릭터가 능력치가 설정되었습니다.");
-
     }
     //유저 상태 메서드 (main.2)
     void userStatus(User user,Inventory inventory,Skills skills){
         int 뎁스1num;
         int 뎁스2num;
         while(true){
-            user.userStatList(user);
+            user.userStatList(user,inventory);
             System.out.println("----------------------------------------------------------------------------------------------------------------------");
             System.out.println("1.능력치 올리기 ㅣ   2.스킬   ㅣ   3.착용장비확인     ㅣ   4.돌아가기"    );
             System.out.println("----------------------------------------------------------------------------------------------------------------------");
 
-            뎁스1num= sc.nextInt();
+            뎁스1num=project.예외();
             switch (뎁스1num){           //     1.wearingEquipments
                 //              2.userSkills
                 //              3.inventory
@@ -131,7 +125,7 @@ public class User extends unit {
                         System.out.println("----------------------------------------------------------------------------------------------------------------------");
                         System.out.println("1.스킬 올리기 ㅣ   2.돌아가기   ㅣ ");
                         System.out.println("----------------------------------------------------------------------------------------------------------------------");
-                        뎁스2num= sc.nextInt();
+                        뎁스2num=project.예외();
                         if(뎁스2num==1){
                             if(skills.getSkillPoint()>0){
                                 skills.skillsUp(skills);
@@ -147,7 +141,7 @@ public class User extends unit {
                     }break;
                 case 3:
                     //착용장비확인 장비메서드호출
-                    inventory.wearing(user,inventory);
+                    inventory.wearing();
                     sc.nextLine();
                     break;
                 case 4: 뎁스1num=4; //돌아가기
@@ -155,11 +149,10 @@ public class User extends unit {
             if(뎁스1num==4){ //돌아가기
                 break;
             }
-
         }
     }
     // 유저 스탯 리스트
-    User userStatList(User user) {
+    User userStatList(User user,Inventory inventory) {
         System.out.println();
         ArrayList member = new ArrayList();
         System.out.println(user.getName() + "님의 능력치 : ");
@@ -167,12 +160,12 @@ public class User extends unit {
         member.add("레벨       : "+ user.level);
         member.add("체력       : " + user.getRealHp() + " / " + user.getHp());
         member.add("마나       : " + user.getRealMp() + " / " + user.getMp());
-        member.add("공격력     : " + user.getAttack());
-        member.add("방어력     : " + user.getDefense());
-        member.add("명중률     : " + user.getAvoid());
+        member.add("공격력     : " + user.getAttack() +"("+inventory.soadWearing(inventory.store)+")");
+        member.add("방어력     : " + user.getDefense() +"("+inventory.armorWearing(inventory.store)+")");
+        member.add("명중률     : " + user.getAvoid() +"("+inventory.shoesWearing(inventory.store)+")");
         member.add("경험치     : " + user.getExperience() + " / " + user.getRevelUpExperience());
         member.add("스탯포인트  : " + user.getStatPoint());
-        member.add("현재 공격력 : "+user.getPower());
+        member.add("현재 공격력 : "+user.getPower()  +"("+inventory.soadWearing(inventory.store)+inventory.shoesWearing(inventory.store)+")");
         //member.add("스킬포인트  : "+skill.
         System.out.println("User Status");
         System.out.println("---------------------------------------------------------------------");
@@ -183,7 +176,6 @@ public class User extends unit {
         return user;
     }
     //장비착용시 능력치 업그레이드
-
     // 유저 레벨업시 스탯 UP 메서드
     User userLavelUp(User user) {
         setLevel(getLevel()+1);
@@ -205,65 +197,64 @@ public class User extends unit {
         System.out.println("----------------------------------------------------------------------------------------------------------------------");
         System.out.println("1. HP+20  ㅣ   2.MP+10  ㅣ    3.공격력+1  ㅣ  4.방어력+1  ㅣ   5.민첩성+1  ㅣ   6.돌아가기");
         System.out.println("----------------------------------------------------------------------------------------------------------------------");
-        num = sc.nextInt();
+        num =project.예외();
         switch (num) {
             case 1:
-                hpUp(user);
+                hpUp();
                 break;
             case 2:
-                mpUp(user);
+                mpUp();
                 break;
             case 3:
-                AttackUp(user);
+                AttackUp();
                 break;
             case 4:
-                DefenseUp(user);
+                DefenseUp();
                 break;
             case 5:
-                avoidUp(user);
+                avoidUp();
                 break;
             case 6:
                 break;
         }
         return user;
     }
-
-    //유저 킬 메서드
+    //유저 다이 메서드
     void userDie(User user){
         if(user.getRealHp()<0){
-            System.out.println(user.getName()+"님이 사망하셨습니다. ");
             user.setExperience(0);
             user.setRealHp(user.getHp());
             user.setRealMp(user.getMp());
+            System.out.println(user.getName()+"님 캐릭터가 다시 생성 되었습니다.");
         }
     }
     // 스텟업메서드 해당스탯+1 보유스탯-1
-    void AttackUp(User user) {
+    void AttackUp() {
         setAttack(getAttack() + 1);
         setStatPoint(getStatPoint() - 1);
 
         System.out.println("공격력 +1");
     }
 
-    void DefenseUp(User user) {
+    void DefenseUp() {
         setDefense(getDefense() + 1);
         setStatPoint(getStatPoint() - 1);
         System.out.println("방어력 +1");
     }
 
-    void avoidUp(User user) {
+    void avoidUp() {
         setAvoid(getAvoid() + 1);
         setStatPoint(getStatPoint() - 1);
         System.out.println("민첩성 +1");
     }
 
-    void hpUp(User user) {
+    void hpUp() {
         setHp(getHp() + 20);
         setStatPoint(getStatPoint() - 1);
         System.out.println("총 체력  +20 ");
     }
 
-    void mpUp(User user) {
+    void mpUp() {
         setMp(getMp() + 10);
         setStatPoint(getStatPoint() - 1);
         System.out.println("총 마나  +10 ");
@@ -293,11 +284,11 @@ public class User extends unit {
         this.statPoint = statPoint;
 
     }
-
+    boolean afternoon = TimerRunnable.afternoon;
 
     public int getAvoid() {
-        return avoid;
-    }
+        return this.avoid;
+    } //어보이드
 
     public void setAvoid(int avoid) {
         this.avoid = avoid;
@@ -336,7 +327,7 @@ public class User extends unit {
             setRealMp(getMp());
             setAttack(getAttack() + 1);
             setDefense(getDefense() + 1);
-            setAvoid(getAttack() + 1);
+            setAvoid(getAvoid() + 1);
             System.out.println(user.getName() + "님의 레벨이 " + getLevel() + "이 되었습니다.");
             //스킬포인트 추가해야됌
             user.setExperience(0); //레벨업--> 경험치 초기화

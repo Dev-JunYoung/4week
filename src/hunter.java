@@ -1,34 +1,51 @@
-import org.w3c.dom.ls.LSOutput;
-
-import java.util.ArrayList;
-import java.util.Random;
 import java.util.Scanner;
 
-public class hunter {
+import static java.lang.Thread.State.*;
 
+public class hunter {
+    Thread l=new Thread(new LodingBar());
+    void loding() throws InterruptedException {
+        l.start();
+        l.join();
+    }
+    boolean game=true;
+
+    boolean afternoon = TimerRunnable.afternoon;
     Scanner sc=new Scanner(System.in);
-    int stage;
     int num;
     int random;
     int skillDamage;
-    void 사냥터입구(User user,Skills skills,Inventory inventory,Store store){
+    void 사냥터입구(User user,Skills skills,Inventory inventory,Store store) throws InterruptedException {
         int num;
         System.out.println("----------------------------------------------------------------------------------------------------------------------");
         System.out.println("1.초보자사냥터  ㅣ  2.숙련자사냥터  ㅣ  3.상급자사냥터  ㅣ  4.보스   ㅣ  5.돌아가기  ㅣ  ");
         System.out.println("----------------------------------------------------------------------------------------------------------------------");
-        num= sc.nextInt();
+        num=project.예외();
+        //loding();
         switch (num){
             case 1: //초급
                 초급사냥터(user, skills, inventory,store);
                 break;
             case 2: //중급
-                중급사냥터(user, skills, inventory,store);
+                if(user.getLevel()>4){
+                    중급사냥터(user, skills, inventory,store);
+                }else {
+                    System.out.println("레벨이 낮아, 진입 할 수 없습니다.");
+                }
                 break;
             case 3: //상급
-                상급사냥터(user, skills, inventory,store);
+                if(user.getLevel()>7){
+                    상급사냥터(user, skills, inventory,store);
+                }else {
+                    System.out.println("레벨이 낮아, 진입 할 수 없습니다.");
+                }
                 break;
             case 4: //보스
-                보스사냥터(user, skills, inventory,store);
+                if(user.getLevel()>=10){
+                    보스사냥터(user, skills, inventory,store);
+                }else {
+                    System.out.println("레벨이 낮아, 진입 할 수 없습니다.");
+                }
                 break;
             case 5:
                 break;
@@ -39,69 +56,133 @@ public class hunter {
     User 보스사냥터(User user, Skills skills, Inventory inventory, Store store){
         //보스는 매 턴마다 속성이 달라짐,
         int ranChar=((int)(Math.random()*3+1));
-        boss 뮤츠=new boss(
+        Runnable 뮤츠=new boss(
                 "뮤츠",
                 10,
+                10000,
+                10000,
                 200,
                 200,
-                200,
-                200,
-                150,
-                100,
+                10,
+                10,
                 0,
                 200,
                 "뮤츠의 유골",
                 2000,
-                100
+                100,
+                10,user
         ) ;
-        Battle뮤츠(user,skills,inventory,store,뮤츠);
+        Battle뮤츠(user,skills,inventory,store,(boss)뮤츠);
         return user;
-    }
+    } //보스사냥터
     //--------------------------------------------------------------------------------------------------------------
     User Battle뮤츠(User user, Skills skills, Inventory inventory, Store store,boss 뮤츠){
-        뮤츠.property=((int)(Math.random()*3+1));
-        String 속성 = null;
-        if(뮤츠.property==1){
-            속성="'불' 속성";
-        }else if(뮤츠.property==2){
-            속성="'물' 속성";
-        }else if(뮤츠.property==3){
-            속성="'풀' 속성";
-        }
         System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println(뮤츠.getName()+"와 전투를 합니다");
+        System.out.println(ConsoleColors.FONT_RED+뮤츠.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
         System.out.println(" 공격력         : " + 뮤츠.getAttack());
         System.out.println(" 방어력         : " + 뮤츠.getDefense());
-        System.out.println("뮤츠의 현재 속성은 "+속성+" 입니다");
         System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println(ConsoleColors.FONT_YELLOW+user.getName()+"님의       현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp()+ConsoleColors.RESET);
+        System.out.println(ConsoleColors.FONT_YELLOW+"                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp()+ConsoleColors.RESET);
+        System.out.println("");
+        Thread th=new Thread(뮤츠);
+        //아머스킬쓰레드 runnable 상태 (실행대기)
+        Runnable armor=new ArmorSkill(user,skills);
+        Thread armorTh=new Thread(armor);
+        //스킬쓰레드 runnable 상태 (실행대기)
+        Runnable hp=new HpSkill(user,skills);
+        Thread hpTh=new Thread(hp);
+        th.start();
+        game=true;
         while (game) {
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.도망가기    ㅣ");
+            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.포션 및 장비교환    ㅣ    8.도망가기    ㅣ");
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            num=sc.nextInt();
+            num=project.예외();
             switch (num){
                 case 1: //일반공격
                     if(뮤츠.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 일반공격!!!"+ConsoleColors.RESET);
+                        System.out.println("                            뮤츠의 HP  / 총HP  : " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
                         뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-user.getPower()));
-                    }  else {
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            뮤츠에게 입힌 데미지    : "+(뮤츠.getDefense()-user.getPower())+ConsoleColors.RESET);
+                        System.out.println("                            뮤츠의 현재HP  / 총HP  :  " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        //new Th1(시간 쿨타임 start();
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
                         System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
                     }
                     break;
                 case 2: //내가 불공격
-                        switch (뮤츠.property){
+                        switch (뮤츠.getProperty()){
                             case 1:   //case 1 불뮤츠
                                 skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
                                 if(뮤츠.getDefense()<skillDamage){
+                                    if(user.getRealMp()>5){
+                                        user.setRealMp(user.getRealMp()-5);
+                                        System.out.println("----------------------------------------------------------------------------------------------");
+                                        System.out.println(ConsoleColors.FONT_YELLOW+"같은 상성입니다"+ConsoleColors.RESET);
+                                        System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 화염발사!!!"+ConsoleColors.RESET);
+                                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                                        System.out.println("");
+                                        System.out.println("                            뮤츠의 현재HP  / 총HP  : " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                        뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                        System.out.println(ConsoleColors.FONT_YELLOW+"                            뮤츠에게 입힌 데미지    : "+(뮤츠.getDefense()-skillDamage)+ConsoleColors.RESET);
+                                        System.out.println("                            뮤츠의 현재HP  / 총HP  :  " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                        System.out.println("----------------------------------------------------------------------------------------------");
+                                        Runnable a=new Action();
+                                        Thread aTh=new Thread(a);
+                                        aTh.start();
+                                        try {
+                                            aTh.join();
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }else {
+                                        System.out.println("MP가 부족합니다.");
+                                    }
                                     뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
                                     System.out.println(user.getName()+"님이 공격했습니다.");
                                 }else {
                                     System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                                 }
                                 break;
-                            case 2:    //case 2 물뮤츠
-                                skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*2/3;
+                            case 2:    //case 2 물뮤츠 내가 불공격
+                                skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10)*2/3);
                                 if(뮤츠.getDefense()<skillDamage){
+                                    if(user.getRealMp()>5){
+                                        user.setRealMp(user.getRealMp()-5);
+                                        System.out.println("----------------------------------------------------------------------------------------------");
+                                        System.out.println(ConsoleColors.FONT_YELLOW+"상성에 불리합니다"+ConsoleColors.RESET);
+                                        System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 화염발사!!!"+ConsoleColors.RESET);
+                                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                                        System.out.println("");
+                                        System.out.println("                            뮤츠의 현재HP  / 총HP  : " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                        뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                        System.out.println(ConsoleColors.FONT_YELLOW+"                            뮤츠에게 입힌 데미지    : "+(뮤츠.getDefense()-skillDamage)+ConsoleColors.RESET);
+                                        System.out.println("                            뮤츠의 현재HP  / 총HP  :  " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                        System.out.println("----------------------------------------------------------------------------------------------");
+                                        Runnable a=new Action();
+                                        Thread aTh=new Thread(a);
+                                        aTh.start();
+                                        try {
+                                            aTh.join();
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }else {
+                                        System.out.println("MP가 부족합니다.");
+                                    }
                                     뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
                                     System.out.println(user.getName()+"님이 공격했습니다.");
                                 }else {
@@ -109,8 +190,31 @@ public class hunter {
                                 }
                                 break;
                             case 3:  //case 3 풀뮤츠
-                                skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*3/2;
+                                skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10)*3/2);
                                 if(뮤츠.getDefense()<skillDamage){
+                                    if(user.getRealMp()>5){
+                                        user.setRealMp(user.getRealMp()-5);
+                                        System.out.println("----------------------------------------------------------------------------------------------");
+                                        System.out.println(ConsoleColors.FONT_YELLOW+"상성에 유리합니다"+ConsoleColors.RESET);
+                                        System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 화염발사!!!"+ConsoleColors.RESET);
+                                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                                        System.out.println("");
+                                        System.out.println("                            뮤츠의 현재HP  / 총HP  : " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                        뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                        System.out.println(ConsoleColors.FONT_YELLOW+"                            뮤츠에게 입힌 데미지    : "+(뮤츠.getDefense()-skillDamage)+ConsoleColors.RESET);
+                                        System.out.println("                            뮤츠의 현재HP  / 총HP  :  " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                        System.out.println("----------------------------------------------------------------------------------------------");
+                                        Runnable a=new Action();
+                                        Thread aTh=new Thread(a);
+                                        aTh.start();
+                                        try {
+                                            aTh.join();
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }else {
+                                        System.out.println("MP가 부족합니다.");
+                                    }
                                     뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
                                     System.out.println(user.getName()+"님이 공격했습니다.");
                                 }else {
@@ -120,28 +224,97 @@ public class hunter {
                         }
                     break;
                 case 3: //내가 물공격
-                    switch (뮤츠.property){
+                    switch (뮤츠.getProperty()){
                         case 1:   //case 1 불뮤츠
-                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*3/2;
+                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10)*3/2);
                             if(뮤츠.getDefense()<skillDamage){
+                                if(user.getRealMp()>5){
+                                    user.setRealMp(user.getRealMp()-5);
+                                    System.out.println("----------------------------------------------------------------------------------------------");
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"상성에 유리합니다"+ConsoleColors.RESET);
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
+                                    System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                                    System.out.println("");
+                                    System.out.println("                            뮤츠의 현재HP  / 총HP  : " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                    뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"                            뮤츠에게 입힌 데미지    : "+(뮤츠.getDefense()-skillDamage)+ConsoleColors.RESET);
+                                    System.out.println("                            뮤츠의 현재HP  / 총HP  :  " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                    System.out.println("----------------------------------------------------------------------------------------------");
+                                    Runnable a=new Action();
+                                    Thread aTh=new Thread(a);
+                                    aTh.start();
+                                    try {
+                                        aTh.join();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }else {
+                                    System.out.println("MP가 부족합니다.");
+                                }
                                 뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
                                 System.out.println(user.getName()+"님이 공격했습니다.");
                             }else {
                                 System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                             }
                             break;
-                        case 2:    //case 2 물뮤츠
-                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10));
+                        case 2:    //case 2 물뮤츠 내가 물공격
+                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
                             if(뮤츠.getDefense()<skillDamage){
+                                if(user.getRealMp()>5){
+                                    user.setRealMp(user.getRealMp()-5);
+                                    System.out.println("----------------------------------------------------------------------------------------------");
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"같은 상성입니다"+ConsoleColors.RESET);
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
+                                    System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                                    System.out.println("");
+                                    System.out.println("                            뮤츠의 현재HP  / 총HP  : " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                    뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"                            뮤츠에게 입힌 데미지    : "+(뮤츠.getDefense()-skillDamage)+ConsoleColors.RESET);
+                                    System.out.println("                            뮤츠의 현재HP  / 총HP  :  " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                    System.out.println("----------------------------------------------------------------------------------------------");
+                                    Runnable a=new Action();
+                                    Thread aTh=new Thread(a);
+                                    aTh.start();
+                                    try {
+                                        aTh.join();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }else {
+                                    System.out.println("MP가 부족합니다.");
+                                }
                                 뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
                                 System.out.println(user.getName()+"님이 공격했습니다.");
                             }else {
                                 System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                             }
                             break;
-                        case 3:  //case 3 풀뮤츠
-                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*2/3;
+                        case 3:  //case 3 풀뮤츠 물공격
+                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10)*2/3);
                             if(뮤츠.getDefense()<skillDamage){
+                                if(user.getRealMp()>5){
+                                    user.setRealMp(user.getRealMp()-5);
+                                    System.out.println("----------------------------------------------------------------------------------------------");
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"상성에 불리합니다"+ConsoleColors.RESET);
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
+                                    System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                                    System.out.println("");
+                                    System.out.println("                            뮤츠의 현재HP  / 총HP  : " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                    뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"                            뮤츠에게 입힌 데미지    : "+(뮤츠.getDefense()-skillDamage)+ConsoleColors.RESET);
+                                    System.out.println("                            뮤츠의 현재HP  / 총HP  :  " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                    System.out.println("----------------------------------------------------------------------------------------------");
+                                    Runnable a=new Action();
+                                    Thread aTh=new Thread(a);
+                                    aTh.start();
+                                    try {
+                                        aTh.join();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }else {
+                                    System.out.println("MP가 부족합니다.");
+                                }
                                 뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
                                 System.out.println(user.getName()+"님이 공격했습니다.");
                             }else {
@@ -151,28 +324,97 @@ public class hunter {
                     }
                     break;
                 case 4: //user 풀
-                    switch (뮤츠.property){
-                        case 1:   //case 1 불뮤츠
-                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*2/3;
+                    switch (뮤츠.getProperty()){
+                        case 1:   //case 1 불뮤츠 user  풀
+                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10)*2/3);
                             if(뮤츠.getDefense()<skillDamage){
+                                if(user.getRealMp()>5){
+                                    user.setRealMp(user.getRealMp()-5);
+                                    System.out.println("----------------------------------------------------------------------------------------------");
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"상성에 불리합니다"+ConsoleColors.RESET);
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
+                                    System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                                    System.out.println("");
+                                    System.out.println("                            뮤츠의 현재HP  / 총HP  : " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                    뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"                            뮤츠에게 입힌 데미지    : "+(뮤츠.getDefense()-skillDamage)+ConsoleColors.RESET);
+                                    System.out.println("                            뮤츠의 현재HP  / 총HP  :  " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                    System.out.println("----------------------------------------------------------------------------------------------");
+                                    Runnable a=new Action();
+                                    Thread aTh=new Thread(a);
+                                    aTh.start();
+                                    try {
+                                        aTh.join();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }else {
+                                    System.out.println("MP가 부족합니다.");
+                                }
                                 뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
                                 System.out.println(user.getName()+"님이 공격했습니다.");
                             }else {
                                 System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                             }
                             break;
-                        case 2:    //case 2 물뮤츠
-                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*3/2;
+                        case 2:    //case 2 물뮤츠 내가 풀공격
+                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10)*3/2);
                             if(뮤츠.getDefense()<skillDamage){
+                                if(user.getRealMp()>5){
+                                    user.setRealMp(user.getRealMp()-5);
+                                    System.out.println("----------------------------------------------------------------------------------------------");
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"상성에 유리합니다"+ConsoleColors.RESET);
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
+                                    System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                                    System.out.println("");
+                                    System.out.println("                            뮤츠의 현재HP  / 총HP  : " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                    뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"                            뮤츠에게 입힌 데미지    : "+(뮤츠.getDefense()-skillDamage)+ConsoleColors.RESET);
+                                    System.out.println("                            뮤츠의 현재HP  / 총HP  :  " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                    System.out.println("----------------------------------------------------------------------------------------------");
+                                    Runnable a=new Action();
+                                    Thread aTh=new Thread(a);
+                                    aTh.start();
+                                    try {
+                                        aTh.join();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }else {
+                                    System.out.println("MP가 부족합니다.");
+                                }
                                 뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
                                 System.out.println(user.getName()+"님이 공격했습니다.");
                             }else {
                                 System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                             }
                             break;
-                        case 3:  //case 3 풀뮤츠
-                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10));
+                        case 3:  //case 3 풀뮤츠 풀공격
+                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
                             if(뮤츠.getDefense()<skillDamage){
+                                if(user.getRealMp()>5){
+                                    user.setRealMp(user.getRealMp()-5);
+                                    System.out.println("----------------------------------------------------------------------------------------------");
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"같은 상성입니다"+ConsoleColors.RESET);
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
+                                    System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                                    System.out.println("");
+                                    System.out.println("                            뮤츠의 현재HP  / 총HP  : " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                    뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
+                                    System.out.println(ConsoleColors.FONT_YELLOW+"                            뮤츠에게 입힌 데미지    : "+(뮤츠.getDefense()-skillDamage)+ConsoleColors.RESET);
+                                    System.out.println("                            뮤츠의 현재HP  / 총HP  :  " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
+                                    System.out.println("----------------------------------------------------------------------------------------------");
+                                    Runnable a=new Action();
+                                    Thread aTh=new Thread(a);
+                                    aTh.start();
+                                    try {
+                                        aTh.join();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }else {
+                                    System.out.println("MP가 부족합니다.");
+                                }
                                 뮤츠.setRealHp(뮤츠.getRealHp()+(뮤츠.getDefense()-skillDamage));
                                 System.out.println(user.getName()+"님이 공격했습니다.");
                             }else {
@@ -182,153 +424,83 @@ public class hunter {
                     }
                     break;
                 case 5:
-                    skills.hpRecovery(user, skills);
+                    if(hpTh.getState()==NEW){
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TERMINATED){
+                        hpTh=new Thread(hp);
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다다.");
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
                     break;
                 case 6:
-                    skills.ArmorUp(user,skills);
+                    //running
+                    if(armorTh.getState()==NEW){
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TERMINATED){
+                        armorTh=new Thread(armor);
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다.");
+
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
+                    System.out.println("-----------------------------------------------------------------------");
+                    System.out.println("                                        스킬종료!!");
+                    System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
+                    inventory.listView(user,inventory,store);
+                    break;
+                case 8:
                     game=false;
+                    th.interrupt();
                     return user;
             }//내공격끝
 
             if(뮤츠.getRealHp()<=0){
-
-                System.out.println("뮤츠를 처치했습니다.");
+                th.interrupt();
+                System.out.println(ConsoleColors.FONT_YELLOW+"뮤츠를 처치했습니다."+ConsoleColors.RESET);
                 user.setExperience(user.getExperience()+뮤츠.getMonEX(),user,skills);
                 inventory.inventoryList.add(뮤츠.dropItem);
                 inventory.setCash(inventory.getCash()+100);
-                System.out.println("보상아이템 :  "+뮤츠.dropItem+" ㅣ 금화:  "+뮤츠.getDropCash()+"  ㅣ  경험치 : "+뮤츠.getMonEX());
+                System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+뮤츠.dropItem+" ㅣ 금화:  "+뮤츠.getDropCash()+"  ㅣ  경험치 : "+뮤츠.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
             }
-            System.out.println("뮤츠의 공격");
-            sc.nextLine();
-            random=((int)(Math.random()*4+1));
-            switch (random){
-                case 1: // 평타
-                    System.out.println("----------------------------------------------------------------------------------------------------------");
-                    System.out.println("드레인펀치!!");
-                    System.out.println("----------------------------------------------------------------------------------------------------------");
-                    user.setRealHp(user.getRealHp()-100);
-                    if(user.getDefense()-뮤츠.getAttack()<0){ //양수가 되면 안됌
-                        user.setRealHp(user.getRealHp()+(user.getDefense()-뮤츠.getAttack()));
-                        System.out.println("칼등치기!!");
-                    }else {
-                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                    }
-                    break;
-                case 2: //스킬
-                    System.out.println("----------------------------------------------------------------------------------------------------------");
-                    System.out.println("솔라빔!!");
-                    System.out.println("----------------------------------------------------------------------------------------------------------");
-                    user.setRealHp(user.getRealHp()-100);
-                    break;
-                case 3: //스킬
-                    System.out.println("----------------------------------------------------------------------------------------------------------");
-                    System.out.println("파괴광선!!");
-                    System.out.println("----------------------------------------------------------------------------------------------------------");
-                    user.setRealHp(user.getRealHp()-100);
-                    break;
-                case 4: //스킬
-                    System.out.println("----------------------------------------------------------------------------------------------------------");
-                    System.out.println("1000만볼트!!");
-                    System.out.println("----------------------------------------------------------------------------------------------------------");
-                    user.setRealHp(user.getRealHp()-100);
-                    break;
-            }
-            뮤츠.property=((int)(Math.random()*3+1));
-            if(뮤츠.property==1){
-                속성="'물' 속성";
-            }else if(뮤츠.property==2){
-                속성="'불' 속성";
-            }else {
-                속성="'풀' 속성";
-            }
-            stage=stage+1;
-            System.out.println("진행횟수  :  "+stage);
-            if(user.getRealHp()<0){
-                user.userDie(user);
-                return user;
-            }
-            System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
-            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
-            System.out.println("----------------------------------------------------------------------------------------------------------");
-            System.out.println("뮤츠의 현재HP  / 총HP  : " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
-            System.out.println("뮤츠의 현재 속성은 "+속성+" 입니다");
-            System.out.println();
         }
-
+        if(th.getState()==TERMINATED){
+            hpTh.interrupt();
+            armorTh.interrupt();
+        }
         return user;
-    }
-    void 뮤츠속성별공격력변화(User user,boss 뮤츠){
-        switch (뮤츠.property){
-            case 1: //불
-                //뮤츠불속성(user, 뮤츠);
-                break;
-            case 2: //물
-                //뮤츠물속성(user, 뮤츠);
-                break;
-            case 3: //풀
-                //뮤츠풀속성(user, 뮤츠);
-                break;
-        }
-    }
-    void 뮤츠불속성(User user,boss 뮤츠){ //뮤츠 불속성일때
-        switch (뮤츠.property){
-            case 1: //불속성공격
-                뮤츠.setRealHp(뮤츠.getRealHp()-30);
-                user.setRealMp(user.getRealMp()-3);
-                break;
-            case 2: //물속성공격
-                뮤츠.setRealHp(뮤츠.getRealHp()-60);
-                user.setRealMp(user.getRealMp()-3);
-                break;
-            case 3: //풀속성공격
-                뮤츠.setRealHp(뮤츠.getRealHp()-15);
-                user.setRealMp(user.getRealMp()-3);
-                break;
-        }
-    }
-    void 뮤츠물속성(User user,boss 뮤츠){
-        switch (뮤츠.property){
-            case 1: //불속성공격
-                뮤츠.setRealHp(뮤츠.getRealHp()-15);
-                user.setRealMp(user.getRealMp()-3);
-                break;
-            case 2: //물속성공격
-                뮤츠.setRealHp(뮤츠.getRealHp()-30);
-                user.setRealMp(user.getRealMp()-3);
-                break;
-            case 3: //풀속성공격
-                뮤츠.setRealHp(뮤츠.getRealHp()-60);
-                user.setRealMp(user.getRealMp()-3);
-                break;
-        }
-    }
-    void 뮤츠풀속성(User user,boss 뮤츠){
-        switch (뮤츠.property){
-
-            case 1: //불속성공격
-                뮤츠.setRealHp(뮤츠.getRealHp()-60);
-                user.setRealMp(user.getRealMp()-3);
-                break;
-            case 2: //물속성공격
-                뮤츠.setRealHp(뮤츠.getRealHp()-15);
-                user.setRealMp(user.getRealMp()-3);
-                break;
-            case 3: //풀속성공격
-                뮤츠.setRealHp(뮤츠.getRealHp()-30);
-                user.setRealMp(user.getRealMp()-3);
-                break;
-        }
-    }
+    } //보스vs
     //완성
     User 상급사냥터(User user, Skills skills, Inventory inventory, Store store){
+        game=true;
         int ranChar=((int)(Math.random()*3+1));
         switch (ranChar){
             case 1: //
-                Monster 리자몽=new Monster(
+                Runnable 리자몽=new Monster(
                         "리자몽",
                         7,
                         100,
@@ -336,16 +508,18 @@ public class hunter {
                         100,
                         100,
                         70,
-                        70,
+                        35,
                         1,
                         70,
                         "리자몽의 꼬리",
                         500,
-                        50
+                        50,
+                        7,
+                        user
                 );
-                Battle리자몽(user, skills, inventory, store,리자몽);
+                Battle리자몽(user, skills, inventory, store,(Monster)리자몽);
                 break;
-            case 2:Monster 거북왕=new Monster(
+            case 2:Runnable 거북왕=new Monster(
                     "거북왕",
                     7,
                     100,
@@ -353,16 +527,18 @@ public class hunter {
                     100,
                     100,
                     100,
-                    100,
+                    35,
                     2,
                     70,
                     "거북왕의 등딱지",
                     500,
-                    50
+                    50,
+                    8,
+                    user
             );
-                Battle거북왕(user, skills, inventory, store,거북왕);
+                Battle거북왕(user, skills, inventory, store,(Monster)거북왕);
                 break;
-            case 3:Monster 이상해꽃=new Monster(
+            case 3:Runnable 이상해꽃=new Monster(
                     "이상해꽃",
                     7,
                     100,
@@ -370,145 +546,310 @@ public class hunter {
                     100,
                     100,
                     100,
-                    100,
+                    35,
                     3,
                     70,
                     "이상해꽃의 꽃",
                     500,
-                    50
+                    50,
+                    9,
+                    user
             );
-                Battle이상해꽃(user, skills, inventory, store,이상해꽃);
+                Battle이상해꽃(user, skills, inventory, store,(Monster)이상해꽃);
                 break;
         }
         return user;
     }
     User Battle이상해꽃(User user, Skills skills, Inventory inventory, Store store,Monster 이상해꽃){
         System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println(이상해꽃.getName()+"와 전투를 합니다");
+        System.out.println(ConsoleColors.FONT_RED+이상해꽃.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 이상해꽃.getRealHp() + " / " + 이상해꽃.getHp());
         System.out.println(" 공격력         : " + 이상해꽃.getAttack());
         System.out.println(" 방어력         : " + 이상해꽃.getDefense());
         System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println(ConsoleColors.FONT_YELLOW+user.getName()+"님의       현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp()+ConsoleColors.RESET);
+        System.out.println(ConsoleColors.FONT_YELLOW+"                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp()+ConsoleColors.RESET);
+        System.out.println("");
+        Thread th=new Thread(이상해꽃);
+        //아머스킬쓰레드 runnable 상태 (실행대기)
+        Runnable armor=new ArmorSkill(user,skills);
+
+        Thread armorTh=new Thread(armor);
+        //스킬쓰레드 runnable 상태 (실행대기)
+
+        Runnable hp=new HpSkill(user,skills);
+        Thread hpTh=new Thread(hp);
+        th.start();
+
         while (game) {
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.도망가기    ㅣ");
+            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.포션 및 장비교환    ㅣ    8.도망가기    ㅣ");
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            num=sc.nextInt();
+            if(th.getState()==TERMINATED){
+                game=false;
+            }
+            num=project.예외();
+            if(user.getRealHp()<0){
+                game=false;
+                num=0;
+            }
             switch (num){
+                case 0: user.userDie(user);
+                    break;
                 case 1: //일반공격
                     if(이상해꽃.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 일반공격!!!"+ConsoleColors.RESET);
+                        System.out.println("                            이상해꽃의 HP  / 총HP  : " + 이상해꽃.getRealHp() + " / " + 이상해꽃.getHp());
                         이상해꽃.setRealHp(이상해꽃.getRealHp()+(이상해꽃.getDefense()-user.getPower()));
-                    }  else {
-                    System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                }
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            이상해꽃에게 입힌 데미지    : "+(이상해꽃.getDefense()-user.getPower())+ConsoleColors.RESET);
+                        System.out.println("                            이상해꽃의 현재HP  / 총HP  :  " + 이상해꽃.getRealHp() + " / " + 이상해꽃.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        //new Th1(시간 쿨타임 start();
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");                    }
                     break;
-                case 2:
+                case 2://불공격
+                    ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*3/2;
                     if(이상해꽃.getDefense()<skillDamage){
-                        이상해꽃.setRealHp(이상해꽃.getRealHp()+(이상해꽃.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        if(user.getRealMp()>5){
+                            user.setRealMp(user.getRealMp()-5);
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 화염발사!!!"+ConsoleColors.RESET);
+                            System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                            System.out.println("");
+                            System.out.println("                            이상해꽃의 현재HP  / 총HP  : " + 이상해꽃.getRealHp() + " / " + 이상해꽃.getHp());
+                            이상해꽃.setRealHp(이상해꽃.getRealHp()+(이상해꽃.getDefense()-skillDamage));
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                            이상해꽃에게 입힌 데미지    : "+(이상해꽃.getDefense()-skillDamage)+ConsoleColors.RESET);
+                            System.out.println("                            이상해꽃의 현재HP  / 총HP  :  " + 이상해꽃.getRealHp() + " / " + 이상해꽃.getHp());
+                            System.out.println("----------------------------------------------------------------------------------------------");
+
+                            Runnable a=new Action();
+                            Thread aTh=new Thread(a);
+                            aTh.start();
+                            try {
+                                aTh.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            System.out.println("MP가 부족합니다.");
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
                     break;
-                case 3:
+                case 3: //물공격
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*2/3;
                     if(이상해꽃.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
+                        System.out.println("                            이상해꽃의 현재HP  / 총HP  : " + 이상해꽃.getRealHp() + " / " + 이상해꽃.getHp());
                         이상해꽃.setRealHp(이상해꽃.getRealHp()+(이상해꽃.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            이상해꽃에게 입힌 데미지    : "+(이상해꽃.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            이상해꽃의 현재HP  / 총HP  :  " + 이상해꽃.getRealHp() + " / " + 이상해꽃.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
                     break;
-                case 4:
+                case 4: //풀공격
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10));
                     if(이상해꽃.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
+                        System.out.println("                            이상해꽃의 현재HP  / 총HP  : " + 이상해꽃.getRealHp() + " / " + 이상해꽃.getHp());
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
                         이상해꽃.setRealHp(이상해꽃.getRealHp()+(이상해꽃.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            이상해꽃에게 입힌 데미지    : "+(이상해꽃.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            이상해꽃의 현재HP  / 총HP  :  " + 이상해꽃.getRealHp() + " / " + 이상해꽃.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
                     break;
                 case 5:
-                    skills.hpRecovery(user, skills);
+                    if(hpTh.getState()==NEW){
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TERMINATED){
+                        hpTh=new Thread(hp);
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다다.");
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
                     break;
                 case 6:
-                    skills.ArmorUp(user,skills);
+                    //running
+                    if(armorTh.getState()==NEW){
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TERMINATED){
+                        armorTh=new Thread(armor);
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다.");
+
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
+                    System.out.println("-----------------------------------------------------------------------");
+                    System.out.println("                                        스킬종료!!");
+                    System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
+                    inventory.listView(user,inventory,store);
+                    break;
+                case 8:
                     game=false;
+                    th.interrupt();
                     return user;
-            }//내공격끝
-            //리자몽공격
+            }
             if(이상해꽃.getRealHp()<=0){
-                System.out.println("이상해꽃을 처치했습니다.");
+                th.interrupt();
+                System.out.println("이상해꽃를 처치했습니다.");
                 user.setExperience(user.getExperience()+이상해꽃.getMonEX(),user,skills);
                 inventory.inventoryList.add(이상해꽃.dropItem);
-                inventory.setCash(inventory.getCash()+300);
-                System.out.println("보상아이템 :  "+이상해꽃.dropItem+" ㅣ 금화:  "+이상해꽃.getDropCash()+"  ㅣ  경험치 : "+이상해꽃.getMonEX());
+                inventory.setCash(inventory.getCash()+100);
+                System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+이상해꽃.dropItem+" ㅣ 금화:  "+이상해꽃.getDropCash()+"  ㅣ  경험치 : "+이상해꽃.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
             }
-            System.out.println("이상해꽃의 공격");
-            sc.nextLine();
-            random=((int)(Math.random()*2+1));
-            switch (random){
-                case 1: // 평타
+        }
 
-                    if(user.getDefense()-이상해꽃.getAttack()<0){ //양수가 되면 안됌
-                    user.setRealHp(user.getRealHp()+(user.getDefense()-이상해꽃.getAttack()));
-                        System.out.println("칼등치기!!"); }else {
-                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                    }
-                    break;
-                case 2: //스킬
 
-                    if(이상해꽃.getDefense()-user.getPower()<0){ //양수가 되면 안됌
-                        이상해꽃.setRealHp(이상해꽃.getRealHp()+(이상해꽃.getDefense()-user.getPower()));
-                        System.out.println("솔라빔!!");
-                    } else {
-                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                    }
-                    break;
-            }
-            stage=stage+1;
-            System.out.println("진행횟수  :  "+stage);
-            if(user.getRealHp()<0){
-                user.userDie(user);
-                return user;
-            }
-            System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
-            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
-            System.out.println("----------------------------------------------------------------------------------------------------------");
-            System.out.println("이상해꽃의 현재HP  / 총HP  : " + 이상해꽃.getRealHp() + " / " + 이상해꽃.getHp());
+        if(th.getState()==TERMINATED){
+            hpTh.interrupt();
+            armorTh.interrupt();
         }
         return user;
     }
     User Battle거북왕(User user, Skills skills, Inventory inventory, Store store,Monster 거북왕){
         System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println(거북왕.getName()+"와 전투를 합니다");
+        System.out.println(ConsoleColors.FONT_RED+거북왕.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 거북왕.getRealHp() + " / " + 거북왕.getHp());
         System.out.println(" 공격력         : " + 거북왕.getAttack());
         System.out.println(" 방어력         : " + 거북왕.getDefense());
         System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println(ConsoleColors.FONT_YELLOW+user.getName()+"님의       현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp()+ConsoleColors.RESET);
+        System.out.println(ConsoleColors.FONT_YELLOW+"                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp()+ConsoleColors.RESET);
+        System.out.println("");
+        Thread th=new Thread(거북왕);
+        //아머스킬쓰레드 runnable 상태 (실행대기)
+        Runnable armor=new ArmorSkill(user,skills);
+        Thread armorTh=new Thread(armor);
+        //스킬쓰레드 runnable 상태 (실행대기)
+        Runnable hp=new HpSkill(user,skills);
+        Thread hpTh=new Thread(hp);
+        th.start();
+
         while (game) {
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.도망가기    ㅣ");
+            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.포션 및 장비교환    ㅣ    8.도망가기    ㅣ");
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            num=sc.nextInt();
+            if(th.getState()==TERMINATED){
+                game=false;
+            }
+            num=project.예외();
+            if(user.getRealHp()<0){
+                game=false;
+                num=0;
+            }
             switch (num){
+                case 0: user.userDie(user);
+                    break;
                 case 1: //일반공격
                     if(거북왕.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 일반공격!!!"+ConsoleColors.RESET);
+                        System.out.println("                            거북왕의 HP  / 총HP  : " + 거북왕.getRealHp() + " / " + 거북왕.getHp());
                         거북왕.setRealHp(거북왕.getRealHp()+(거북왕.getDefense()-user.getPower()));
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            거북왕에게 입힌 데미지    : "+(거북왕.getDefense()-user.getPower())+ConsoleColors.RESET);
+                        System.out.println("                            거북왕의 현재HP  / 총HP  :  " + 거북왕.getRealHp() + " / " + 거북왕.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        //new Th1(시간 쿨타임 start();
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     } else {
-                    System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                }
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");                    }
                     break;
-                case 2:
+                case 2://불공격
+                    ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*2/3;
                     if(거북왕.getDefense()<skillDamage){
-                        거북왕.setRealHp(거북왕.getRealHp()+(거북왕.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        if(user.getRealMp()>5){
+                            user.setRealMp(user.getRealMp()-5);
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 화염발사!!!"+ConsoleColors.RESET);
+                            System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                            System.out.println("");
+                            System.out.println("                            거북왕의 현재HP  / 총HP  : " + 거북왕.getRealHp() + " / " + 거북왕.getHp());
+                            거북왕.setRealHp(거북왕.getRealHp()+(거북왕.getDefense()-skillDamage));
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                            거북왕에게 입힌 데미지    : "+(거북왕.getDefense()-skillDamage)+ConsoleColors.RESET);
+                            System.out.println("                            거북왕의 현재HP  / 총HP  :  " + 거북왕.getRealHp() + " / " + 거북왕.getHp());
+                            System.out.println("----------------------------------------------------------------------------------------------");
+
+                            Runnable a=new Action();
+                            Thread aTh=new Thread(a);
+                            aTh.start();
+                            try {
+                                aTh.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            System.out.println("MP가 부족합니다.");
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
@@ -516,8 +857,23 @@ public class hunter {
                 case 3: //물공격
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10));
                     if(거북왕.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
+                        System.out.println("                            거북왕의 현재HP  / 총HP  : " + 거북왕.getRealHp() + " / " + 거북왕.getHp());
                         거북왕.setRealHp(거북왕.getRealHp()+(거북왕.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            거북왕에게 입힌 데미지    : "+(거북왕.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            거북왕의 현재HP  / 총HP  :  " + 거북왕.getRealHp() + " / " + 거북왕.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
@@ -525,91 +881,181 @@ public class hunter {
                 case 4: //풀공격
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*3/2;
                     if(거북왕.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
+                        System.out.println("                            거북왕의 현재HP  / 총HP  : " + 거북왕.getRealHp() + " / " + 거북왕.getHp());
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
                         거북왕.setRealHp(거북왕.getRealHp()+(거북왕.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            거북왕에게 입힌 데미지    : "+(거북왕.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            거북왕의 현재HP  / 총HP  :  " + 거북왕.getRealHp() + " / " + 거북왕.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
                     break;
                 case 5:
-                    skills.hpRecovery(user, skills);
+                    if(hpTh.getState()==NEW){
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TERMINATED){
+                        hpTh=new Thread(hp);
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다다.");
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
                     break;
                 case 6:
-                    skills.ArmorUp(user,skills);
+                    //running
+                    if(armorTh.getState()==NEW){
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TERMINATED){
+                        armorTh=new Thread(armor);
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다.");
+
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
+                    System.out.println("-----------------------------------------------------------------------");
+                    System.out.println("                                        스킬종료!!");
+                    System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
+                    inventory.listView(user,inventory,store);
+                    break;
+                case 8:
                     game=false;
+                    th.interrupt();
                     return user;
-            }//내공격끝
-            //리자몽공격
+            }
             if(거북왕.getRealHp()<=0){
-                System.out.println("거북왕을 처치했습니다.");
+                th.interrupt();
+                System.out.println("거북왕를 처치했습니다.");
                 user.setExperience(user.getExperience()+거북왕.getMonEX(),user,skills);
                 inventory.inventoryList.add(거북왕.dropItem);
-                inventory.setCash(inventory.getCash()+300);
-                System.out.println("보상아이템 :  "+거북왕.dropItem+" ㅣ 금화:  "+거북왕.getDropCash()+"  ㅣ  경험치 : "+거북왕.getMonEX());
+                inventory.setCash(inventory.getCash()+100);
+                System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+거북왕.dropItem+" ㅣ 금화:  "+거북왕.getDropCash()+"  ㅣ  경험치 : "+거북왕.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
             }
-            System.out.println("거북왕의 공격");
-            sc.nextLine();
-            random=((int)(Math.random()*2+1));
-            switch (random){
-                case 1: // 평타
+        }
 
-                    if(user.getDefense()-거북왕.getAttack()<0){ //양수가 되면 안됌
-                        user.setRealHp(user.getRealHp()+(user.getDefense()-거북왕.getAttack()));
-                        System.out.println("거북왕펀치!!");
-                    }
-                    break;
-                case 2: //스킬
-
-                    if(거북왕.getDefense()-user.getPower()<0){ //양수가 되면 안됌
-                        거북왕.setRealHp(거북왕.getRealHp()+(거북왕.getDefense()-user.getPower()));
-                        System.out.println("하이드로빔!!");
-                    } else {
-                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                    }
-                    break;
-            }
-            stage=stage+1;
-            System.out.println("진행횟수  :  "+stage);
-            if(user.getRealHp()<0){
-                user.userDie(user);
-                return user;
-            }
-            System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
-            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
-            System.out.println("----------------------------------------------------------------------------------------------------------");
-            System.out.println("거북왕의 현재HP  / 총HP  : " + 거북왕.getRealHp() + " / " + 거북왕.getHp());
+        if(th.getState()==TERMINATED){
+            hpTh.interrupt();
+            armorTh.interrupt();
         }
         return user;
     }
     User Battle리자몽(User user, Skills skills, Inventory inventory, Store store,Monster 리자몽){
         System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println(리자몽.getName()+"와 전투를 합니다");
+        System.out.println(ConsoleColors.FONT_RED+리자몽.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 리자몽.getRealHp() + " / " + 리자몽.getHp());
         System.out.println(" 공격력         : " + 리자몽.getAttack());
         System.out.println(" 방어력         : " + 리자몽.getDefense());
         System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println(ConsoleColors.FONT_YELLOW+user.getName()+"님의       현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp()+ConsoleColors.RESET);
+        System.out.println(ConsoleColors.FONT_YELLOW+"                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp()+ConsoleColors.RESET);
+        System.out.println("");
+        Thread th=new Thread(리자몽);
+        //아머스킬쓰레드 runnable 상태 (실행대기)
+        Runnable armor=new ArmorSkill(user,skills);
+        Thread armorTh=new Thread(armor);
+        //스킬쓰레드 runnable 상태 (실행대기)
+
+        Runnable hp=new HpSkill(user,skills);
+        Thread hpTh=new Thread(hp);
+        th.start();
+
         while (game) {
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.도망가기    ㅣ");
+            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.포션 및 장비교환    ㅣ    8.도망가기    ㅣ");
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            num=sc.nextInt();
+            if(th.getState()==TERMINATED){
+                game=false;
+            }
+            num=project.예외();
+            if(user.getRealHp()<0){
+                game=false;
+                num=0;
+            }
             switch (num){
+                case 0: user.userDie(user);
+                    break;
                 case 1: //일반공격
                     if(리자몽.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 일반공격!!!"+ConsoleColors.RESET);
+                        System.out.println("                            리자몽의 HP  / 총HP  : " + 리자몽.getRealHp() + " / " + 리자몽.getHp());
                         리자몽.setRealHp(리자몽.getRealHp()+(리자몽.getDefense()-user.getPower()));
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            리자몽에게 입힌 데미지    : "+(리자몽.getDefense()-user.getPower())+ConsoleColors.RESET);
+                        System.out.println("                            리자몽의 현재HP  / 총HP  :  " + 리자몽.getRealHp() + " / " + 리자몽.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        //new Th1(시간 쿨타임 start();
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     } else {
-                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                    }
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");                    }
                     break;
-                case 2:
+                case 2://불공격
+                    ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
                     if(리자몽.getDefense()<skillDamage){
-                        리자몽.setRealHp(리자몽.getRealHp()+(리자몽.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        if(user.getRealMp()>5){
+                            user.setRealMp(user.getRealMp()-5);
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 화염발사!!!"+ConsoleColors.RESET);
+                            System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                            System.out.println("");
+                            System.out.println("                            리자몽의 현재HP  / 총HP  : " + 리자몽.getRealHp() + " / " + 리자몽.getHp());
+                            리자몽.setRealHp(리자몽.getRealHp()+(리자몽.getDefense()-skillDamage));
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                            리자몽에게 입힌 데미지    : "+(리자몽.getDefense()-skillDamage)+ConsoleColors.RESET);
+                            System.out.println("                            리자몽의 현재HP  / 총HP  :  " + 리자몽.getRealHp() + " / " + 리자몽.getHp());
+                            System.out.println("----------------------------------------------------------------------------------------------");
+
+                            Runnable a=new Action();
+                            Thread aTh=new Thread(a);
+                            aTh.start();
+                            try {
+                                aTh.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            System.out.println("MP가 부족합니다.");
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
@@ -617,8 +1063,23 @@ public class hunter {
                 case 3: //물공격
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*3/2;
                     if(리자몽.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
+                        System.out.println("                            리자몽의 현재HP  / 총HP  : " + 리자몽.getRealHp() + " / " + 리자몽.getHp());
                         리자몽.setRealHp(리자몽.getRealHp()+(리자몽.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            리자몽에게 입힌 데미지    : "+(리자몽.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            리자몽의 현재HP  / 총HP  :  " + 리자몽.getRealHp() + " / " + 리자몽.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
@@ -626,73 +1087,103 @@ public class hunter {
                 case 4: //풀공격
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*2/3;
                     if(리자몽.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
+                        System.out.println("                            리자몽의 현재HP  / 총HP  : " + 리자몽.getRealHp() + " / " + 리자몽.getHp());
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
                         리자몽.setRealHp(리자몽.getRealHp()+(리자몽.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            리자몽에게 입힌 데미지    : "+(리자몽.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            리자몽의 현재HP  / 총HP  :  " + 리자몽.getRealHp() + " / " + 리자몽.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
                     break;
                 case 5:
-                    skills.hpRecovery(user, skills);
+                    if(hpTh.getState()==NEW){
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TERMINATED){
+                        hpTh=new Thread(hp);
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다다.");
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
                     break;
                 case 6:
-                    skills.ArmorUp(user,skills);
+                    //running
+                    if(armorTh.getState()==NEW){
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TERMINATED){
+                        armorTh=new Thread(armor);
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다.");
+
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
+                    System.out.println("-----------------------------------------------------------------------");
+                    System.out.println("                                        스킬종료!!");
+                    System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
+                    inventory.listView(user,inventory,store);
+                    break;
+                case 8:
                     game=false;
+                    th.interrupt();
                     return user;
-            }//내공격끝
-            //리자몽공격
+            }
             if(리자몽.getRealHp()<=0){
-                System.out.println("리자몽을 처치했습니다.");
+                th.interrupt();
+                System.out.println("리자몽를 처치했습니다.");
                 user.setExperience(user.getExperience()+리자몽.getMonEX(),user,skills);
                 inventory.inventoryList.add(리자몽.dropItem);
-                inventory.setCash(inventory.getCash()+300);
-                System.out.println("보상아이템 :  "+리자몽.dropItem+" ㅣ 금화:  "+리자몽.getDropCash()+"  ㅣ  경험치 : "+리자몽.getMonEX());
+                inventory.setCash(inventory.getCash()+100);
+                System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+리자몽.dropItem+" ㅣ 금화:  "+리자몽.getDropCash()+"  ㅣ  경험치 : "+리자몽.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
             }
-            System.out.println("리자몽의 공격");
-            sc.nextLine();
-            random=((int)(Math.random()*2+1));
-            switch (random){
-                case 1: // 평타
-
-                    if(user.getDefense()-리자몽.getAttack()<0){ //양수가 되면 안됌
-                        user.setRealHp(user.getRealHp()+(user.getDefense()-리자몽.getAttack()));
-                        System.out.println("마구 할퀴기!!");
-                    }
-                    break;
-                case 2: //스킬
-
-                    if(user.getDefense()-리자몽.getAttack()*4/3<0){ //양수가 되면 안됌
-                        user.setRealHp(user.getRealHp()+(user.getDefense()-리자몽.getAttack()));
-                        System.out.println("회오리 불꽃!!");
-
-                    }else {
-                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                    }
-                    break;
-            }
-            stage=stage+1;
-            System.out.println("진행횟수  :  "+stage);
-            if(user.getRealHp()<0){
-                user.userDie(user);
-                return user;
-            }
-            System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
-            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
-            System.out.println("----------------------------------------------------------------------------------------------------------");
-            System.out.println("리자몽의 현재HP  / 총HP  : " + 리자몽.getRealHp() + " / " + 리자몽.getHp());
+        } if(th.getState()==TERMINATED){
+            hpTh.interrupt();
+            armorTh.interrupt();
         }
         return user;
     }
 //--------------------------------------------------------------------------------------------------------------
     User 중급사냥터(User user, Skills skills, Inventory inventory, Store store){
+        game=true;
         int ranChar=((int)(Math.random()*3+1));
         switch (ranChar){
             case 1: //리자드
-                Monster 리자드=new Monster(
+                Runnable 리자드=new Monster(
                         "리자드",
                         4,
                         70,
@@ -700,17 +1191,19 @@ public class hunter {
                         70,
                         70,
                         70,
-                        70,
+                        20,
                         1,
                         70,
                         "리자드의 꼬리",
                         200,
-                        30
+                        30,
+                        4,
+                        user
                 );
-                Battle리자드(user, skills, inventory,store,리자드);
+                Battle리자드(user, skills, inventory,store, (Monster)리자드);
                 break;
             case 2:
-                Monster 어니부기=new Monster(
+                Runnable 어니부기=new Monster(
                         "어니부기",
                         4,
                         70,
@@ -718,17 +1211,19 @@ public class hunter {
                         70,
                         70,
                         70,
-                        70,
+                        20,
                         2,
                         70,
                         "어니부기의 등딱지",
                         200,
-                        30
+                        30,
+                        5,
+                        user
                 );
-                Battle어니부기(user, skills, inventory, store,어니부기);
+                Battle어니부기(user, skills, inventory, store, (Monster)어니부기);
                 break;
             case 3:
-                Monster 이상해풀=new Monster(
+                Runnable 이상해풀=new Monster(
                         "이상해풀",
                         4,
                         70,
@@ -736,14 +1231,16 @@ public class hunter {
                         70,
                         70,
                         70,
-                        70,
+                        20,
                         3,
                         70,
                         "이상해풀의 풀입",
                         200,
-                        30
+                        30,
+                        6,
+                        user
                 );
-                Battle이상해풀(user, skills, inventory, store,이상해풀);
+                Battle이상해풀(user, skills, inventory, store, (Monster)이상해풀);
                 break;
         }
 
@@ -751,131 +1248,293 @@ public class hunter {
     } //switch
     User Battle이상해풀(User user,Skills skills,Inventory inventory,Store store,Monster 이상해풀){
         System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println(이상해풀.getName()+"와 전투를 합니다");
+        System.out.println(ConsoleColors.FONT_RED+이상해풀.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 이상해풀.getRealHp() + " / " + 이상해풀.getHp());
         System.out.println(" 공격력         : " + 이상해풀.getAttack());
         System.out.println(" 방어력         : " + 이상해풀.getDefense());
         System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println(ConsoleColors.FONT_YELLOW+user.getName()+"님의       현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp()+ConsoleColors.RESET);
+        System.out.println(ConsoleColors.FONT_YELLOW+"                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp()+ConsoleColors.RESET);
+        System.out.println("");
+        Thread th=new Thread(이상해풀);
+        //아머스킬쓰레드 runnable 상태 (실행대기)
+        Runnable armor=new ArmorSkill(user,skills);
+        Thread armorTh=new Thread(armor);
+        //스킬쓰레드 runnable 상태 (실행대기)
+
+        Runnable hp=new HpSkill(user,skills);
+        Thread hpTh=new Thread(hp);
+        th.start();
+
         while (game) {
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.도망가기    ㅣ");
+            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.포션 및 장비교환    ㅣ    8.도망가기    ㅣ");
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            num=sc.nextInt();
+            if(th.getState()==TERMINATED){
+                game=false;
+            }
+            num=project.예외();
+            if(user.getRealHp()<0){
+                game=false;
+                num=0;
+            }
             switch (num){
+                case 0: user.userDie(user);
+                    break;
                 case 1: //일반공격
                     if(이상해풀.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 일반공격!!!"+ConsoleColors.RESET);
+                        System.out.println("                            이상해풀의 HP  / 총HP  : " + 이상해풀.getRealHp() + " / " + 이상해풀.getHp());
                         이상해풀.setRealHp(이상해풀.getRealHp()+(이상해풀.getDefense()-user.getPower()));
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            이상해풀에게 입힌 데미지    : "+(이상해풀.getDefense()-user.getPower())+ConsoleColors.RESET);
+                        System.out.println("                            이상해풀의 현재HP  / 총HP  :  " + 이상해풀.getRealHp() + " / " + 이상해풀.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        //new Th1(시간 쿨타임 start();
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     } else {
-                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                    }
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");                    }
                     break;
-                case 2:
+                case 2://불공격
+                    ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*3/2;
                     if(이상해풀.getDefense()<skillDamage){
-                        이상해풀.setRealHp(이상해풀.getRealHp()+(이상해풀.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        if(user.getRealMp()>5){
+                            user.setRealMp(user.getRealMp()-5);
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 화염발사!!!"+ConsoleColors.RESET);
+                            System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                            System.out.println("");
+                            System.out.println("                            이상해풀의 현재HP  / 총HP  : " + 이상해풀.getRealHp() + " / " + 이상해풀.getHp());
+                            이상해풀.setRealHp(이상해풀.getRealHp()+(이상해풀.getDefense()-skillDamage));
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                            이상해풀에게 입힌 데미지    : "+(이상해풀.getDefense()-skillDamage)+ConsoleColors.RESET);
+                            System.out.println("                            이상해풀의 현재HP  / 총HP  :  " + 이상해풀.getRealHp() + " / " + 이상해풀.getHp());
+                            System.out.println("----------------------------------------------------------------------------------------------");
+
+                            Runnable a=new Action();
+                            Thread aTh=new Thread(a);
+                            aTh.start();
+                            try {
+                                aTh.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            System.out.println("MP가 부족합니다.");
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
                     break;
-                case 3:
+                case 3: //물공격
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*2/3;
                     if(이상해풀.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
+                        System.out.println("                            이상해풀의 현재HP  / 총HP  : " + 이상해풀.getRealHp() + " / " + 이상해풀.getHp());
                         이상해풀.setRealHp(이상해풀.getRealHp()+(이상해풀.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            이상해풀에게 입힌 데미지    : "+(이상해풀.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            이상해풀의 현재HP  / 총HP  :  " + 이상해풀.getRealHp() + " / " + 이상해풀.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
                     break;
-                case 4:
+                case 4: //풀공격
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10));
                     if(이상해풀.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
+                        System.out.println("                            이상해풀의 현재HP  / 총HP  : " + 이상해풀.getRealHp() + " / " + 이상해풀.getHp());
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
                         이상해풀.setRealHp(이상해풀.getRealHp()+(이상해풀.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            이상해풀에게 입힌 데미지    : "+(이상해풀.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            이상해풀의 현재HP  / 총HP  :  " + 이상해풀.getRealHp() + " / " + 이상해풀.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
                     break;
                 case 5:
-                    skills.hpRecovery(user, skills);
+                    if(hpTh.getState()==NEW){
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TERMINATED){
+                        hpTh=new Thread(hp);
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다다.");
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
                     break;
                 case 6:
-                    skills.ArmorUp(user,skills);
+                    //running
+                    if(armorTh.getState()==NEW){
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TERMINATED){
+                        armorTh=new Thread(armor);
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다.");
+
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
+                    System.out.println("-----------------------------------------------------------------------");
+                    System.out.println("                                        스킬종료!!");
+                    System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
+                    inventory.listView(user,inventory,store);
+                    break;
+                case 8:
                     game=false;
+                    th.interrupt();
                     return user;
-            }//내공격끝
-            //
-            sc.nextLine();
+            }
             if(이상해풀.getRealHp()<=0){
-                System.out.println("이상해풀을 처치했습니다.");
+                th.interrupt();
+                System.out.println("이상해풀를 처치했습니다.");
                 user.setExperience(user.getExperience()+이상해풀.getMonEX(),user,skills);
                 inventory.inventoryList.add(이상해풀.dropItem);
-                inventory.setCash(inventory.getCash()+200);
-                System.out.println("보상아이템 :  "+이상해풀.dropItem+" ㅣ 금화:  "+이상해풀.getDropCash()+"  ㅣ  경험치 : "+이상해풀.getMonEX());
+                inventory.setCash(inventory.getCash()+100);
+                System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+이상해풀.dropItem+" ㅣ 금화:  "+이상해풀.getDropCash()+"  ㅣ  경험치 : "+이상해풀.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
             }
-            System.out.println("이상해풀의 공격");
-            sc.nextLine();
-            random=((int)(Math.random()*2+1));
-            switch (random){
-                case 1: // 평타
-                    if(user.getDefense()-이상해풀.getAttack()<0){ //양수가 되면 안됌
-                        user.setRealHp(user.getRealHp()+(user.getDefense()-이상해풀.getAttack()));
-                        System.out.println("땅울리기!!");
-                    }
-                    break;
-                case 2: //스킬
-                    if(user.getDefense()-이상해풀.getAttack()*4/3<0){ //양수가 되면 안됌
-                        user.setRealHp(user.getRealHp()+(user.getDefense()-이상해풀.getAttack()));
-                       System.out.println("풀입날리기!!");
-
-                    }else {
-                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                    }
-                    break;
-            }
-            stage=stage+1;
-            System.out.println("진행횟수  :  "+stage);
-            if(user.getRealHp()<0){
-                user.userDie(user);
-                return user;
-            }
-            System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
-            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
-            System.out.println("----------------------------------------------------------------------------------------------------------");
-            System.out.println("이상해풀의 현재HP  / 총HP  : " + 이상해풀.getRealHp() + " / " + 이상해풀.getHp());
+        }
+        if(th.getState()==TERMINATED){
+            hpTh.interrupt();
+            armorTh.interrupt();
         }
         return user;
     }
     User Battle리자드(User user, Skills skills, Inventory inventory, Store store, Monster 리자드){
         System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println(리자드.getName()+"와 전투를 합니다");
+        System.out.println(ConsoleColors.FONT_RED+리자드.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 리자드.getRealHp() + " / " + 리자드.getHp());
         System.out.println(" 공격력         : " + 리자드.getAttack());
         System.out.println(" 방어력         : " + 리자드.getDefense());
         System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println(ConsoleColors.FONT_YELLOW+user.getName()+"님의       현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp()+ConsoleColors.RESET);
+        System.out.println(ConsoleColors.FONT_YELLOW+"                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp()+ConsoleColors.RESET);
+        System.out.println("");
+        Thread th=new Thread(리자드);
+        //아머스킬쓰레드 runnable 상태 (실행대기)
+
+        Runnable armor=new ArmorSkill(user,skills);
+        Thread armorTh=new Thread(armor);
+        //스킬쓰레드 runnable 상태 (실행대기)
+
+        Runnable hp=new HpSkill(user,skills);
+        Thread hpTh=new Thread(hp);
+        th.start();
+
         while (game) {
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.도망가기    ㅣ");
+            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.포션 및 장비교환    ㅣ    8.도망가기    ㅣ");
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            num=sc.nextInt();
+            if(th.getState()==TERMINATED){
+                game=false;
+            }
+            num=project.예외();
+            if(user.getRealHp()<0){
+                game=false;
+                num=0;
+            }
             switch (num){
+                case 0: user.userDie(user);
+                    break;
                 case 1: //일반공격
                     if(리자드.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 일반공격!!!"+ConsoleColors.RESET);
+                        System.out.println("                            리자드의 HP  / 총HP  : " + 리자드.getRealHp() + " / " + 리자드.getHp());
                         리자드.setRealHp(리자드.getRealHp()+(리자드.getDefense()-user.getPower()));
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            리자드에게 입힌 데미지    : "+(리자드.getDefense()-user.getPower())+ConsoleColors.RESET);
+                        System.out.println("                            리자드의 현재HP  / 총HP  :  " + 리자드.getRealHp() + " / " + 리자드.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        //new Th1(시간 쿨타임 start();
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     } else {
-                    System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                }
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");                    }
                     break;
-                case 2:
+                case 2://불공격
                     ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
                     if(리자드.getDefense()<skillDamage){
-                        리자드.setRealHp(리자드.getRealHp()+(리자드.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        if(user.getRealMp()>5){
+                            user.setRealMp(user.getRealMp()-5);
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 화염발사!!!"+ConsoleColors.RESET);
+                            System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                            System.out.println("");
+                            System.out.println("                            리자드의 현재HP  / 총HP  : " + 리자드.getRealHp() + " / " + 리자드.getHp());
+                            리자드.setRealHp(리자드.getRealHp()+(리자드.getDefense()-skillDamage));
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                            리자드에게 입힌 데미지    : "+(리자드.getDefense()-skillDamage)+ConsoleColors.RESET);
+                            System.out.println("                            리자드의 현재HP  / 총HP  :  " + 리자드.getRealHp() + " / " + 리자드.getHp());
+                            System.out.println("----------------------------------------------------------------------------------------------");
+
+                            Runnable a=new Action();
+                            Thread aTh=new Thread(a);
+                            aTh.start();
+                            try {
+                                aTh.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            System.out.println("MP가 부족합니다.");
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
@@ -883,8 +1542,23 @@ public class hunter {
                 case 3: //물공격
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*3/2;
                     if(리자드.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
+                        System.out.println("                            리자드의 현재HP  / 총HP  : " + 리자드.getRealHp() + " / " + 리자드.getHp());
                         리자드.setRealHp(리자드.getRealHp()+(리자드.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            리자드에게 입힌 데미지    : "+(리자드.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            리자드의 현재HP  / 총HP  :  " + 리자드.getRealHp() + " / " + 리자드.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
@@ -892,101 +1566,204 @@ public class hunter {
                 case 4: //풀공격
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*2/3;
                     if(리자드.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
+                        System.out.println("                            리자드의 현재HP  / 총HP  : " + 리자드.getRealHp() + " / " + 리자드.getHp());
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
                         리자드.setRealHp(리자드.getRealHp()+(리자드.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            리자드에게 입힌 데미지    : "+(리자드.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            리자드의 현재HP  / 총HP  :  " + 리자드.getRealHp() + " / " + 리자드.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
                     break;
-
                 case 5:
-                    skills.hpRecovery(user, skills);
+                    if(hpTh.getState()==NEW){
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TERMINATED){
+                        hpTh=new Thread(hp);
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다다.");
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
                     break;
                 case 6:
-                    skills.ArmorUp(user,skills);
+                    //running
+                    if(armorTh.getState()==NEW){
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TERMINATED){
+                        armorTh=new Thread(armor);
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다.");
+
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
+                    System.out.println("-----------------------------------------------------------------------");
+                    System.out.println("                                        스킬종료!!");
+                    System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
+                    inventory.listView(user,inventory,store);
+                    break;
+                case 8:
                     game=false;
+                    th.interrupt();
                     return user;
-            }//내공격끝
-            //
-            sc.nextLine();
+            }
             if(리자드.getRealHp()<=0){
+                th.interrupt();
                 System.out.println("리자드를 처치했습니다.");
                 user.setExperience(user.getExperience()+리자드.getMonEX(),user,skills);
                 inventory.inventoryList.add(리자드.dropItem);
-                inventory.setCash(inventory.getCash()+200);
-                System.out.println("보상아이템 :  "+리자드.dropItem+" ㅣ 금화:  "+리자드.getDropCash()+"  ㅣ  경험치 : "+리자드.getMonEX());
+                inventory.setCash(inventory.getCash()+100);
+                System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+리자드.dropItem+" ㅣ 금화:  "+리자드.getDropCash()+"  ㅣ  경험치 : "+리자드.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
             }
-            System.out.println("리자드의 공격");
-            sc.nextLine();
-            random=((int)(Math.random()*2+1));
-            switch (random){
-                case 1: // 평타
-                    if(user.getDefense()-리자드.getAttack()<0){ //양수가 되면 안됌
-                    user.setRealHp(user.getRealHp()+(user.getDefense()-리자드.getAttack()));
-                        System.out.println("손톱할퀴기!!"); }
-                    break;
-                case 2: //스킬
-
-                    if(user.getDefense()-리자드.getAttack()*4/3<0){ //양수가 되면 안됌
-                        user.setRealHp(user.getRealHp()+(user.getDefense()-리자드.getAttack()));
-                        System.out.println("불꽃세례!!");
-                    }else {
-                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                    }
-                    break;
-            }
-            stage=stage+1;
-            System.out.println("진행횟수  :  "+stage);
-            if(user.getRealHp()<0){
-                user.userDie(user);
-                return user;
-            }
-            System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
-            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
-            System.out.println("----------------------------------------------------------------------------------------------------------");
-            System.out.println("리자드의 현재HP  / 총HP  : " + 리자드.getRealHp() + " / " + 리자드.getHp());
+        }
+        if(th.getState()==TERMINATED){
+            hpTh.interrupt();
+            armorTh.interrupt();
         }
         return user;
     } //리자드
     User Battle어니부기(User user, Skills skills, Inventory inventory, Store store,Monster 어니부기){
         System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println(어니부기.getName()+"와 전투를 합니다");
+        System.out.println(ConsoleColors.FONT_RED+어니부기.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 어니부기.getRealHp() + " / " + 어니부기.getHp());
         System.out.println(" 공격력         : " + 어니부기.getAttack());
         System.out.println(" 방어력         : " + 어니부기.getDefense());
         System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println(ConsoleColors.FONT_YELLOW+user.getName()+"님의       현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp()+ConsoleColors.RESET);
+        System.out.println(ConsoleColors.FONT_YELLOW+"                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp()+ConsoleColors.RESET);
+        System.out.println("");
+        Thread th=new Thread(어니부기);
+        //아머스킬쓰레드 runnable 상태 (실행대기)
+        Runnable armor=new ArmorSkill(user,skills);
+        Thread armorTh=new Thread(armor);
+        //스킬쓰레드 runnable 상태 (실행대기)
+
+        Runnable hp=new HpSkill(user,skills);
+        Thread hpTh=new Thread(hp);
+        th.start();
+
         while (game) {
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.도망가기    ㅣ");
+            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.포션 및 장비교환    ㅣ    8.도망가기    ㅣ");
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            num=sc.nextInt();
+            if(th.getState()==TERMINATED){
+                game=false;
+            }
+            num=project.예외();
+            if(user.getRealHp()<0){
+                game=false;
+                num=0;
+            }
             switch (num){
+                case 0: user.userDie(user);
+                    break;
                 case 1: //일반공격
                     if(어니부기.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 일반공격!!!"+ConsoleColors.RESET);
+                        System.out.println("                            어니부기의 HP  / 총HP  : " + 어니부기.getRealHp() + " / " + 어니부기.getHp());
                         어니부기.setRealHp(어니부기.getRealHp()+(어니부기.getDefense()-user.getPower()));
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            어니부기에게 입힌 데미지    : "+(어니부기.getDefense()-user.getPower())+ConsoleColors.RESET);
+                        System.out.println("                            어니부기의 현재HP  / 총HP  :  " + 어니부기.getRealHp() + " / " + 어니부기.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        //new Th1(시간 쿨타임 start();
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     } else {
-                    System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                }
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");                    }
                     break;
-                ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
-                case 2:
-                skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*2/3;
-                if(어니부기.getDefense()<skillDamage){
-                    어니부기.setRealHp(어니부기.getRealHp()+(어니부기.getDefense()-skillDamage));
-                    System.out.println(user.getName()+"님이 공격했습니다.");
-                }else {
-                    System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
-                }
-                break;
+                case 2://불공격
+                    ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*2/3;
+                    if(어니부기.getDefense()<skillDamage){
+                        if(user.getRealMp()>5){
+                            user.setRealMp(user.getRealMp()-5);
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 화염발사!!!"+ConsoleColors.RESET);
+                            System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                            System.out.println("");
+                            System.out.println("                            어니부기의 현재HP  / 총HP  : " + 어니부기.getRealHp() + " / " + 어니부기.getHp());
+                            어니부기.setRealHp(어니부기.getRealHp()+(어니부기.getDefense()-skillDamage));
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                            어니부기에게 입힌 데미지    : "+(어니부기.getDefense()-skillDamage)+ConsoleColors.RESET);
+                            System.out.println("                            어니부기의 현재HP  / 총HP  :  " + 어니부기.getRealHp() + " / " + 어니부기.getHp());
+                            System.out.println("----------------------------------------------------------------------------------------------");
+
+                            Runnable a=new Action();
+                            Thread aTh=new Thread(a);
+                            aTh.start();
+                            try {
+                                aTh.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            System.out.println("MP가 부족합니다.");
+                        }
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
+                    break;
                 case 3: //물공격
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10));
                     if(어니부기.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
+                        System.out.println("                            어니부기의 현재HP  / 총HP  : " + 어니부기.getRealHp() + " / " + 어니부기.getHp());
                         어니부기.setRealHp(어니부기.getRealHp()+(어니부기.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            어니부기에게 입힌 데미지    : "+(어니부기.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            어니부기의 현재HP  / 총HP  :  " + 어니부기.getRealHp() + " / " + 어니부기.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
@@ -994,72 +1771,105 @@ public class hunter {
                 case 4: //풀공격
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*3/2;
                     if(어니부기.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
+                        System.out.println("                            어니부기의 현재HP  / 총HP  : " + 어니부기.getRealHp() + " / " + 어니부기.getHp());
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
                         어니부기.setRealHp(어니부기.getRealHp()+(어니부기.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            어니부기에게 입힌 데미지    : "+(어니부기.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            어니부기의 현재HP  / 총HP  :  " + 어니부기.getRealHp() + " / " + 어니부기.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
                     break;
-
                 case 5:
-                    skills.hpRecovery(user, skills);
+                    if(hpTh.getState()==NEW){
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TERMINATED){
+                        hpTh=new Thread(hp);
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다다.");
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
                     break;
                 case 6:
-                    skills.ArmorUp(user,skills);
+                    //running
+                    if(armorTh.getState()==NEW){
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TERMINATED){
+                        armorTh=new Thread(armor);
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다.");
+
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
+                    System.out.println("-----------------------------------------------------------------------");
+                    System.out.println("                                        스킬종료!!");
+                    System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
+                    inventory.listView(user,inventory,store);
+                    break;
+                case 8:
                     game=false;
+                    th.interrupt();
                     return user;
-            }//내공격끝
-            sc.nextLine();
+            }
             if(어니부기.getRealHp()<=0){
-                System.out.println("어니부기을 처치했습니다.");
+                th.interrupt();
+                System.out.println("어니부기를 처치했습니다.");
                 user.setExperience(user.getExperience()+어니부기.getMonEX(),user,skills);
                 inventory.inventoryList.add(어니부기.dropItem);
-                inventory.setCash(inventory.getCash()+200);
-                System.out.println("보상아이템 :  "+어니부기.dropItem+" ㅣ 금화:  "+어니부기.getDropCash()+"  ㅣ  경험치 : "+어니부기.getMonEX());
+                inventory.setCash(inventory.getCash()+100);
+                System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+어니부기.dropItem+" ㅣ 금화:  "+어니부기.getDropCash()+"  ㅣ  경험치 : "+어니부기.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
             }
-
-            System.out.println("어니부기의 공격");
-            sc.nextLine();sc.nextLine();
-            random=((int)(Math.random()*2+1));
-            switch (random){
-                case 1: // 평타
-                    if(user.getDefense()-어니부기.getAttack()<0){ //양수가 되면 안됌
-                    user.setRealHp(user.getRealHp()+(user.getDefense()-어니부기.getAttack()));
-                        System.out.println("등딱지 박치기!!"); }
-                    break;
-                case 2: //스킬
-
-                    if(user.getDefense()-어니부기.getAttack()*4/3<0){ //양수가 되면 안됌
-                        user.setRealHp(user.getRealHp()+(user.getDefense()-어니부기.getAttack()));
-                        System.out.println("물대포!!");
-                    }else {
-                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                    }
-                    break;
-            }
-            stage=stage+1;
-            System.out.println("진행횟수  :  "+stage);
-            if(user.getRealHp()<0){
-                user.userDie(user);
-                return user;
-            }
-            System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
-            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
-            System.out.println("----------------------------------------------------------------------------------------------------------");
-            System.out.println("어니부기의 현재HP  / 총HP  : " + 어니부기.getRealHp() + " / " + 어니부기.getHp());
+        }
+        if(th.getState()==TERMINATED){
+            hpTh.interrupt();
+            armorTh.interrupt();
         }
         return user;
-    }
+    } //중급사냥터
 //--------------------------------------------------------------------------------------------------------------
     User 초급사냥터(User user,Skills skills,Inventory inventory,Store store){
+        game=true;
     int ranChar=((int)(Math.random()*3+1));
-    switch (ranChar){ //속성 1 파이리 , 2꼬북이  3이상해씨
+
+    switch (1){ //속성 1 파이리 , 2꼬북이  3이상해씨
         case 1:
-            Monster 파이리=new Monster(
+            Runnable 파이리=new Monster(
                     "파이리",
                     3,
                     30,
@@ -1067,79 +1877,142 @@ public class hunter {
                     30,
                     30,
                     30,
-                    30,
+                    10,
                     1,
                     30,
                     "파이리의 꼬리",
                     100,
-                    20
+                    20,
+                    1
+                    ,user
             );
-         Battle파이리(user,skills,inventory,store,파이리);
+         Battle파이리(user,skills,inventory,store, (Monster) 파이리);
             break;
-        case 2:Monster 꼬북이=new Monster(
+        case 2:Runnable 꼬북이=new Monster(
                 "꼬북이",
                 3,
+                10000,
+                10000,
                 30,
                 30,
                 30,
-                30,
-                30,
-                30,
+                10,
                 2,
                 30,
                 "꼬북이의 등딱지",
                 100,
-                20
+                20,
+                2,
+                user
         );
-         Battle꼬북이(user,skills,inventory,store,꼬북이);
+         Battle꼬북이(user,skills,inventory,store, (Monster)꼬북이);
             break;
-        case 3:Monster 이상해씨=new Monster(
+        case 3:Runnable 이상해씨=new Monster(
                 "이상해씨",
                 3,
+                10000,
+                10000,
                 30,
                 30,
                 30,
-                30,
-                30,
-                30,
+                10,
                 3,
                 30,
                 "이상해씨의 씨앗",
                 100,
-                20
+                20,
+                3,
+                user
         );
-            Battle이상해씨(user,skills,inventory,store,이상해씨);
+            Battle이상해씨(user,skills,inventory,store, (Monster)이상해씨);
             break;
     }
     return user;
     } //switch
     User Battle파이리(User user, Skills skills, Inventory inventory, Store store,Monster 파이리){
+        파이리.밤(파이리);
         System.out.println("----------------------------------------------------------------------------------------------------------");
-        System.out.println(파이리.getName()+"와 전투를 합니다");
+        System.out.println(ConsoleColors.FONT_RED+파이리.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 파이리.getRealHp() + " / " + 파이리.getHp());
         System.out.println(" 공격력         : " + 파이리.getAttack());
         System.out.println(" 방어력         : " + 파이리.getDefense());
         System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println(ConsoleColors.FONT_YELLOW+user.getName()+"님의       현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp()+ConsoleColors.RESET);
+        System.out.println(ConsoleColors.FONT_YELLOW+"                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp()+ConsoleColors.RESET);
+        System.out.println("");
+        Thread th=new Thread(파이리);
+        //아머스킬쓰레드 runnable 상태 (실행대기)
+
+        Runnable armor=new ArmorSkill(user,skills);
+        Thread armorTh=new Thread(armor);
+        //스킬쓰레드 runnable 상태 (실행대기)
+        Runnable hp=new HpSkill(user,skills);
+        Thread hpTh=new Thread(hp);
+        th.start();
+
         while (game) {
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.도망가기    ㅣ");
+            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.포션 및 장비교환    ㅣ    8.도망가기    ㅣ");
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            num=sc.nextInt();
+            if(th.getState()==TERMINATED){
+                game=false;
+            }
+            num=project.예외();
+            if(user.getRealHp()<0){
+                game=false;
+                num=0;
+            }
             switch (num){
+                case 0: user.userDie(user);
+                    break;
                 case 1: //일반공격
                     if(파이리.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 일반공격!!!"+ConsoleColors.RESET);
+                        System.out.println("                            파이리의 HP  / 총HP  : " + 파이리.getRealHp() + " / " + 파이리.getHp());
                         파이리.setRealHp(파이리.getRealHp()+(파이리.getDefense()-user.getPower()));
-                    }
-                    else {
-                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                    }
-                        break;
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            파이리에게 입힌 데미지    : "+(파이리.getDefense()-user.getPower())+ConsoleColors.RESET);
+                        System.out.println("                            파이리의 현재HP  / 총HP  :  " + 파이리.getRealHp() + " / " + 파이리.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        //new Th1(시간 쿨타임 start();
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");                    }
+                    break;
                 case 2://불공격
                     ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
                     if(파이리.getDefense()<skillDamage){
-                        파이리.setRealHp(파이리.getRealHp()+(파이리.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        if(user.getRealMp()>5){
+                            user.setRealMp(user.getRealMp()-5);
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 화염발사!!!"+ConsoleColors.RESET);
+                            System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                            System.out.println("");
+                            System.out.println("                            파이리의 현재HP  / 총HP  : " + 파이리.getRealHp() + " / " + 파이리.getHp());
+                            파이리.setRealHp(파이리.getRealHp()+(파이리.getDefense()-skillDamage));
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                            파이리에게 입힌 데미지    : "+(파이리.getDefense()-skillDamage)+ConsoleColors.RESET);
+                            System.out.println("                            파이리의 현재HP  / 총HP  :  " + 파이리.getRealHp() + " / " + 파이리.getHp());
+                            System.out.println("----------------------------------------------------------------------------------------------");
+
+                            Runnable a=new Action();
+                            Thread aTh=new Thread(a);
+                            aTh.start();
+                            try {
+                                aTh.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            System.out.println("MP가 부족합니다.");
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
@@ -1147,8 +2020,23 @@ public class hunter {
                 case 3: //물공격
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*3/2;
                     if(파이리.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
+                        System.out.println("                            파이리의 현재HP  / 총HP  : " + 파이리.getRealHp() + " / " + 파이리.getHp());
                         파이리.setRealHp(파이리.getRealHp()+(파이리.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            파이리에게 입힌 데미지    : "+(파이리.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            파이리의 현재HP  / 총HP  :  " + 파이리.getRealHp() + " / " + 파이리.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
@@ -1156,90 +2044,178 @@ public class hunter {
                 case 4: //풀공격
                     skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*2/3;
                     if(파이리.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
+                        System.out.println("                            파이리의 현재HP  / 총HP  : " + 파이리.getRealHp() + " / " + 파이리.getHp());
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
                         파이리.setRealHp(파이리.getRealHp()+(파이리.getDefense()-skillDamage));
-                        System.out.println(user.getName()+"님이 공격했습니다.");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            파이리에게 입힌 데미지    : "+(파이리.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            파이리의 현재HP  / 총HP  :  " + 파이리.getRealHp() + " / " + 파이리.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }else {
                         System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                     }
                     break;
-                    case 5:
-                        skills.hpRecovery(user, skills);
+                case 5:
+                    if(hpTh.getState()==NEW){
+                        hpTh.start();
                         break;
-                    case 6:
-                        skills.ArmorUp(user,skills);
+                    }
+                    if(hpTh.getState()==TERMINATED){
+                        hpTh=new Thread(hp);
+                        hpTh.start();
                         break;
-                    case 7:
-                        game=false;
-                        return user;
-            }//내공격끝
+                    }
+                    if(hpTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다다.");
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
+                    break;
+                case 6:
+                    //running
+                    if(armorTh.getState()==NEW){
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TERMINATED){
+                        armorTh=new Thread(armor);
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다.");
+
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
+                    System.out.println("-----------------------------------------------------------------------");
+                    System.out.println("                                        스킬종료!!");
+                    System.out.println("-----------------------------------------------------------------------");
+                    break;
+                case 7:
+                    inventory.listView(user,inventory,store);
+                    break;
+                case 8:
+                    game=false;
+                    th.interrupt();
+                    return user;
+            }
             if(파이리.getRealHp()<=0){
-                System.out.println("파이리을 처치했습니다.");
+                th.interrupt();
+                System.out.println("파이리를 처치했습니다.");
                 user.setExperience(user.getExperience()+파이리.getMonEX(),user,skills);
                 inventory.inventoryList.add(파이리.dropItem);
                 inventory.setCash(inventory.getCash()+100);
-                System.out.println("보상아이템 :  "+파이리.dropItem+" ㅣ 금화:  "+파이리.getDropCash()+"  ㅣ  경험치 : "+파이리.getMonEX());
+                System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+파이리.dropItem+" ㅣ 금화:  "+파이리.getDropCash()+"  ㅣ  경험치 : "+파이리.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
             }
-            System.out.println("파이리의 공격 차례입니다");
-            sc.nextLine();
-            random=((int)(Math.random()*2+1));
-            switch (random){
-                case 1: // 평타
-                    System.out.println("파이리 펀치!!");
-                    if(user.getDefense()-파이리.getAttack()<0){ //양수가 되면 안됌
-                        user.setRealHp(user.getRealHp()+(user.getDefense()-파이리.getAttack()));
-                    }
-                    break;
-                case 2: //스킬
-
-                    if(user.getDefense()-파이리.getAttack()*4/3<0){ //양수가 되면 안됌
-                        user.setRealHp(user.getRealHp()+(user.getDefense()-파이리.getAttack()));
-                        System.out.println("불꽃발사!!");
-                    }else {
-                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                    }
-                    break;
-            }
-            stage=stage+1;
-            System.out.println("진행횟수  :  "+stage);
-            if(user.getRealHp()<0){
-                user.userDie(user);
-                return user;
-            }
-            System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
-            System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
-            System.out.println("----------------------------------------------------------------------------------------------------------");
-            System.out.println("파이리의 현재HP  / 총HP  : " + 파이리.getRealHp() + " / " + 파이리.getHp());
+        }
+        if(th.getState()==TERMINATED){
+            hpTh.interrupt();
+            armorTh.interrupt();
         }
         return user;
     }
     User Battle꼬북이(User user, Skills skills, Inventory inventory, Store store,Monster 꼬북이){
             System.out.println("----------------------------------------------------------------------------------------------------------");
-            System.out.println(꼬북이.getName()+"와 전투를 합니다");
+            System.out.println(ConsoleColors.FONT_RED+꼬북이.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
             System.out.println("현재HP  / 총HP  : " + 꼬북이.getRealHp() + " / " + 꼬북이.getHp());
             System.out.println(" 공격력         : " + 꼬북이.getAttack());
             System.out.println(" 방어력         : " + 꼬북이.getDefense());
             System.out.println("----------------------------------------------------------------------------------------------------------");
+            System.out.println(ConsoleColors.FONT_YELLOW+user.getName()+"님의       현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp()+ConsoleColors.RESET);
+            System.out.println(ConsoleColors.FONT_YELLOW+"                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp()+ConsoleColors.RESET);
+            System.out.println("");
+            Thread th=new Thread(꼬북이);
+            //아머스킬쓰레드 runnable 상태 (실행대기)
+            Runnable armor=new ArmorSkill(user,skills,꼬북이);
+            Thread armorTh=new Thread(armor);
+            //스킬쓰레드 runnable 상태 (실행대기)
+            Runnable hp=new HpSkill(user,skills);
+            Thread hpTh=new Thread(hp);
+            th.start();
             while (game) {
                 System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.도망가기    ㅣ");
+                System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.포션 및 장비교환    ㅣ    8.도망가기    ㅣ");
                 System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                num=sc.nextInt();
+                if(th.getState()==TERMINATED){
+                    System.out.println("터미네이티드");
+                    game=false;
+                }
+                num=project.예외();
+                if(user.getRealHp()<0){
+                    game=false;
+                    num=0;
+                }
                 switch (num){
+                    case 0: user.userDie(user);
+                        break;
                     case 1: //일반공격
                         if(꼬북이.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 일반공격!!!"+ConsoleColors.RESET);
+                            System.out.println("                            꼬북이의 HP  / 총HP  : " + 꼬북이.getRealHp() + " / " + 꼬북이.getHp());
                             꼬북이.setRealHp(꼬북이.getRealHp()+(꼬북이.getDefense()-user.getPower()));
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                            꼬북이에게 입힌 데미지    : "+(꼬북이.getDefense()-user.getPower())+ConsoleColors.RESET);
+                            System.out.println("                            꼬북이의 현재HP  / 총HP  :  " + 꼬북이.getRealHp() + " / " + 꼬북이.getHp());
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                        //new Th1(시간 쿨타임 start();
+                            Runnable a=new Action();
+                            Thread aTh=new Thread(a);
+                            aTh.start();
+                            try {
+                                aTh.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         } else {
-                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                    }
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");                    }
                         break;
                     case 2://불공격
                         ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
                         skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*2/3;
                         if(꼬북이.getDefense()<skillDamage){
+                            if(user.getRealMp()>5){
+                            user.setRealMp(user.getRealMp()-5);
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 화염발사!!!"+ConsoleColors.RESET);
+                            System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                            System.out.println("");
+                            System.out.println("                            꼬북이의 현재HP  / 총HP  : " + 꼬북이.getRealHp() + " / " + 꼬북이.getHp());
                             꼬북이.setRealHp(꼬북이.getRealHp()+(꼬북이.getDefense()-skillDamage));
-                            System.out.println(user.getName()+"님이 공격했습니다.");
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                            꼬북이에게 입힌 데미지    : "+(꼬북이.getDefense()-skillDamage)+ConsoleColors.RESET);
+                            System.out.println("                            꼬북이의 현재HP  / 총HP  :  " + 꼬북이.getRealHp() + " / " + 꼬북이.getHp());
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                                Runnable a=new Action();
+                                Thread aTh=new Thread(a);
+                                aTh.start();
+                                try {
+                                    aTh.join();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }else {
+                                System.out.println("MP가 부족합니다.");
+                            }
                         }else {
                             System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                         }
@@ -1247,8 +2223,23 @@ public class hunter {
                     case 3: //물공격
                         skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10));
                         if(꼬북이.getDefense()<skillDamage){
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
+                            System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                            System.out.println("");
+                            System.out.println("                            꼬북이의 현재HP  / 총HP  : " + 꼬북이.getRealHp() + " / " + 꼬북이.getHp());
                             꼬북이.setRealHp(꼬북이.getRealHp()+(꼬북이.getDefense()-skillDamage));
-                            System.out.println(user.getName()+"님이 공격했습니다.");
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                            꼬북이에게 입힌 데미지    : "+(꼬북이.getDefense()-skillDamage)+ConsoleColors.RESET);
+                            System.out.println("                            꼬북이의 현재HP  / 총HP  :  " + 꼬북이.getRealHp() + " / " + 꼬북이.getHp());
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                            Runnable a=new Action();
+                            Thread aTh=new Thread(a);
+                            aTh.start();
+                            try {
+                                aTh.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }else {
                             System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                         }
@@ -1256,175 +2247,437 @@ public class hunter {
                     case 4: //풀공격
                         skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*3/2;
                         if(꼬북이.getDefense()<skillDamage){
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
+                            System.out.println("                            꼬북이의 현재HP  / 총HP  : " + 꼬북이.getRealHp() + " / " + 꼬북이.getHp());
+                            System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                            System.out.println("");
                             꼬북이.setRealHp(꼬북이.getRealHp()+(꼬북이.getDefense()-skillDamage));
-                            System.out.println(user.getName()+"님이 공격했습니다.");
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                            꼬북이에게 입힌 데미지    : "+(꼬북이.getDefense()-skillDamage)+ConsoleColors.RESET);
+                            System.out.println("                            꼬북이의 현재HP  / 총HP  :  " + 꼬북이.getRealHp() + " / " + 꼬북이.getHp());
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                            Runnable a=new Action();
+                            Thread aTh=new Thread(a);
+                            aTh.start();
+                            try {
+                                aTh.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }else {
                             System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
                         }
                         break;
                     case 5:
-                        skills.hpRecovery(user, skills);
+                        if(hpTh.getState()==NEW){
+                            hpTh.start();
+                            break;
+                        }
+                        if(hpTh.getState()==TERMINATED){
+                            hpTh=new Thread(hp);
+                            hpTh.start();
+                            break;
+                        }
+                        if(hpTh.getState()==TIMED_WAITING){
+                            System.out.println("--------------------------------------------------------------------------------------");
+                            System.out.println("");
+                            System.out.println("스킬이 실행중입니다다.");
+                            System.out.println("");
+                            System.out.println("--------------------------------------------------------------------------------------");
+                           break;
+                        }else {
+                        }
                         break;
                     case 6:
-                        skills.ArmorUp(user,skills);
+                        //running
+                    if(armorTh.getState()==NEW){
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TERMINATED){
+                        armorTh=new Thread(armor);
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다.");
+
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
+                        System.out.println("-----------------------------------------------------------------------");
+                        System.out.println("                                        스킬종료!!");
+                        System.out.println("-----------------------------------------------------------------------");
                         break;
                     case 7:
+                        inventory.listView(user,inventory,store);
+                        break;
+                    case 8:
                         game=false;
+                        th.interrupt();
                         return user;
-                }//내공격끝
+                }
                 if(꼬북이.getRealHp()<=0){
+                    th.interrupt();
                     System.out.println("꼬북이를 처치했습니다.");
                     user.setExperience(user.getExperience()+꼬북이.getMonEX(),user,skills);
                     inventory.inventoryList.add(꼬북이.dropItem);
                     inventory.setCash(inventory.getCash()+100);
-                    System.out.println("보상아이템 :  "+꼬북이.dropItem+" ㅣ 금화:  "+꼬북이.getDropCash()+"  ㅣ  경험치 : "+꼬북이.getMonEX());
+                    System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+꼬북이.dropItem+" ㅣ 금화:  "+꼬북이.getDropCash()+"  ㅣ  경험치 : "+꼬북이.getMonEX()+ConsoleColors.RESET);
                     game=false;
                     break;
                 }
-                System.out.println("꼬북이의 공격 차례입니다");
-                sc.nextLine();
-                random=((int)(Math.random()*2+1));
-                switch (random){
-                    case 1: // 평타
-                        System.out.println("몸통박치기!!");
-                        if(user.getDefense()-꼬북이.getAttack()<0){ //양수가 되면 안됌
-                            user.setRealHp(user.getRealHp()+(user.getDefense()-꼬북이.getAttack()));
-                        }
-                        break;
-                    case 2: //스킬
-
-                        if(user.getDefense()-꼬북이.getAttack()*4/3<0){ //양수가 되면 안됌
-                            user.setRealHp(user.getRealHp()+(user.getDefense()-꼬북이.getAttack()));
-                            System.out.println("물뿌리기!!");
-                        }else {
-                            System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                        }
-                        break;
-                }
-                stage=stage+1;
-                System.out.println("진행횟수  :  "+stage);
-                if(user.getRealHp()<0){
-                    user.userDie(user);
-                    return user;
-                }
-
-                System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
-                System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
-                System.out.println("----------------------------------------------------------------------------------------------------------");
-                System.out.println("꼬북이의 현재HP  / 총HP  : " + 꼬북이.getRealHp() + " / " + 꼬북이.getHp());
             }
+        if(th.getState()==TERMINATED){
+            hpTh.interrupt();
+            armorTh.interrupt();
+        }
             return user;
         }
     User Battle이상해씨(User user, Skills skills, Inventory inventory, Store store,Monster 이상해씨){
-            System.out.println("----------------------------------------------------------------------------------------------------------");
-            System.out.println(이상해씨.getName()+"와 전투를 합니다");
-            System.out.println("현재HP  / 총HP  : " + 이상해씨.getRealHp() + " / " + 이상해씨.getHp());
-            System.out.println(" 공격력         : " + 이상해씨.getAttack());
-            System.out.println(" 방어력         : " + 이상해씨.getDefense());
-            System.out.println("----------------------------------------------------------------------------------------------------------");
-            while (game) {
-                System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.도망가기    ㅣ");
-                System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                num=sc.nextInt();
-                switch (num){
-                    case 1: //일반공격
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println(ConsoleColors.FONT_RED+이상해씨.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
+        System.out.println("현재HP  / 총HP  : " + 이상해씨.getRealHp() + " / " + 이상해씨.getHp());
+        System.out.println(" 공격력         : " + 이상해씨.getAttack());
+        System.out.println(" 방어력         : " + 이상해씨.getDefense());
+        System.out.println("----------------------------------------------------------------------------------------------------------");
+        System.out.println(ConsoleColors.FONT_YELLOW+user.getName()+"님의       현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp()+ConsoleColors.RESET);
+        System.out.println(ConsoleColors.FONT_YELLOW+"                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp()+ConsoleColors.RESET);
+        System.out.println("");
+        Thread th=new Thread(이상해씨);
+        //아머스킬쓰레드 runnable 상태 (실행대기)
 
-                        if(이상해씨.getDefense()-user.getPower()<0){ //양수가 되면 안됌
-                            이상해씨.setRealHp(이상해씨.getRealHp()+(이상해씨.getDefense()-user.getPower()));
-                        } else {
-                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                    }
-                        break;
-                    case 2://불>풀
-                        ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
-                         skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*3/2;
-                        if(이상해씨.getDefense()<skillDamage){
-                            이상해씨.setRealHp(이상해씨.getRealHp()+(이상해씨.getDefense()-skillDamage));
-                            System.out.println(user.getName()+"님이 공격했습니다.");
-                        }else {
-                            System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
-                        }
-                        break;
-                    case 3:
-                        skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*2/3;
-                        if(이상해씨.getDefense()<skillDamage){
-                            이상해씨.setRealHp(이상해씨.getRealHp()+(이상해씨.getDefense()-skillDamage));
-                            System.out.println(user.getName()+"님이 공격했습니다.");
-                        }else {
-                            System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
-                        }
-                        break;
-                    case 4:
-                        skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10));
-                        if(이상해씨.getDefense()<skillDamage){
-                            이상해씨.setRealHp(이상해씨.getRealHp()+(이상해씨.getDefense()-skillDamage));
-                            System.out.println(user.getName()+"님이 공격했습니다.");
-                        }else {
-                            System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
-                        }
-                        break;
-                    case 5:
-                        skills.hpRecovery(user, skills);
-                        break;
-                    case 6:
-                        skills.ArmorUp(user,skills);
-                        break;
-                    case 7:
-                        game=false;
-                        return user;
-                }//내공격끝
-
-                if(이상해씨.getRealHp()<=0){
-                    System.out.println("이상해씨을 처치했습니다.");
-                    user.setExperience(user.getExperience()+이상해씨.getMonEX(),user,skills);
-                    inventory.inventoryList.add(이상해씨.dropItem);
-                    inventory.setCash(inventory.getCash()+100);
-                    System.out.println("보상아이템 :  "+이상해씨.dropItem+" ㅣ 금화:  "+이상해씨.getDropCash()+"  ㅣ  경험치 : "+이상해씨.getMonEX());
-                    game=false;
-                    break;
-                }
-                System.out.println("이상해씨의 공격");
-                sc.nextLine();
-                random=((int)(Math.random()*2+1));
-                switch (random){
-                    case 1: // 평타
-
-                    if(user.getDefense()-이상해씨.getAttack()<0){ //양수가 되면 안됌
-                        user.setRealHp(user.getRealHp()+(user.getDefense()-이상해씨.getAttack()));
-                        System.out.println("몸통박치기!!");
-                    }else {
-                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                    }
-
-                    break;
-                    case 2: //스킬
-
-                        if(user.getDefense()-이상해씨.getAttack()*4/3<0){ //양수가 되면 안됌
-                            user.setRealHp(user.getRealHp()+(user.getDefense()-이상해씨.getAttack()));
-                            System.out.println("씨폭탄!!");
-
-                        }else {
-                            System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");
-                        }
-                        break;
-                }
-                stage=stage+1;
-                System.out.println("진행횟수  :  "+stage);
-                if(user.getRealHp()<0){
-                    user.userDie(user);
-                    return user;
-                }
-                System.out.println(user.getName()+"님의  현재HP  / 총HP  : " + user.getRealHp() + " / " + user.getHp());
-                System.out.println("    현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
-                System.out.println("----------------------------------------------------------------------------------------------------------");
-                System.out.println("이상해씨의 현재HP  / 총HP  : " + 이상해씨.getRealHp() + " / " + 이상해씨.getHp());
+        Runnable armor=new ArmorSkill(user,skills);
+        Thread armorTh=new Thread(armor);
+        //스킬쓰레드 runnable 상태 (실행대기)
+        Runnable hp=new HpSkill(user,skills);
+        Thread hpTh=new Thread(hp);
+        th.start();
+        while (game) {
+            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println("ㅣ  1.일반공격  ㅣ    2.화염발사    ㅣ  3. 물대포    ㅣ  4.나뭇잎날리기    ㅣ  5.체력회복    ㅣ  6.방어력증가    ㅣ    7.포션 및 장비교환    ㅣ    8.도망가기    ㅣ");
+            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            if(th.getState()==TERMINATED){
+                game=false;
             }
-            return user;
+            num=project.예외();
+            if(user.getRealHp()<0){
+                game=false;
+                num=0;
+            }
+            switch (num){
+                case 0: user.userDie(user);
+                    break;
+                case 1: //일반공격
+                    if(이상해씨.getDefense()-user.getPower()<0){ //양수가 되면 안됌
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 일반공격!!!"+ConsoleColors.RESET);
+                        System.out.println("                            이상해씨의 HP  / 총HP  : " + 이상해씨.getRealHp() + " / " + 이상해씨.getHp());
+                        이상해씨.setRealHp(이상해씨.getRealHp()+(이상해씨.getDefense()-user.getPower()));
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            이상해씨에게 입힌 데미지    : "+(이상해씨.getDefense()-user.getPower())+ConsoleColors.RESET);
+                        System.out.println("                            이상해씨의 현재HP  / 총HP  :  " + 이상해씨.getRealHp() + " / " + 이상해씨.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        //new Th1(시간 쿨타임 start();
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        System.out.println("상대의 방어력이 높아 타격을 줄 수 없습니다");                    }
+                    break;
+                case 2://불공격
+                    ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*3/2;
+                    if(이상해씨.getDefense()<skillDamage){
+                        if(user.getRealMp()>5){
+                            user.setRealMp(user.getRealMp()-5);
+                            System.out.println("----------------------------------------------------------------------------------------------");
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                   mp -5      "+user.getName()+"님의 화염발사!!!"+ConsoleColors.RESET);
+                            System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                            System.out.println("");
+                            System.out.println("                            이상해씨의 현재HP  / 총HP  : " + 이상해씨.getRealHp() + " / " + 이상해씨.getHp());
+                            이상해씨.setRealHp(이상해씨.getRealHp()+(이상해씨.getDefense()-skillDamage));
+                            System.out.println(ConsoleColors.FONT_YELLOW+"                            이상해씨에게 입힌 데미지    : "+(이상해씨.getDefense()-skillDamage)+ConsoleColors.RESET);
+                            System.out.println("                            이상해씨의 현재HP  / 총HP  :  " + 이상해씨.getRealHp() + " / " + 이상해씨.getHp());
+                            System.out.println("----------------------------------------------------------------------------------------------");
+
+                            Runnable a=new Action();
+                            Thread aTh=new Thread(a);
+                            aTh.start();
+                            try {
+                                aTh.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            System.out.println("MP가 부족합니다.");
+                        }
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
+                    break;
+                case 3: //물공격
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*2/3;
+                    if(이상해씨.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
+                        System.out.println("                            이상해씨의 현재HP  / 총HP  : " + 이상해씨.getRealHp() + " / " + 이상해씨.getHp());
+                        이상해씨.setRealHp(이상해씨.getRealHp()+(이상해씨.getDefense()-skillDamage));
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            이상해씨에게 입힌 데미지    : "+(이상해씨.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            이상해씨의 현재HP  / 총HP  :  " + 이상해씨.getRealHp() + " / " + 이상해씨.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
+                    break;
+                case 4: //풀공격
+                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10));
+                    if(이상해씨.getDefense()<skillDamage){
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
+                        System.out.println("                            이상해씨의 현재HP  / 총HP  : " + 이상해씨.getRealHp() + " / " + 이상해씨.getHp());
+                        System.out.println("                 현재MP  / 총MP  : " + user.getRealMp() + " / " + user.getMp());
+                        System.out.println("");
+                        이상해씨.setRealHp(이상해씨.getRealHp()+(이상해씨.getDefense()-skillDamage));
+                        System.out.println(ConsoleColors.FONT_YELLOW+"                            이상해씨에게 입힌 데미지    : "+(이상해씨.getDefense()-skillDamage)+ConsoleColors.RESET);
+                        System.out.println("                            이상해씨의 현재HP  / 총HP  :  " + 이상해씨.getRealHp() + " / " + 이상해씨.getHp());
+                        System.out.println("----------------------------------------------------------------------------------------------");
+                        Runnable a=new Action();
+                        Thread aTh=new Thread(a);
+                        aTh.start();
+                        try {
+                            aTh.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        System.out.println("포켓몬의 방어력이 높아 타격을 줄 수 없습니다");
+                    }
+                    break;
+                case 5:
+                    if(hpTh.getState()==NEW){
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TERMINATED){
+                        hpTh=new Thread(hp);
+                        hpTh.start();
+                        break;
+                    }
+                    if(hpTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다다.");
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
+                    break;
+                case 6:
+                    //running
+                    if(armorTh.getState()==NEW){
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TERMINATED){
+                        armorTh=new Thread(armor);
+                        armorTh.start();
+                        break;
+                    }
+                    if(armorTh.getState()==TIMED_WAITING){
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        System.out.println("");
+                        System.out.println("스킬이 실행중입니다.");
+
+                        System.out.println("");
+                        System.out.println("--------------------------------------------------------------------------------------");
+                        break;
+                    }else {
+                    }
+                    System.out.println("-----------------------------------------------------------------------");
+                    System.out.println("                                        스킬종료!!");
+                    System.out.println("-----------------------------------------------------------------------");
+                    break;
+                case 7:
+                    inventory.listView(user,inventory,store);
+                    break;
+                case 8:
+                    game=false;
+                    th.interrupt();
+                    return user;
+            }
+            if(이상해씨.getRealHp()<=0){
+                th.interrupt();
+                System.out.println("이상해씨를 처치했습니다.");
+                user.setExperience(user.getExperience()+이상해씨.getMonEX(),user,skills);
+                inventory.inventoryList.add(이상해씨.dropItem);
+                inventory.setCash(inventory.getCash()+100);
+                if(afternoon==true){
+                    System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+이상해씨.dropItem+" ㅣ 금화:  "+이상해씨.getDropCash()+"  ㅣ  경험치 : "+이상해씨.getMonEX()+ConsoleColors.RESET);
+                }else {
+                    System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+이상해씨.dropItem+" ㅣ 금화:  "+이상해씨.getDropCash()*2+"  ㅣ  경험치 : "+이상해씨.getMonEX()*2+ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.FONT_YELLOW+"밤에는 경험치와 보상아이템이 2배입니다!!!"+ConsoleColors.RESET);
+                }
+
+                game=false;
+                break;
+            }else{
+                System.out.println(afternoon+"    true면 낮,,   false면 밤");
+                System.out.println(user.getAvoid()+"명중률");
+                System.out.println(user.getPower()+"공격력");
+            }
+        }
+        if(th.getState()==TERMINATED){
+            hpTh.interrupt();
+            armorTh.interrupt();
+        }
+        return user;
     }
 //--------------------------------------------------------------------------------------------------------------
+    void Battle파퀘(User user, Skills skills, Inventory inventory, Store store, hunter hunter){
 
-boolean game=true;
+       초급파퀘(user,skills,inventory,store,hunter);
+    }
+    Boolean halfMinute(int second){
+        if(second==30){
+            return true;
+        }
+        return false;
+    }
+    void 초급파퀘(User user, Skills skills, Inventory inventory, Store store, hunter hunter){
+
+        Runnable armor=new ArmorSkill(user,skills);
+        Thread armorTh=new Thread(armor);
+        //스킬쓰레드 runnable 상태 (실행대기)
+        Runnable hp=new HpSkill(user,skills);
+        Thread hpTh=new Thread(hp);
+        int second = TimerRunnable.second;
+        int minute = TimerRunnable.minute;
+        boolean halfMinute = false;
+        Runnable questTime=new questTime(user);
+        Thread QuestTime=new Thread(questTime); //쓰레드 객체(퀘스트타임) 생성 - 제한시간
+        Runnable randomObj=new RandomObj(hunter,user);
+        Thread RandomObj=new Thread(randomObj);
+        random=((int)(Math.random()*3+1));
+        System.out.println(minute+"분  "+second+"초"+"   초급파퀘시간");
+        QuestTime.start();  //제한시간 시작
+        RandomObj.start(); //객체생성시작
+        while(game){
+            초급퀘스트객체생성(user);
+            Thread th=new Thread(초급퀘스트객체생성(user));
+            th.start();
+
+            if(QuestTime.getState() == TERMINATED){
+                System.out.println("제한시간 쓰레드 종료 ");
+                System.out.println(RandomObj.getState());
+                game=false;
+                if(RandomObj.getState() == TERMINATED){
+                    System.out.println("랜덤객체생성쓰레드종료");
+                    game=false;
+                }
+            }
+
+
+        }
+    }
+    Monster 초급퀘스트객체생성(User user){
+        random=((int)(Math.random()*3+1));
+        System.out.println(random);
+        switch (random){
+            case 1 :
+                Runnable 파이리=new Monster(
+                        "파이리",
+                        3,
+                        30,
+                        30,
+                        30,
+                        30,
+                        30,
+                        10,
+                        1,
+                        30,
+                        "파이리의 꼬리",
+                        100,
+                        20,
+                        1
+                        ,user);
+
+                break;
+            case 2:
+                Runnable 꼬북이=new Monster(
+                        "꼬북이",
+                        3,
+                        30,
+                        30,
+                        30,
+                        30,
+                        30,
+                        10,
+                        1,
+                        30,
+                        "꼬북이의 등딱지", //돌
+                        100,
+                        20,
+                        2
+                        ,user);
+
+                break;
+            case 3:
+                Runnable 이상해씨=new Monster(
+                        "이상해씨",
+                        3,
+                        30,
+                        30,
+                        30,
+                        30,
+                        30,
+                        10,
+                        1,
+                        30,
+                        "이상해씨의 씨앗",
+                        100,
+                        20,
+                        3
+                        ,user);
+                break;
+        }
+        Monster monster=new Monster("이상해씨",
+                3,
+                30,
+                30,
+                30,
+                30,
+                30,
+                10,
+                1,
+                30,
+                "이상해씨의 씨앗",
+                100,
+                20,
+                3
+                ,user);
+        return monster;
+    }
+
 
 }
 

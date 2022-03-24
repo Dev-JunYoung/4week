@@ -48,11 +48,11 @@ public class ending {
                 Arrays.asList(finish).contains("거북왕의 등딱지")&&
                 Arrays.asList(finish).contains("이상해꽃의 꽃")){
 
-                System.out.println(" ");
+              /*  System.out.println(" ");
                 System.out.println("자네덕에 마을에 평화가 찾아왔네 ");
                 System.out.println("이제 자네의 역할은 끝났네 ..  ");
                 System.out.println(user.getName()+"의 이름을 기억하겠네.... (end)  ");
-                user.setStatus(0);
+              */  user.setStatus(0);
                 return ;
             }
             if(num==0){
