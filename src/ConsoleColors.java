@@ -1,4 +1,5 @@
 public class ConsoleColors {
+    //폰트 및 배경색 클래스
     public static final String RESET = "\u001B[0m";
     public static final String FONT_BLACK = "\u001B[30m";
     public static final String FONT_RED = "\u001B[31m";

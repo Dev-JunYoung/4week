@@ -7,136 +7,21 @@ public class Monster extends unit implements Runnable {
     int dropCash;
     int monEX;
     User user;
-    int monNum=0; // 1파이리 2꼬북이 3이상해씨
-                // 4리자드 5어니부기6이상해풀
-                // 7리자몽 8거북왕 9 이상해꽃
+    // 1파이리 2꼬북이 3이상해씨
+    // 4리자드 5어니부기6이상해풀
+    // 7리자몽 8거북왕 9 이상해꽃
+    int monNum=0;
     int 모드=0;
-Monster monster;
-    public Monster(){
-    }
-    public Monster(String name,
-                   int ravel,
-                   int hp,
-                   int realHp,
-                   int mp,
-                   int realMp,
-                   int Attack,
-                   int Defense,
-                   int property, //속성
-                   int skillAttack,
-                   String dropItem,
-                   int dropCash,
-                   int monEX,
-                   int monNum,
-                   User user) {
-        setName(name);
-        setLevel(level);
-        setHp(hp);
-        setRealHp(realHp);
-        setMp(mp);
-        setRealMp(realMp);
-        setAttack(Attack);
-        setDefense(Defense);
-        setProperty(property);
-        setSkillAttack(skillAttack);
-        setDropItem(dropItem);
-        setDropCash(dropCash);
-        setMonEX(monEX);
-        setMonNum(monNum);
-        this.user=user;
-    }
-    public Monster(String name,
-                   int hp,
-                   int realHp,
-                   int mp,
-                   int realMp,
-                   int Attack,
-                   int Defense,
-                   int property,
-                   int 모드,
-                   User user){
-        setName(name);
-        setHp(hp);
-        setRealHp(realHp);
-        setMp(mp);
-        setRealMp(realMp);
-        setAttack(Attack);
-        setDefense(Defense);
-        setProperty(property);
-        this.user=user;
-        set모드(모드);
-    } public Monster(String name,
-                     int hp,
-                     int realHp,
-                     int mp,
-                     int realMp,
-                     int Attack,
-                     int Defense,
-                     int property,
-                     int 모드,
-                     User user,Monster monster){
-        setName(name);
-        setHp(hp);
-        setRealHp(realHp);
-        setMp(mp);
-        setRealMp(realMp);
-        setAttack(Attack);
-        setDefense(Defense);
-        setProperty(property);
-        set모드(모드);
-        this.user=user;
-        this.monster=monster;
-    }
-
-
-
-    public Monster(String name,
-                   int ravel,
-                   int hp,
-                   int realHp,
-                   int mp,
-                   int realMp,
-                   int Attack,
-                   int Defense,
-                   int property, //속성
-                   int skillAttack,
-                   String dropItem,
-                   int dropCash,
-                   int monEX,
-                   int monNum,
-                   User user,
-                   int 모드) {
-        setName(name);
-        setLevel(level);
-        setHp(hp);
-        setRealHp(realHp);
-        setMp(mp);
-        setRealMp(realMp);
-        setAttack(Attack);
-        setDefense(Defense);
-        setProperty(property);
-        setSkillAttack(skillAttack);
-        setDropItem(dropItem);
-        setDropCash(dropCash);
-        setMonEX(monEX);
-        setMonNum(monNum);
-        this.user=user;
-        set모드(모드);
-    }
-
     int second = TimerRunnable.second;
-    int minute = TimerRunnable.minute;
-boolean flag=true;
+    boolean flag=true;
     @Override
     public void run() {
         // 0 == vs 일반사냥터
-        // 1 == vs 퀘스트모드
         // 2 == vs 투기장
         if(user.get유저모드()==0){
-            boolean afternoon = TimerRunnable.afternoon;
-
+            밤();
             try {
-            System.out.println("-----------------------------------------------------------------------------------------------------------------------------");
+                System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
             System.out.println("내 상태                                         포켓몬");
             if(user.getRealHp()<0||this.getRealHp()<0){
                 flag=false;
@@ -214,7 +99,7 @@ boolean flag=true;
                     System.out.println(ConsoleColors.FONT_RED+"사망하셨습니다.   ( 아무숫자를 누르세요  )"+ConsoleColors.RESET);
                     return;
                 }
-                System.out.println("-----------------------------------------------------------------------------------------------------------------------------");
+                System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                 System.out.println("");
             }
         }catch (Exception e){}
@@ -225,7 +110,7 @@ boolean flag=true;
             int delayAttack=0;
             try {
 
-                System.out.println("-----------------------------------------------------------------------------------------------------------------------------");
+                System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                 System.out.println("내 상태                                         포켓몬");
                 if(user.getRealHp()<0||this.getRealHp()<0){
                     flag=false;
@@ -304,7 +189,7 @@ boolean flag=true;
                         System.out.println(ConsoleColors.FONT_RED+"사망하셨습니다.   ( 아무숫자를 누르세요  )"+ConsoleColors.RESET);
                         return;
                     }
-                    System.out.println("-----------------------------------------------------------------------------------------------------------------------------");
+                    System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                     System.out.println("");
                 }
             }catch (Exception e){
@@ -343,7 +228,6 @@ boolean flag=true;
                             Thread.sleep(random*500);
                             this.Attack();
                             flag=check(this);
-
                     } catch (InterruptedException e) {
                         return;
                     }
@@ -362,8 +246,16 @@ boolean flag=true;
             }
         }
         }
-    
-    void mosterAttack(){
+    //-------------------------------------------------------------
+    void 밤(){
+        //밤스레드
+        if(TimerRunnable.afternoon==false){
+            this.setAttack(getAttack()*2);
+            this.setDropCash(this.getDropCash()*2);
+            this.setMonEX(this.getMonEX()*2);
+            System.out.println(ConsoleColors.FONT_YELLOW+"밤입니다. 포켓몬의 데미지가 강력해집니다."+ConsoleColors.RESET);
+            System.out.println(ConsoleColors.FONT_YELLOW+"대신 획득 경험치와 보상금화가 2배입니다."+ConsoleColors.RESET);
+        }
     }
     @Override
     void Attack() {
@@ -399,8 +291,8 @@ boolean flag=true;
             }else if(this.getRealHp()<=0){
                 System.out.println(" ");
             }
-            System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println(ConsoleColors.FONT_RED+"--------------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
             System.out.println(ConsoleColors.FONT_RED+this.monster.getName()+"의 현재 체력 "+this.monster.getRealHp()+" "+ConsoleColors.RESET);
             if(this.monster.getRealHp()==100){
                 System.out.println("■■■■■■■■■■■■■■■■■■■■");
@@ -468,8 +360,8 @@ boolean flag=true;
             }else if(this.monster.getRealHp()<=0){
                 System.out.println(" ");
             }
-            System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println(ConsoleColors.FONT_RED+"--------------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
             System.out.println(ConsoleColors.FONT_RED+this.getName()+"의 현재 체력 "+this.getRealHp()+" "+ConsoleColors.RESET);
             if(this.getRealHp()==100){
                 System.out.println("■■■■■■■■■■■■■■■■■■■■");
@@ -502,8 +394,12 @@ boolean flag=true;
                 System.out.println(ConsoleColors.FONT_YELLOW+"경기가 끝났습니다 "+ConsoleColors.RESET);
             }
         }
-
     }
+    int random(){
+        int random = ((int) (Math.random() * 4 + 1));
+        return random;
+    }
+    //-------------------------------------------------------------
     public String getDropItem() {
         return dropItem;
     }
@@ -528,22 +424,16 @@ boolean flag=true;
     public void setSkillAttack(int skillAttack) {
         this.skillAttack = skillAttack;
     }
-boolean check(Monster monster){
+    boolean check(Monster monster){
         if(this.realHp<=0){
             return false;
         }
         return true;
 }
-int randomAttack(){
+    int randomAttack(){
     int randomAttack=((int)(Math.random()*10+1));
-    System.out.println(randomAttack);
 return randomAttack;
 }
-int random(){
-    int random = ((int) (Math.random() * 4 + 1));
-    return random;
-}
-
     @Override
     void Skill() {
         super.Skill();
@@ -640,21 +530,91 @@ int random(){
     public void set모드(int 모드) {
         this.모드 = 모드;
     }
-
     public Monster getMonster() {
         return monster;
     }
-
     public void setMonster(Monster monster) {
         this.monster = monster;
     }
-    void 밤(Monster monster){
-        if(TimerRunnable.afternoon==false){
-            this.setAttack(getAttack()*2);
-            this.setDropCash(this.getDropCash()*2);
-            this.setMonEX(this.getMonEX()*2);
-            System.out.println(ConsoleColors.FONT_YELLOW+"밤입니다. 포켓몬의 데미지가 강력해집니다."+ConsoleColors.RESET);
-            System.out.println(ConsoleColors.FONT_YELLOW+"대신 획득 경험치와 보상금화가 2배입니다."+ConsoleColors.RESET);
-        }
+    Monster monster;
+    public Monster(){
+    }
+    //일반전투 몬스터 생성자
+    public Monster(String name,
+                   int ravel,
+                   int hp,
+                   int realHp,
+                   int mp,
+                   int realMp,
+                   int Attack,
+                   int Defense,
+                   int property, //속성
+                   int skillAttack,
+                   String dropItem,
+                   int dropCash,
+                   int monEX,
+                   int monNum,
+                   User user) {
+        setName(name);
+        setLevel(level);
+        setHp(hp);
+        setRealHp(realHp);
+        setMp(mp);
+        setRealMp(realMp);
+        setAttack(Attack);
+        setDefense(Defense);
+        setProperty(property);
+        setSkillAttack(skillAttack);
+        setDropItem(dropItem);
+        setDropCash(dropCash);
+        setMonEX(monEX);
+        setMonNum(monNum);
+        this.user=user;
+    }
+    //투기장 몬스터 생성자
+    public Monster(String name,
+                   int hp,
+                   int realHp,
+                   int mp,
+                   int realMp,
+                   int Attack,
+                   int Defense,
+                   int property,
+                   int 모드,
+                   User user){
+        setName(name);
+        setHp(hp);
+        setRealHp(realHp);
+        setMp(mp);
+        setRealMp(realMp);
+        setAttack(Attack);
+        setDefense(Defense);
+        setProperty(property);
+        this.user=user;
+        set모드(모드);
+    } public Monster(String name,
+                     int hp,
+                     int realHp,
+                     int mp,
+                     int realMp,
+                     int Attack,
+                     int Defense,
+                     int property,
+                     int 모드,
+                     User user,
+                     Monster monster){
+        setName(name);
+        setHp(hp);
+        setRealHp(realHp);
+        setMp(mp);
+        setRealMp(realMp);
+        setAttack(Attack);
+        setDefense(Defense);
+        setProperty(property);
+        set모드(모드);
+        this.user=user;
+        this.monster=monster;
+    }
+    void mosterAttack(){
     }
 }

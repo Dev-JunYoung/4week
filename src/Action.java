@@ -1,6 +1,5 @@
-import java.awt.*;
-
-public class Action implements Runnable{ //유저 공격 쿨타임
+public class Action implements Runnable{
+    //유저 공격 쿨타임쓰레드
     @Override
     public void run() {
         System.out.println("공격!!");

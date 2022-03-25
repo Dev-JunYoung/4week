@@ -1,37 +1,43 @@
 public class Potion extends Item{
+
     int recoveryAmount; //회복량
     int type; //회복종류 1.hp , 2.mp
+
     public Potion(String name,int price,int recoveryAmount, int type) {
         setName(name);
         setPrice(price);
         setRecoveryAmount(recoveryAmount);
         setType(type);
     }
+
+    //오버라이딩 메서드
     @Override
-    public void sell(Inventory inventory) {
-        inventory.setCash(inventory.getCash()+this.getPrice());
+    public void sell(User user) {
+        user.getInventory().setCash(user.getInventory().getCash()+this.getPrice());
         System.out.println(ConsoleColors.FONT_YELLOW+this.getName()+"   판매완료!!! 얻은 금화   :    "+this.getPrice()+ConsoleColors.RESET);
     }
     @Override
-    public void 상호작용(User user, Inventory inventory, Store store) {
+    public void 상호작용(User user, Store store) {
        if(this.getType()==1){ //hp
            if(getRecoveryAmount()==50){
-               inventory.setHpPotion(this,user,store,inventory);
+               user.getInventory().setHpPotion(this,user,store);
            }else if(getRecoveryAmount()==100){
-               inventory.setHpPotion100(this,user,store,inventory);
+               user.getInventory().setHpPotion100(this,user,store);
            }else {
-               inventory.setHpPotion200(this,user,store,inventory);
+               user.getInventory().setHpPotion200(this,user,store);
            }
        }else if(this.getType()==2){ //mp
            if(getRecoveryAmount()==50){
-               inventory.setMpPotion(this,user,store,inventory);
+               user.getInventory().setMpPotion(this,user,store);
            }else if(getRecoveryAmount()==100){
-               inventory.setMpPotion100(this,user,store,inventory);
+               user.getInventory().setMpPotion100(this,user,store);
            }else {
-               inventory.setMpPotion200(this,user,store,inventory);
+               user.getInventory().setMpPotion200(this,user,store);
            }
        }
     }
+
+    //getter,setter
     public int getRecoveryAmount() {
         return recoveryAmount;
     }

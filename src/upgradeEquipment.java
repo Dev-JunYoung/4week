@@ -3,12 +3,22 @@ import java.util.Scanner;
 public class upgradeEquipment{
 
 Scanner sc=new Scanner(System.in);
-Thread l=new Thread(new LodingBar());
+Thread l=new Thread(new LodingBar(10));
 void loding() throws InterruptedException {
     l.start();
     l.join();
     System.out.println();}
     int Upgrade(User user,Inventory inventory,Store store) throws InterruptedException {
+
+        System.out.println("" +
+                "██╗   ██╗██████╗  ██████╗ ██████╗  █████╗ ██████╗ ███████╗\n" +
+                "██║   ██║██╔══██╗██╔════╝ ██╔══██╗██╔══██╗██╔══██╗██╔════╝\n" +
+                "██║   ██║██████╔╝██║  ███╗██████╔╝███████║██║  ██║█████╗  \n" +
+                "██║   ██║██╔═══╝ ██║   ██║██╔══██╗██╔══██║██║  ██║██╔══╝  \n" +
+                "╚██████╔╝██║     ╚██████╔╝██║  ██║██║  ██║██████╔╝███████╗\n" +
+                " ╚═════╝ ╚═╝      ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝\n" +
+                "                                                          "
+                );
         System.out.println("--------------------------------------------------------------------------------------------------------------------");
         System.out.println("ㅣ  초보자의 검 강화조건   :    초보자의 검   ㅣ    파이리의 꼬리     ㅣ   금화 100    ㅣ ");
         System.out.println("ㅣ  초보자의 갑옷 강화조건  :   초보자의 갑옷  ㅣ   꼬북이의 등딱지    ㅣ   금화 100    ㅣ");
@@ -23,11 +33,13 @@ void loding() throws InterruptedException {
         System.out.println("ㅣ  마스터의 신발 강화조건  :   마스터의 신발  ㅣ   이상해꽃의 꽃    ㅣ   금화 600    ㅣ ");
         System.out.println("--------------------------------------------------------------------------------------------------------------------");
         //유효성 검사
-        System.out.println("기타 재료 ");
+        System.out.println("기타 재료 : ");
         for (int i = 0; i < inventory.inventoryList.size(); i++) {
             System.out.print("[" + inventory.inventoryList.get(i) +"]");
         }
+        System.out.println("");
         System.out.println("--------------------------------------------------------------------------------------------------------------------");
+        System.out.println("장비 및 포션 리스트 ");
         for(int i=0; i<inventory.list.size();i++){
             System.out.println((i+1)+" : "+inventory.list.get(i).name);
         }
@@ -40,13 +52,13 @@ void loding() throws InterruptedException {
             }else if(inventory.list.isEmpty()){
                 return 0;
             }
+            project.대기(10);
             Equipments chooseItem= (Equipments) inventory.list.get(num-1);
-            chooseItem.upgradeEquipment(user,inventory,store);
+            chooseItem.upgradeEquipment(user,store);
         }catch (IndexOutOfBoundsException ido){
             System.out.println("입력하신 번호에 아이템이 없습니다.");
             return 0;
         }
-
-return 0;
+        return 0;
     }
 }

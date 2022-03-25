@@ -1,21 +1,25 @@
-import java.util.Scanner;
-
 import static java.lang.Thread.State.*;
-
 public class hunter {
-    Thread l=new Thread(new LodingBar());
+    Thread l=new Thread(new LodingBar(10));
+    //진입시 로딩바 스레드
     void loding() throws InterruptedException {
         l.start();
         l.join();
     }
     boolean game=true;
-
     boolean afternoon = TimerRunnable.afternoon;
-    Scanner sc=new Scanner(System.in);
     int num;
-    int random;
     int skillDamage;
-    void 사냥터입구(User user,Skills skills,Inventory inventory,Store store) throws InterruptedException {
+    void 사냥터입구(User user,Store store){
+        System.out.println("" +
+                "██╗  ██╗██╗   ██╗███╗   ██╗████████╗██╗███╗   ██╗ ██████╗     \n" +
+                "██║  ██║██║   ██║████╗  ██║╚══██╔══╝██║████╗  ██║██╔════╝     \n" +
+                "███████║██║   ██║██╔██╗ ██║   ██║   ██║██╔██╗ ██║██║  ███╗    \n" +
+                "██╔══██║██║   ██║██║╚██╗██║   ██║   ██║██║╚██╗██║██║   ██║    \n" +
+                "██║  ██║╚██████╔╝██║ ╚████║   ██║   ██║██║ ╚████║╚██████╔╝    \n" +
+                "╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝     \n" +            "                                                              "
+
+        );
         int num;
         System.out.println("----------------------------------------------------------------------------------------------------------------------");
         System.out.println("1.초보자사냥터  ㅣ  2.숙련자사냥터  ㅣ  3.상급자사냥터  ㅣ  4.보스   ㅣ  5.돌아가기  ㅣ  ");
@@ -24,25 +28,25 @@ public class hunter {
         //loding();
         switch (num){
             case 1: //초급
-                초급사냥터(user, skills, inventory,store);
+                초급사냥터(user,store);
                 break;
             case 2: //중급
                 if(user.getLevel()>4){
-                    중급사냥터(user, skills, inventory,store);
+                    중급사냥터(user,store);
                 }else {
                     System.out.println("레벨이 낮아, 진입 할 수 없습니다.");
                 }
                 break;
             case 3: //상급
                 if(user.getLevel()>7){
-                    상급사냥터(user, skills, inventory,store);
+                    상급사냥터(user,store);
                 }else {
                     System.out.println("레벨이 낮아, 진입 할 수 없습니다.");
                 }
                 break;
             case 4: //보스
                 if(user.getLevel()>=10){
-                    보스사냥터(user, skills, inventory,store);
+                    보스사냥터(user,store);
                 }else {
                     System.out.println("레벨이 낮아, 진입 할 수 없습니다.");
                 }
@@ -50,10 +54,18 @@ public class hunter {
             case 5:
                 break;
         }
+        project.대기(4);
     }
 //--------------------------------------------------------------------------------------------------------------
-    //보스 추가메서드 필살기
-    User 보스사냥터(User user, Skills skills, Inventory inventory, Store store){
+    User 보스사냥터(User user,Store store){
+        System.out.println("" +
+                "██████╗  ██████╗ ███████╗███████╗\n" +
+                "██╔══██╗██╔═══██╗██╔════╝██╔════╝\n" +
+                "██████╔╝██║   ██║███████╗███████╗\n" +
+                "██╔══██╗██║   ██║╚════██║╚════██║\n" +
+                "██████╔╝╚██████╔╝███████║███████║\n" +
+                "╚═════╝  ╚═════╝ ╚══════╝╚══════╝\n" +
+                "                                 ");
         //보스는 매 턴마다 속성이 달라짐,
         int ranChar=((int)(Math.random()*3+1));
         Runnable 뮤츠=new boss(
@@ -72,11 +84,10 @@ public class hunter {
                 100,
                 10,user
         ) ;
-        Battle뮤츠(user,skills,inventory,store,(boss)뮤츠);
+        Battle뮤츠(user,store,(boss)뮤츠);
         return user;
-    } //보스사냥터
-    //--------------------------------------------------------------------------------------------------------------
-    User Battle뮤츠(User user, Skills skills, Inventory inventory, Store store,boss 뮤츠){
+    }
+    User Battle뮤츠(User user,Store store,boss 뮤츠){
         System.out.println("----------------------------------------------------------------------------------------------------------");
         System.out.println(ConsoleColors.FONT_RED+뮤츠.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 뮤츠.getRealHp() + " / " + 뮤츠.getHp());
@@ -88,11 +99,12 @@ public class hunter {
         System.out.println("");
         Thread th=new Thread(뮤츠);
         //아머스킬쓰레드 runnable 상태 (실행대기)
-        Runnable armor=new ArmorSkill(user,skills);
+        Runnable armor=new ArmorSkill(user);
         Thread armorTh=new Thread(armor);
         //스킬쓰레드 runnable 상태 (실행대기)
-        Runnable hp=new HpSkill(user,skills);
+        Runnable hp=new HpSkill(user);
         Thread hpTh=new Thread(hp);
+        //몬스터자동공격스레드
         th.start();
         game=true;
         while (game) {
@@ -113,6 +125,7 @@ public class hunter {
                         //new Th1(시간 쿨타임 start();
                         Runnable a=new Action();
                         Thread aTh=new Thread(a);
+                        //쿨타임스레드
                         aTh.start();
                         try {
                             aTh.join();
@@ -126,7 +139,7 @@ public class hunter {
                 case 2: //내가 불공격
                         switch (뮤츠.getProperty()){
                             case 1:   //case 1 불뮤츠
-                                skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
+                                skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10));
                                 if(뮤츠.getDefense()<skillDamage){
                                     if(user.getRealMp()>5){
                                         user.setRealMp(user.getRealMp()-5);
@@ -158,7 +171,7 @@ public class hunter {
                                 }
                                 break;
                             case 2:    //case 2 물뮤츠 내가 불공격
-                                skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10)*2/3);
+                                skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10)*2/3);
                                 if(뮤츠.getDefense()<skillDamage){
                                     if(user.getRealMp()>5){
                                         user.setRealMp(user.getRealMp()-5);
@@ -190,7 +203,7 @@ public class hunter {
                                 }
                                 break;
                             case 3:  //case 3 풀뮤츠
-                                skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10)*3/2);
+                                skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10)*3/2);
                                 if(뮤츠.getDefense()<skillDamage){
                                     if(user.getRealMp()>5){
                                         user.setRealMp(user.getRealMp()-5);
@@ -226,7 +239,7 @@ public class hunter {
                 case 3: //내가 물공격
                     switch (뮤츠.getProperty()){
                         case 1:   //case 1 불뮤츠
-                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10)*3/2);
+                            skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10)*3/2);
                             if(뮤츠.getDefense()<skillDamage){
                                 if(user.getRealMp()>5){
                                     user.setRealMp(user.getRealMp()-5);
@@ -258,7 +271,7 @@ public class hunter {
                             }
                             break;
                         case 2:    //case 2 물뮤츠 내가 물공격
-                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
+                            skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10));
                             if(뮤츠.getDefense()<skillDamage){
                                 if(user.getRealMp()>5){
                                     user.setRealMp(user.getRealMp()-5);
@@ -290,7 +303,7 @@ public class hunter {
                             }
                             break;
                         case 3:  //case 3 풀뮤츠 물공격
-                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10)*2/3);
+                            skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10)*2/3);
                             if(뮤츠.getDefense()<skillDamage){
                                 if(user.getRealMp()>5){
                                     user.setRealMp(user.getRealMp()-5);
@@ -326,7 +339,7 @@ public class hunter {
                 case 4: //user 풀
                     switch (뮤츠.getProperty()){
                         case 1:   //case 1 불뮤츠 user  풀
-                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10)*2/3);
+                            skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10)*2/3);
                             if(뮤츠.getDefense()<skillDamage){
                                 if(user.getRealMp()>5){
                                     user.setRealMp(user.getRealMp()-5);
@@ -358,7 +371,7 @@ public class hunter {
                             }
                             break;
                         case 2:    //case 2 물뮤츠 내가 풀공격
-                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10)*3/2);
+                            skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10)*3/2);
                             if(뮤츠.getDefense()<skillDamage){
                                 if(user.getRealMp()>5){
                                     user.setRealMp(user.getRealMp()-5);
@@ -390,7 +403,7 @@ public class hunter {
                             }
                             break;
                         case 3:  //case 3 풀뮤츠 풀공격
-                            skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
+                            skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10));
                             if(뮤츠.getDefense()<skillDamage){
                                 if(user.getRealMp()>5){
                                     user.setRealMp(user.getRealMp()-5);
@@ -424,6 +437,7 @@ public class hunter {
                     }
                     break;
                 case 5:
+                    //체력회복스레드
                     if(hpTh.getState()==NEW){
                         hpTh.start();
                         break;
@@ -444,7 +458,7 @@ public class hunter {
                     }
                     break;
                 case 6:
-                    //running
+                    //방어력 증가 스레드
                     if(armorTh.getState()==NEW){
                         armorTh.start();
                         break;
@@ -469,33 +483,41 @@ public class hunter {
                     System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
-                    inventory.listView(user,inventory,store);
+                    user.getInventory().listView(user,store);
                     break;
                 case 8:
                     game=false;
                     th.interrupt();
                     return user;
             }//내공격끝
-
             if(뮤츠.getRealHp()<=0){
                 th.interrupt();
                 System.out.println(ConsoleColors.FONT_YELLOW+"뮤츠를 처치했습니다."+ConsoleColors.RESET);
-                user.setExperience(user.getExperience()+뮤츠.getMonEX(),user,skills);
-                inventory.inventoryList.add(뮤츠.dropItem);
-                inventory.setCash(inventory.getCash()+100);
+                user.setExperience(user.getExperience()+뮤츠.getMonEX(),user);
+                user.getInventory().inventoryList.add(뮤츠.dropItem);
+                user.getInventory().setCash(user.getInventory().getCash()+100);
                 System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+뮤츠.dropItem+" ㅣ 금화:  "+뮤츠.getDropCash()+"  ㅣ  경험치 : "+뮤츠.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
             }
-        }
+        }//몬스터 자동공격스레드 종료시 진행중이던 버프스레드 모두종료
         if(th.getState()==TERMINATED){
             hpTh.interrupt();
             armorTh.interrupt();
+            System.out.println("버프 스킬 종료");
         }
         return user;
-    } //보스vs
-    //완성
-    User 상급사냥터(User user, Skills skills, Inventory inventory, Store store){
+    }
+//--------------------------------------------------------------------------------------------------------------
+    User 상급사냥터(User user, Store store){
+        System.out.println(" " +
+                "█████╗ ██████╗ ██╗   ██╗███████╗███╗   ██╗ ██████╗███████╗██████╗ \n" +
+                "██╔══██╗██╔══██╗██║   ██║██╔════╝████╗  ██║██╔════╝██╔════╝██╔══██╗\n" +
+                "███████║██║  ██║██║   ██║█████╗  ██╔██╗ ██║██║     █████╗  ██║  ██║\n" +
+                "██╔══██║██║  ██║╚██╗ ██╔╝██╔══╝  ██║╚██╗██║██║     ██╔══╝  ██║  ██║\n" +
+                "██║  ██║██████╔╝ ╚████╔╝ ███████╗██║ ╚████║╚██████╗███████╗██████╔╝\n" +
+                "╚═╝  ╚═╝╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═══╝ ╚═════╝╚══════╝╚═════╝ \n" +
+                "                                                                   ");
         game=true;
         int ranChar=((int)(Math.random()*3+1));
         switch (ranChar){
@@ -517,7 +539,7 @@ public class hunter {
                         7,
                         user
                 );
-                Battle리자몽(user, skills, inventory, store,(Monster)리자몽);
+                Battle리자몽(user, store,(Monster)리자몽);
                 break;
             case 2:Runnable 거북왕=new Monster(
                     "거북왕",
@@ -536,7 +558,7 @@ public class hunter {
                     8,
                     user
             );
-                Battle거북왕(user, skills, inventory, store,(Monster)거북왕);
+                Battle거북왕(user, store,(Monster)거북왕);
                 break;
             case 3:Runnable 이상해꽃=new Monster(
                     "이상해꽃",
@@ -555,12 +577,12 @@ public class hunter {
                     9,
                     user
             );
-                Battle이상해꽃(user, skills, inventory, store,(Monster)이상해꽃);
+                Battle이상해꽃(user, store,(Monster)이상해꽃);
                 break;
         }
         return user;
     }
-    User Battle이상해꽃(User user, Skills skills, Inventory inventory, Store store,Monster 이상해꽃){
+    User Battle이상해꽃(User user, Store store,Monster 이상해꽃){
         System.out.println("----------------------------------------------------------------------------------------------------------");
         System.out.println(ConsoleColors.FONT_RED+이상해꽃.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 이상해꽃.getRealHp() + " / " + 이상해꽃.getHp());
@@ -572,12 +594,12 @@ public class hunter {
         System.out.println("");
         Thread th=new Thread(이상해꽃);
         //아머스킬쓰레드 runnable 상태 (실행대기)
-        Runnable armor=new ArmorSkill(user,skills);
+        Runnable armor=new ArmorSkill(user);
 
         Thread armorTh=new Thread(armor);
         //스킬쓰레드 runnable 상태 (실행대기)
 
-        Runnable hp=new HpSkill(user,skills);
+        Runnable hp=new HpSkill(user);
         Thread hpTh=new Thread(hp);
         th.start();
 
@@ -619,7 +641,7 @@ public class hunter {
                     break;
                 case 2://불공격
                     ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*3/2;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10))*3/2;
                     if(이상해꽃.getDefense()<skillDamage){
                         if(user.getRealMp()>5){
                             user.setRealMp(user.getRealMp()-5);
@@ -649,7 +671,7 @@ public class hunter {
                     }
                     break;
                 case 3: //물공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*2/3;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getWater()/10))*2/3;
                     if(이상해꽃.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
@@ -673,7 +695,7 @@ public class hunter {
                     }
                     break;
                 case 4: //풀공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10));
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getForest()/10));
                     if(이상해꽃.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
@@ -742,7 +764,7 @@ public class hunter {
                     System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
-                    inventory.listView(user,inventory,store);
+                    user.getInventory().listView(user,store);
                     break;
                 case 8:
                     game=false;
@@ -752,9 +774,9 @@ public class hunter {
             if(이상해꽃.getRealHp()<=0){
                 th.interrupt();
                 System.out.println("이상해꽃를 처치했습니다.");
-                user.setExperience(user.getExperience()+이상해꽃.getMonEX(),user,skills);
-                inventory.inventoryList.add(이상해꽃.dropItem);
-                inventory.setCash(inventory.getCash()+100);
+                user.setExperience(user.getExperience()+이상해꽃.getMonEX(),user);
+                user.getInventory().inventoryList.add(이상해꽃.dropItem);
+                user.getInventory().setCash(user.getInventory().getCash()+100);
                 System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+이상해꽃.dropItem+" ㅣ 금화:  "+이상해꽃.getDropCash()+"  ㅣ  경험치 : "+이상해꽃.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
@@ -768,7 +790,7 @@ public class hunter {
         }
         return user;
     }
-    User Battle거북왕(User user, Skills skills, Inventory inventory, Store store,Monster 거북왕){
+    User Battle거북왕(User user, Store store,Monster 거북왕){
         System.out.println("----------------------------------------------------------------------------------------------------------");
         System.out.println(ConsoleColors.FONT_RED+거북왕.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 거북왕.getRealHp() + " / " + 거북왕.getHp());
@@ -780,10 +802,10 @@ public class hunter {
         System.out.println("");
         Thread th=new Thread(거북왕);
         //아머스킬쓰레드 runnable 상태 (실행대기)
-        Runnable armor=new ArmorSkill(user,skills);
+        Runnable armor=new ArmorSkill(user);
         Thread armorTh=new Thread(armor);
         //스킬쓰레드 runnable 상태 (실행대기)
-        Runnable hp=new HpSkill(user,skills);
+         Runnable hp=new HpSkill(user);
         Thread hpTh=new Thread(hp);
         th.start();
 
@@ -825,7 +847,7 @@ public class hunter {
                     break;
                 case 2://불공격
                     ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*2/3;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10))*2/3;
                     if(거북왕.getDefense()<skillDamage){
                         if(user.getRealMp()>5){
                             user.setRealMp(user.getRealMp()-5);
@@ -855,7 +877,7 @@ public class hunter {
                     }
                     break;
                 case 3: //물공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10));
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getWater()/10));
                     if(거북왕.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
@@ -879,7 +901,7 @@ public class hunter {
                     }
                     break;
                 case 4: //풀공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*3/2;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getForest()/10))*3/2;
                     if(거북왕.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
@@ -948,7 +970,7 @@ public class hunter {
                     System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
-                    inventory.listView(user,inventory,store);
+                    user.getInventory().listView(user,store);
                     break;
                 case 8:
                     game=false;
@@ -958,9 +980,9 @@ public class hunter {
             if(거북왕.getRealHp()<=0){
                 th.interrupt();
                 System.out.println("거북왕를 처치했습니다.");
-                user.setExperience(user.getExperience()+거북왕.getMonEX(),user,skills);
-                inventory.inventoryList.add(거북왕.dropItem);
-                inventory.setCash(inventory.getCash()+100);
+                user.setExperience(user.getExperience()+거북왕.getMonEX(),user);
+                user.getInventory().inventoryList.add(거북왕.dropItem);
+                user.getInventory().setCash(user.getInventory().getCash()+100);
                 System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+거북왕.dropItem+" ㅣ 금화:  "+거북왕.getDropCash()+"  ㅣ  경험치 : "+거북왕.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
@@ -973,7 +995,7 @@ public class hunter {
         }
         return user;
     }
-    User Battle리자몽(User user, Skills skills, Inventory inventory, Store store,Monster 리자몽){
+    User Battle리자몽(User user, Store store,Monster 리자몽){
         System.out.println("----------------------------------------------------------------------------------------------------------");
         System.out.println(ConsoleColors.FONT_RED+리자몽.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 리자몽.getRealHp() + " / " + 리자몽.getHp());
@@ -985,11 +1007,11 @@ public class hunter {
         System.out.println("");
         Thread th=new Thread(리자몽);
         //아머스킬쓰레드 runnable 상태 (실행대기)
-        Runnable armor=new ArmorSkill(user,skills);
+        Runnable armor=new ArmorSkill(user);
         Thread armorTh=new Thread(armor);
         //스킬쓰레드 runnable 상태 (실행대기)
 
-        Runnable hp=new HpSkill(user,skills);
+         Runnable hp=new HpSkill(user);
         Thread hpTh=new Thread(hp);
         th.start();
 
@@ -1031,7 +1053,7 @@ public class hunter {
                     break;
                 case 2://불공격
                     ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10));
                     if(리자몽.getDefense()<skillDamage){
                         if(user.getRealMp()>5){
                             user.setRealMp(user.getRealMp()-5);
@@ -1061,7 +1083,7 @@ public class hunter {
                     }
                     break;
                 case 3: //물공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*3/2;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getWater()/10))*3/2;
                     if(리자몽.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
@@ -1085,7 +1107,7 @@ public class hunter {
                     }
                     break;
                 case 4: //풀공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*2/3;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getForest()/10))*2/3;
                     if(리자몽.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
@@ -1154,7 +1176,7 @@ public class hunter {
                     System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
-                    inventory.listView(user,inventory,store);
+                    user.getInventory().listView(user,store);
                     break;
                 case 8:
                     game=false;
@@ -1164,9 +1186,9 @@ public class hunter {
             if(리자몽.getRealHp()<=0){
                 th.interrupt();
                 System.out.println("리자몽를 처치했습니다.");
-                user.setExperience(user.getExperience()+리자몽.getMonEX(),user,skills);
-                inventory.inventoryList.add(리자몽.dropItem);
-                inventory.setCash(inventory.getCash()+100);
+                user.setExperience(user.getExperience()+리자몽.getMonEX(),user);
+                user.getInventory().inventoryList.add(리자몽.dropItem);
+                user.getInventory().setCash(user.getInventory().getCash()+100);
                 System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+리자몽.dropItem+" ㅣ 금화:  "+리자몽.getDropCash()+"  ㅣ  경험치 : "+리자몽.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
@@ -1178,7 +1200,15 @@ public class hunter {
         return user;
     }
 //--------------------------------------------------------------------------------------------------------------
-    User 중급사냥터(User user, Skills skills, Inventory inventory, Store store){
+    User 중급사냥터(User user, Store store){
+        System.out.println(
+                "███████╗███████╗███╗   ██╗██╗ ██████╗ ██████╗ \n" +
+                "██╔════╝██╔════╝████╗  ██║██║██╔═══██╗██╔══██╗\n" +
+                "███████╗█████╗  ██╔██╗ ██║██║██║   ██║██████╔╝\n" +
+                "╚════██║██╔══╝  ██║╚██╗██║██║██║   ██║██╔══██╗\n" +
+                "███████║███████╗██║ ╚████║██║╚██████╔╝██║  ██║\n" +
+                "╚══════╝╚══════╝╚═╝  ╚═══╝╚═╝ ╚═════╝ ╚═╝  ╚═╝\n" +
+                "                                              ");
         game=true;
         int ranChar=((int)(Math.random()*3+1));
         switch (ranChar){
@@ -1200,7 +1230,7 @@ public class hunter {
                         4,
                         user
                 );
-                Battle리자드(user, skills, inventory,store, (Monster)리자드);
+                Battle리자드(user,store, (Monster)리자드);
                 break;
             case 2:
                 Runnable 어니부기=new Monster(
@@ -1220,7 +1250,7 @@ public class hunter {
                         5,
                         user
                 );
-                Battle어니부기(user, skills, inventory, store, (Monster)어니부기);
+                Battle어니부기(user, store, (Monster)어니부기);
                 break;
             case 3:
                 Runnable 이상해풀=new Monster(
@@ -1240,13 +1270,13 @@ public class hunter {
                         6,
                         user
                 );
-                Battle이상해풀(user, skills, inventory, store, (Monster)이상해풀);
+                Battle이상해풀(user, store, (Monster)이상해풀);
                 break;
         }
 
         return user;
-    } //switch
-    User Battle이상해풀(User user,Skills skills,Inventory inventory,Store store,Monster 이상해풀){
+    }
+    User Battle이상해풀(User user,Store store,Monster 이상해풀){
         System.out.println("----------------------------------------------------------------------------------------------------------");
         System.out.println(ConsoleColors.FONT_RED+이상해풀.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 이상해풀.getRealHp() + " / " + 이상해풀.getHp());
@@ -1258,11 +1288,11 @@ public class hunter {
         System.out.println("");
         Thread th=new Thread(이상해풀);
         //아머스킬쓰레드 runnable 상태 (실행대기)
-        Runnable armor=new ArmorSkill(user,skills);
+        Runnable armor=new ArmorSkill(user);
         Thread armorTh=new Thread(armor);
         //스킬쓰레드 runnable 상태 (실행대기)
 
-        Runnable hp=new HpSkill(user,skills);
+         Runnable hp=new HpSkill(user);
         Thread hpTh=new Thread(hp);
         th.start();
 
@@ -1304,7 +1334,7 @@ public class hunter {
                     break;
                 case 2://불공격
                     ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*3/2;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10))*3/2;
                     if(이상해풀.getDefense()<skillDamage){
                         if(user.getRealMp()>5){
                             user.setRealMp(user.getRealMp()-5);
@@ -1334,7 +1364,7 @@ public class hunter {
                     }
                     break;
                 case 3: //물공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*2/3;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getWater()/10))*2/3;
                     if(이상해풀.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
@@ -1358,7 +1388,7 @@ public class hunter {
                     }
                     break;
                 case 4: //풀공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10));
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getForest()/10));
                     if(이상해풀.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
@@ -1427,7 +1457,7 @@ public class hunter {
                     System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
-                    inventory.listView(user,inventory,store);
+                    user.getInventory().listView(user,store);
                     break;
                 case 8:
                     game=false;
@@ -1437,9 +1467,9 @@ public class hunter {
             if(이상해풀.getRealHp()<=0){
                 th.interrupt();
                 System.out.println("이상해풀를 처치했습니다.");
-                user.setExperience(user.getExperience()+이상해풀.getMonEX(),user,skills);
-                inventory.inventoryList.add(이상해풀.dropItem);
-                inventory.setCash(inventory.getCash()+100);
+                user.setExperience(user.getExperience()+이상해풀.getMonEX(),user);
+                user.getInventory().inventoryList.add(이상해풀.dropItem);
+                user.getInventory().setCash(user.getInventory().getCash()+100);
                 System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+이상해풀.dropItem+" ㅣ 금화:  "+이상해풀.getDropCash()+"  ㅣ  경험치 : "+이상해풀.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
@@ -1451,7 +1481,7 @@ public class hunter {
         }
         return user;
     }
-    User Battle리자드(User user, Skills skills, Inventory inventory, Store store, Monster 리자드){
+    User Battle리자드(User user, Store store, Monster 리자드){
         System.out.println("----------------------------------------------------------------------------------------------------------");
         System.out.println(ConsoleColors.FONT_RED+리자드.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 리자드.getRealHp() + " / " + 리자드.getHp());
@@ -1464,11 +1494,11 @@ public class hunter {
         Thread th=new Thread(리자드);
         //아머스킬쓰레드 runnable 상태 (실행대기)
 
-        Runnable armor=new ArmorSkill(user,skills);
+        Runnable armor=new ArmorSkill(user);
         Thread armorTh=new Thread(armor);
         //스킬쓰레드 runnable 상태 (실행대기)
 
-        Runnable hp=new HpSkill(user,skills);
+         Runnable hp=new HpSkill(user);
         Thread hpTh=new Thread(hp);
         th.start();
 
@@ -1510,7 +1540,7 @@ public class hunter {
                     break;
                 case 2://불공격
                     ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10));
                     if(리자드.getDefense()<skillDamage){
                         if(user.getRealMp()>5){
                             user.setRealMp(user.getRealMp()-5);
@@ -1540,7 +1570,7 @@ public class hunter {
                     }
                     break;
                 case 3: //물공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*3/2;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getWater()/10))*3/2;
                     if(리자드.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
@@ -1564,7 +1594,7 @@ public class hunter {
                     }
                     break;
                 case 4: //풀공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*2/3;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getForest()/10))*2/3;
                     if(리자드.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
@@ -1633,7 +1663,7 @@ public class hunter {
                     System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
-                    inventory.listView(user,inventory,store);
+                    user.getInventory().listView(user,store);
                     break;
                 case 8:
                     game=false;
@@ -1643,9 +1673,9 @@ public class hunter {
             if(리자드.getRealHp()<=0){
                 th.interrupt();
                 System.out.println("리자드를 처치했습니다.");
-                user.setExperience(user.getExperience()+리자드.getMonEX(),user,skills);
-                inventory.inventoryList.add(리자드.dropItem);
-                inventory.setCash(inventory.getCash()+100);
+                user.setExperience(user.getExperience()+리자드.getMonEX(),user);
+                user.getInventory().inventoryList.add(리자드.dropItem);
+                user.getInventory().setCash(user.getInventory().getCash()+100);
                 System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+리자드.dropItem+" ㅣ 금화:  "+리자드.getDropCash()+"  ㅣ  경험치 : "+리자드.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
@@ -1656,8 +1686,8 @@ public class hunter {
             armorTh.interrupt();
         }
         return user;
-    } //리자드
-    User Battle어니부기(User user, Skills skills, Inventory inventory, Store store,Monster 어니부기){
+    }
+    User Battle어니부기(User user,Store store,Monster 어니부기){
         System.out.println("----------------------------------------------------------------------------------------------------------");
         System.out.println(ConsoleColors.FONT_RED+어니부기.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 어니부기.getRealHp() + " / " + 어니부기.getHp());
@@ -1669,11 +1699,11 @@ public class hunter {
         System.out.println("");
         Thread th=new Thread(어니부기);
         //아머스킬쓰레드 runnable 상태 (실행대기)
-        Runnable armor=new ArmorSkill(user,skills);
+        Runnable armor=new ArmorSkill(user);
         Thread armorTh=new Thread(armor);
         //스킬쓰레드 runnable 상태 (실행대기)
 
-        Runnable hp=new HpSkill(user,skills);
+         Runnable hp=new HpSkill(user);
         Thread hpTh=new Thread(hp);
         th.start();
 
@@ -1715,7 +1745,7 @@ public class hunter {
                     break;
                 case 2://불공격
                     ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*2/3;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10))*2/3;
                     if(어니부기.getDefense()<skillDamage){
                         if(user.getRealMp()>5){
                             user.setRealMp(user.getRealMp()-5);
@@ -1745,7 +1775,7 @@ public class hunter {
                     }
                     break;
                 case 3: //물공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10));
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getWater()/10));
                     if(어니부기.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
@@ -1769,7 +1799,7 @@ public class hunter {
                     }
                     break;
                 case 4: //풀공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*3/2;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getForest()/10))*3/2;
                     if(어니부기.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
@@ -1838,7 +1868,7 @@ public class hunter {
                     System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
-                    inventory.listView(user,inventory,store);
+                    user.getInventory().listView(user,store);
                     break;
                 case 8:
                     game=false;
@@ -1848,9 +1878,9 @@ public class hunter {
             if(어니부기.getRealHp()<=0){
                 th.interrupt();
                 System.out.println("어니부기를 처치했습니다.");
-                user.setExperience(user.getExperience()+어니부기.getMonEX(),user,skills);
-                inventory.inventoryList.add(어니부기.dropItem);
-                inventory.setCash(inventory.getCash()+100);
+                user.setExperience(user.getExperience()+어니부기.getMonEX(),user);
+                user.getInventory().inventoryList.add(어니부기.dropItem);
+                user.getInventory().setCash(user.getInventory().getCash()+100);
                 System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+어니부기.dropItem+" ㅣ 금화:  "+어니부기.getDropCash()+"  ㅣ  경험치 : "+어니부기.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
@@ -1861,19 +1891,27 @@ public class hunter {
             armorTh.interrupt();
         }
         return user;
-    } //중급사냥터
+    }
 //--------------------------------------------------------------------------------------------------------------
-    User 초급사냥터(User user,Skills skills,Inventory inventory,Store store){
+    User 초급사냥터(User user, Store store){
+        System.out.println("" +
+                "██████╗ ███████╗ ██████╗ ██╗███╗   ██╗███╗   ██╗███████╗██████╗ \n" +
+                "██╔══██╗██╔════╝██╔════╝ ██║████╗  ██║████╗  ██║██╔════╝██╔══██╗\n" +
+                "██████╔╝█████╗  ██║  ███╗██║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝\n" +
+                "██╔══██╗██╔══╝  ██║   ██║██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗\n" +
+                "██████╔╝███████╗╚██████╔╝██║██║ ╚████║██║ ╚████║███████╗██║  ██║\n" +
+                "╚═════╝ ╚══════╝ ╚═════╝ ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝\n" +
+                "                                                                ");
         game=true;
     int ranChar=((int)(Math.random()*3+1));
 
-    switch (1){ //속성 1 파이리 , 2꼬북이  3이상해씨
+    switch (ranChar){ //속성 1 파이리 , 2꼬북이  3이상해씨
         case 1:
             Runnable 파이리=new Monster(
                     "파이리",
                     3,
-                    30,
-                    30,
+                    50,
+                    50,
                     30,
                     30,
                     30,
@@ -1886,13 +1924,13 @@ public class hunter {
                     1
                     ,user
             );
-         Battle파이리(user,skills,inventory,store, (Monster) 파이리);
+         Battle파이리(user,store, (Monster) 파이리);
             break;
         case 2:Runnable 꼬북이=new Monster(
                 "꼬북이",
                 3,
-                10000,
-                10000,
+                50,
+                50,
                 30,
                 30,
                 30,
@@ -1905,13 +1943,13 @@ public class hunter {
                 2,
                 user
         );
-         Battle꼬북이(user,skills,inventory,store, (Monster)꼬북이);
+         Battle꼬북이(user,store, (Monster)꼬북이);
             break;
         case 3:Runnable 이상해씨=new Monster(
                 "이상해씨",
                 3,
-                10000,
-                10000,
+                50,
+                50,
                 30,
                 30,
                 30,
@@ -1924,13 +1962,12 @@ public class hunter {
                 3,
                 user
         );
-            Battle이상해씨(user,skills,inventory,store, (Monster)이상해씨);
+            Battle이상해씨(user,store, (Monster)이상해씨);
             break;
     }
     return user;
     } //switch
-    User Battle파이리(User user, Skills skills, Inventory inventory, Store store,Monster 파이리){
-        파이리.밤(파이리);
+    User Battle파이리(User user, Store store,Monster 파이리){
         System.out.println("----------------------------------------------------------------------------------------------------------");
         System.out.println(ConsoleColors.FONT_RED+파이리.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 파이리.getRealHp() + " / " + 파이리.getHp());
@@ -1943,10 +1980,10 @@ public class hunter {
         Thread th=new Thread(파이리);
         //아머스킬쓰레드 runnable 상태 (실행대기)
 
-        Runnable armor=new ArmorSkill(user,skills);
+        Runnable armor=new ArmorSkill(user);
         Thread armorTh=new Thread(armor);
         //스킬쓰레드 runnable 상태 (실행대기)
-        Runnable hp=new HpSkill(user,skills);
+         Runnable hp=new HpSkill(user);
         Thread hpTh=new Thread(hp);
         th.start();
 
@@ -1988,7 +2025,7 @@ public class hunter {
                     break;
                 case 2://불공격
                     ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10));
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10));
                     if(파이리.getDefense()<skillDamage){
                         if(user.getRealMp()>5){
                             user.setRealMp(user.getRealMp()-5);
@@ -2018,7 +2055,7 @@ public class hunter {
                     }
                     break;
                 case 3: //물공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*3/2;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getWater()/10))*3/2;
                     if(파이리.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
@@ -2042,7 +2079,7 @@ public class hunter {
                     }
                     break;
                 case 4: //풀공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*2/3;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getForest()/10))*2/3;
                     if(파이리.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
@@ -2111,7 +2148,7 @@ public class hunter {
                     System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
-                    inventory.listView(user,inventory,store);
+                    user.getInventory().listView(user,store);
                     break;
                 case 8:
                     game=false;
@@ -2121,9 +2158,9 @@ public class hunter {
             if(파이리.getRealHp()<=0){
                 th.interrupt();
                 System.out.println("파이리를 처치했습니다.");
-                user.setExperience(user.getExperience()+파이리.getMonEX(),user,skills);
-                inventory.inventoryList.add(파이리.dropItem);
-                inventory.setCash(inventory.getCash()+100);
+                user.setExperience(user.getExperience()+파이리.getMonEX(),user);
+                user.getInventory().inventoryList.add(파이리.dropItem);
+                user.getInventory().setCash(user.getInventory().getCash()+100);
                 System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+파이리.dropItem+" ㅣ 금화:  "+파이리.getDropCash()+"  ㅣ  경험치 : "+파이리.getMonEX()+ConsoleColors.RESET);
                 game=false;
                 break;
@@ -2135,7 +2172,7 @@ public class hunter {
         }
         return user;
     }
-    User Battle꼬북이(User user, Skills skills, Inventory inventory, Store store,Monster 꼬북이){
+    User Battle꼬북이(User user, Store store,Monster 꼬북이){
             System.out.println("----------------------------------------------------------------------------------------------------------");
             System.out.println(ConsoleColors.FONT_RED+꼬북이.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
             System.out.println("현재HP  / 총HP  : " + 꼬북이.getRealHp() + " / " + 꼬북이.getHp());
@@ -2147,10 +2184,10 @@ public class hunter {
             System.out.println("");
             Thread th=new Thread(꼬북이);
             //아머스킬쓰레드 runnable 상태 (실행대기)
-            Runnable armor=new ArmorSkill(user,skills,꼬북이);
+            Runnable armor=new ArmorSkill(user);
             Thread armorTh=new Thread(armor);
             //스킬쓰레드 runnable 상태 (실행대기)
-            Runnable hp=new HpSkill(user,skills);
+             Runnable hp=new HpSkill(user);
             Thread hpTh=new Thread(hp);
             th.start();
             while (game) {
@@ -2192,7 +2229,7 @@ public class hunter {
                         break;
                     case 2://불공격
                         ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
-                        skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*2/3;
+                        skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10))*2/3;
                         if(꼬북이.getDefense()<skillDamage){
                             if(user.getRealMp()>5){
                             user.setRealMp(user.getRealMp()-5);
@@ -2221,7 +2258,7 @@ public class hunter {
                         }
                         break;
                     case 3: //물공격
-                        skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10));
+                        skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getWater()/10));
                         if(꼬북이.getDefense()<skillDamage){
                             System.out.println("----------------------------------------------------------------------------------------------");
                             System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
@@ -2245,7 +2282,7 @@ public class hunter {
                         }
                         break;
                     case 4: //풀공격
-                        skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10))*3/2;
+                        skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getForest()/10))*3/2;
                         if(꼬북이.getDefense()<skillDamage){
                             System.out.println("----------------------------------------------------------------------------------------------");
                             System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
@@ -2314,7 +2351,7 @@ public class hunter {
                         System.out.println("-----------------------------------------------------------------------");
                         break;
                     case 7:
-                        inventory.listView(user,inventory,store);
+                        user.getInventory().listView(user,store);
                         break;
                     case 8:
                         game=false;
@@ -2324,9 +2361,9 @@ public class hunter {
                 if(꼬북이.getRealHp()<=0){
                     th.interrupt();
                     System.out.println("꼬북이를 처치했습니다.");
-                    user.setExperience(user.getExperience()+꼬북이.getMonEX(),user,skills);
-                    inventory.inventoryList.add(꼬북이.dropItem);
-                    inventory.setCash(inventory.getCash()+100);
+                    user.setExperience(user.getExperience()+꼬북이.getMonEX(),user);
+                    user.getInventory().inventoryList.add(꼬북이.dropItem);
+                    user.getInventory().setCash(user.getInventory().getCash()+100);
                     System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+꼬북이.dropItem+" ㅣ 금화:  "+꼬북이.getDropCash()+"  ㅣ  경험치 : "+꼬북이.getMonEX()+ConsoleColors.RESET);
                     game=false;
                     break;
@@ -2338,7 +2375,7 @@ public class hunter {
         }
             return user;
         }
-    User Battle이상해씨(User user, Skills skills, Inventory inventory, Store store,Monster 이상해씨){
+    User Battle이상해씨(User user, Store store,Monster 이상해씨){
         System.out.println("----------------------------------------------------------------------------------------------------------");
         System.out.println(ConsoleColors.FONT_RED+이상해씨.getName()+"와 전투를 합니다"+ConsoleColors.RESET);
         System.out.println("현재HP  / 총HP  : " + 이상해씨.getRealHp() + " / " + 이상해씨.getHp());
@@ -2351,10 +2388,10 @@ public class hunter {
         Thread th=new Thread(이상해씨);
         //아머스킬쓰레드 runnable 상태 (실행대기)
 
-        Runnable armor=new ArmorSkill(user,skills);
+        Runnable armor=new ArmorSkill(user);
         Thread armorTh=new Thread(armor);
         //스킬쓰레드 runnable 상태 (실행대기)
-        Runnable hp=new HpSkill(user,skills);
+         Runnable hp=new HpSkill(user);
         Thread hpTh=new Thread(hp);
         th.start();
         while (game) {
@@ -2395,7 +2432,7 @@ public class hunter {
                     break;
                 case 2://불공격
                     ///현재 데미지+(현재데미지* 스킬포인트/10 ) * 3/2(상성)
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getFire()/10))*3/2;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getFire()/10))*3/2;
                     if(이상해씨.getDefense()<skillDamage){
                         if(user.getRealMp()>5){
                             user.setRealMp(user.getRealMp()-5);
@@ -2425,7 +2462,7 @@ public class hunter {
                     }
                     break;
                 case 3: //물공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getWater()/10))*2/3;
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getWater()/10))*2/3;
                     if(이상해씨.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 물대포!!!"+ConsoleColors.RESET);
@@ -2449,7 +2486,7 @@ public class hunter {
                     }
                     break;
                 case 4: //풀공격
-                    skillDamage=(user.getPower()+ (user.getPower())*(skills.getForest()/10));
+                    skillDamage=(user.getPower()+ (user.getPower())*(user.getSkills().getForest()/10));
                     if(이상해씨.getDefense()<skillDamage){
                         System.out.println("----------------------------------------------------------------------------------------------");
                         System.out.println(ConsoleColors.FONT_YELLOW+"                             "+user.getName()+"님의 나뭇잎날리기!!!"+ConsoleColors.RESET);
@@ -2518,7 +2555,7 @@ public class hunter {
                     System.out.println("-----------------------------------------------------------------------");
                     break;
                 case 7:
-                    inventory.listView(user,inventory,store);
+                    user.getInventory().listView(user,store);
                     break;
                 case 8:
                     game=false;
@@ -2528,22 +2565,18 @@ public class hunter {
             if(이상해씨.getRealHp()<=0){
                 th.interrupt();
                 System.out.println("이상해씨를 처치했습니다.");
-                user.setExperience(user.getExperience()+이상해씨.getMonEX(),user,skills);
-                inventory.inventoryList.add(이상해씨.dropItem);
-                inventory.setCash(inventory.getCash()+100);
+                user.setExperience(user.getExperience()+이상해씨.getMonEX(),user);
+                user.getInventory().inventoryList.add(이상해씨.dropItem);
+                user.getInventory().setCash(user.getInventory().getCash()+100);
                 if(afternoon==true){
                     System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+이상해씨.dropItem+" ㅣ 금화:  "+이상해씨.getDropCash()+"  ㅣ  경험치 : "+이상해씨.getMonEX()+ConsoleColors.RESET);
                 }else {
                     System.out.println(ConsoleColors.FONT_YELLOW+"보상아이템 :  "+이상해씨.dropItem+" ㅣ 금화:  "+이상해씨.getDropCash()*2+"  ㅣ  경험치 : "+이상해씨.getMonEX()*2+ConsoleColors.RESET);
                     System.out.println(ConsoleColors.FONT_YELLOW+"밤에는 경험치와 보상아이템이 2배입니다!!!"+ConsoleColors.RESET);
                 }
-
                 game=false;
                 break;
             }else{
-                System.out.println(afternoon+"    true면 낮,,   false면 밤");
-                System.out.println(user.getAvoid()+"명중률");
-                System.out.println(user.getPower()+"공격력");
             }
         }
         if(th.getState()==TERMINATED){
@@ -2553,131 +2586,5 @@ public class hunter {
         return user;
     }
 //--------------------------------------------------------------------------------------------------------------
-    void Battle파퀘(User user, Skills skills, Inventory inventory, Store store, hunter hunter){
-
-       초급파퀘(user,skills,inventory,store,hunter);
-    }
-    Boolean halfMinute(int second){
-        if(second==30){
-            return true;
-        }
-        return false;
-    }
-    void 초급파퀘(User user, Skills skills, Inventory inventory, Store store, hunter hunter){
-
-        Runnable armor=new ArmorSkill(user,skills);
-        Thread armorTh=new Thread(armor);
-        //스킬쓰레드 runnable 상태 (실행대기)
-        Runnable hp=new HpSkill(user,skills);
-        Thread hpTh=new Thread(hp);
-        int second = TimerRunnable.second;
-        int minute = TimerRunnable.minute;
-        boolean halfMinute = false;
-        Runnable questTime=new questTime(user);
-        Thread QuestTime=new Thread(questTime); //쓰레드 객체(퀘스트타임) 생성 - 제한시간
-        Runnable randomObj=new RandomObj(hunter,user);
-        Thread RandomObj=new Thread(randomObj);
-        random=((int)(Math.random()*3+1));
-        System.out.println(minute+"분  "+second+"초"+"   초급파퀘시간");
-        QuestTime.start();  //제한시간 시작
-        RandomObj.start(); //객체생성시작
-        while(game){
-            초급퀘스트객체생성(user);
-            Thread th=new Thread(초급퀘스트객체생성(user));
-            th.start();
-
-            if(QuestTime.getState() == TERMINATED){
-                System.out.println("제한시간 쓰레드 종료 ");
-                System.out.println(RandomObj.getState());
-                game=false;
-                if(RandomObj.getState() == TERMINATED){
-                    System.out.println("랜덤객체생성쓰레드종료");
-                    game=false;
-                }
-            }
-
-
-        }
-    }
-    Monster 초급퀘스트객체생성(User user){
-        random=((int)(Math.random()*3+1));
-        System.out.println(random);
-        switch (random){
-            case 1 :
-                Runnable 파이리=new Monster(
-                        "파이리",
-                        3,
-                        30,
-                        30,
-                        30,
-                        30,
-                        30,
-                        10,
-                        1,
-                        30,
-                        "파이리의 꼬리",
-                        100,
-                        20,
-                        1
-                        ,user);
-
-                break;
-            case 2:
-                Runnable 꼬북이=new Monster(
-                        "꼬북이",
-                        3,
-                        30,
-                        30,
-                        30,
-                        30,
-                        30,
-                        10,
-                        1,
-                        30,
-                        "꼬북이의 등딱지", //돌
-                        100,
-                        20,
-                        2
-                        ,user);
-
-                break;
-            case 3:
-                Runnable 이상해씨=new Monster(
-                        "이상해씨",
-                        3,
-                        30,
-                        30,
-                        30,
-                        30,
-                        30,
-                        10,
-                        1,
-                        30,
-                        "이상해씨의 씨앗",
-                        100,
-                        20,
-                        3
-                        ,user);
-                break;
-        }
-        Monster monster=new Monster("이상해씨",
-                3,
-                30,
-                30,
-                30,
-                30,
-                30,
-                10,
-                1,
-                30,
-                "이상해씨의 씨앗",
-                100,
-                20,
-                3
-                ,user);
-        return monster;
-    }
-
-
 }
 

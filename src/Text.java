@@ -45,11 +45,18 @@ class EndingText implements Runnable{
         scriptList.add("이제 자네 할일은 끝났네.. ");
         scriptList.add("덕분에 마을이 이제 평화롭다네..");
         scriptList.add("고맙네.. 잘지내시게 ");
-        scriptList.add("The End");
         scriptList.add("3");
         scriptList.add("2");
         scriptList.add("1");
-        scriptList.add(".");
+        scriptList.add("" +
+                "████████╗██╗  ██╗███████╗    ███████╗███╗   ██╗██████╗       \n" +
+                "╚══██╔══╝██║  ██║██╔════╝    ██╔════╝████╗  ██║██╔══██╗      \n" +
+                "   ██║   ███████║█████╗      █████╗  ██╔██╗ ██║██║  ██║      \n" +
+                "   ██║   ██╔══██║██╔══╝      ██╔══╝  ██║╚██╗██║██║  ██║      \n" +
+                "   ██║   ██║  ██║███████╗    ███████╗██║ ╚████║██████╔╝██╗██╗\n" +
+                "   ╚═╝   ╚═╝  ╚═╝╚══════╝    ╚══════╝╚═╝  ╚═══╝╚═════╝ ╚═╝╚═╝\n" +
+                "                                                             ");
+
         for(int i=0;i<scriptList.size();i++){
             try{
                 Thread.sleep(1000);
